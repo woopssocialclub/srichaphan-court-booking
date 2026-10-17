@@ -383,6 +383,7 @@ var I18N = {
     uploaded_at:'ส่งสลิป {t}', expires_at:'ต้องส่งสลิปก่อน {t} น.', d_price:'ราคา', d_status:'สถานะ', can_confirm:'ยืนยันสลิป',
     err_payment_expired:'หมดเวลาชำระแล้ว การจองหลุด — กรุณาจองใหม่ (ถ้าโอนเงินไปแล้ว ติดต่อแอดมิน)',
     err_invalid_slip:'ไฟล์สลิปต้องเป็นรูปภาพ', err_slip_too_large:'รูปใหญ่เกินไป (เกิน 5MB)',
+    backend_outdated:'ระบบกำลังอัปเดต กรุณากลับมาใหม่อีกครั้ง 🙏 (สำหรับแอดมิน: หลังบ้านยังเป็นโค้ด .gs เวอร์ชันเก่า — วางโค้ดใหม่ → รัน setup → Deploy New version ตามคู่มือส่วนที่ 7)',
     err_demo_unavailable:'โหมดทดลองต้องเปิดผ่านเว็บ (เช่น GitHub Pages) — เปิดไฟล์จากเครื่องตรง ๆ ไม่ได้',
     err_auth_required:'กรุณาเข้าสู่ระบบก่อน', err_invalid_login:'เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง',
     err_phone_taken:'เบอร์นี้สมัครไว้แล้ว — ลองเข้าสู่ระบบ', err_invalid_phone:'เบอร์โทรไม่ถูกต้อง (เช่น 0812345678)',
@@ -447,6 +448,7 @@ var I18N = {
     uploaded_at:'Slip sent {t}', expires_at:'Slip due by {t}', d_price:'Price', d_status:'Status', can_confirm:'Approve slips',
     err_payment_expired:'Payment time is up and the booking was released — please book again (contact an admin if you already paid)',
     err_invalid_slip:'The slip must be an image', err_slip_too_large:'Image too large (over 5MB)',
+    backend_outdated:'The system is being updated, please check back soon 🙏 (Admins: the backend still runs the old .gs — paste the new code → run setup → Deploy a New version, see guide section 7)',
     err_demo_unavailable:'Demo mode must be opened from the website (e.g. GitHub Pages), not as a local file',
     err_auth_required:'Please log in first', err_invalid_login:'Wrong phone number or password',
     err_phone_taken:'This phone number is already registered — try logging in', err_invalid_phone:'Invalid phone number (e.g. 0812345678)',
@@ -593,6 +595,8 @@ function applyLang() {
 function boot() {
   applyLang();
   api('bootstrap').then(function (cfg) {
+    // หน้าเว็บเวอร์ชันนี้ต้องใช้หลังบ้านที่มีระบบราคา/ชำระเงิน — ถ้ายังเป็นโค้ด .gs เก่า แจ้งให้อัปเดตแทนที่จะพัง
+    if (!cfg.pricing || !cfg.payment) { $('main').innerHTML = '<div class="empty">' + esc(t('backend_outdated')) + '</div>'; return; }
     state.cfg = cfg;
     state.clock = cfg.clock;
     state.user = cfg.user;
