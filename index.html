@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>จองคอร์ท · Srichaphan Tennis Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0F1C3F; --navy3:#0A1228;
+    --gold:#D4A843; --gold-lt:#F0C660; --gold-dk:#A07828;
+    --blue:#2563EB; --blue-lt:#3B82F6; --blue-bg:#EFF6FF;
+    --green:#059669; --green-bg:#DCFCE7; --green-line:#86EFAC;
+    --amber:#B45309; --amber-bg:#FEF3C7;
+    --red:#DC2626; --red-bg:#FEF2F2;
+    --bg:#F3F6FB; --card:#FFFFFF; --line:#E2E8F0;
+    --g400:#CBD5E1; --g500:#94A3B8; --g600:#64748B; --g700:#475569; --g900:#1E293B;
+    --taken: repeating-linear-gradient(135deg,#EEF1F5 0 6px,#E3E8EF 6px 12px);
+    --tabbar-h: 64px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { background:var(--bg); }
+  body { font-family:'Inter','Kanit',sans-serif; color:var(--g900); min-height:100vh;
+         padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 16px); }
+  body.th { font-family:'Kanit','Inter',sans-serif; }
+  body.has-sel { padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 90px); }
+  button, input, select { font:inherit; color:inherit; }
+  button { cursor:pointer; }
+  [hidden] { display:none !important; }
+  svg { display:block; }
+
+  /* ── TOP BAR ── */
+  .topbar { position:sticky; top:0; z-index:50; background:rgba(10,18,40,.96); backdrop-filter:blur(10px);
+            border-bottom:1px solid rgba(212,168,67,.2); height:60px; padding:0 16px;
+            display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .brand { display:flex; flex-direction:column; justify-content:center; min-width:0; color:#fff; text-decoration:none; line-height:1.15; }
+  .brand-name { font-family:'Inter',sans-serif; font-weight:800; font-size:15px; letter-spacing:-.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .brand-sub { font-size:11px; font-weight:600; color:var(--gold-lt); letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .top-actions { display:flex; align-items:center; gap:8px; }
+  .lang { display:flex; background:rgba(255,255,255,.08); border-radius:10px; padding:3px; }
+  .lang button { border:0; background:transparent; color:rgba(255,255,255,.6); font-size:12px; font-weight:700; padding:5px 9px; border-radius:7px; }
+  .lang button.on { background:#fff; color:var(--navy); }
+  .avatar { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08);
+            color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+  .avatar.in { background:linear-gradient(135deg,var(--gold-dk),var(--gold-lt)); color:var(--navy3); border:0; }
+
+  .demo { background:#FFF7E0; border-bottom:1px solid #F5DFA0; color:#7A5A12; font-size:12.5px; padding:8px 16px; line-height:1.5; }
+  .demo b { font-weight:700; }
+  .demo button { border:0; background:none; color:var(--blue); text-decoration:underline; font-size:12.5px; padding:0; }
+
+  main { max-width:980px; margin:0 auto; padding:16px; }
+  .view-title { font-size:20px; font-weight:800; margin:4px 0 14px; color:var(--navy); }
+
+  /* ── DATE STRIP ── */
+  .dates { display:flex; gap:8px; overflow-x:auto; padding:2px 2px 6px; scrollbar-width:none; }
+  .dates::-webkit-scrollbar { display:none; }
+  .date-chip { flex:0 0 auto; min-width:92px; border:1px solid var(--line); background:var(--card); border-radius:14px;
+               padding:9px 12px; text-align:center; transition:all .15s; }
+  .date-chip b { display:block; font-size:15px; font-weight:700; }
+  .date-chip small { display:block; font-size:12px; color:var(--g600); margin-top:2px; white-space:nowrap; }
+  .date-chip.on { background:var(--blue); border-color:var(--blue); color:#fff; box-shadow:0 6px 16px rgba(37,99,235,.28); }
+  .date-chip.on small { color:rgba(255,255,255,.85); }
+  .date-full { font-size:14px; color:var(--g700); margin:10px 2px 0; font-weight:500; }
+
+  .toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:14px 0 10px; flex-wrap:wrap; }
+  .seg { display:inline-flex; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:3px; }
+  .seg button { border:0; background:transparent; padding:7px 14px; border-radius:9px; font-size:14px; font-weight:600; color:var(--g700);
+                display:flex; align-items:center; gap:6px; }
+  .seg button.on { background:var(--blue); color:#fff; }
+  .admin-date { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--g600); }
+  .admin-date input { border:1px solid var(--line); border-radius:10px; padding:6px 8px; background:var(--card); font-size:13px; }
+
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--g700); margin-bottom:8px; }
+  .legend span { display:flex; align-items:center; gap:6px; }
+  .legend i { width:16px; height:16px; border-radius:5px; border:1px solid var(--line); display:inline-block; }
+  .lg-free { background:#fff; } .lg-sel { background:var(--blue-bg); border-color:var(--blue) !important; }
+  .lg-mine { background:var(--green-bg); border-color:var(--green-line) !important; }
+  .lg-block { background:var(--amber-bg); border-color:#FCD34D !important; }
+  .lg-taken { background:var(--taken); }
+
+  .perm-hint { font-size:12.5px; color:var(--g600); background:var(--card); border:1px dashed var(--line); border-radius:12px;
+               padding:8px 12px; margin-bottom:12px; line-height:1.6; }
+  .perm-hint b { color:var(--navy); }
+  .role-pill { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; background:var(--blue-bg); color:var(--blue); vertical-align:1px; }
+  .role-pill.admin { background:#FDF3D8; color:var(--gold-dk); }
+  .role-pill.member { background:var(--green-bg); color:var(--green); }
+
+  /* ── GRID ── */
+  .grid-wrap { background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:auto; max-height:calc(100vh - 150px); max-height:calc(100dvh - 150px);
+               box-shadow:0 1px 2px rgba(15,28,63,.04); }
+  table.grid { border-collapse:separate; border-spacing:4px; width:100%; min-width:330px; table-layout:fixed; }
+  .grid thead th { position:sticky; top:0; z-index:3; background:#F8FAFC; font-size:15px; font-weight:700; color:var(--navy); padding:12px 4px; }
+  .grid th.tcol { position:sticky; left:0; z-index:2; background:#F8FAFC; width:72px; min-width:72px; text-align:left; padding:6px 6px; border-radius:10px; }
+  .grid thead th.tcol { z-index:4; color:var(--g600); font-weight:600; font-size:13px; text-align:center; }
+  .tlabel { display:flex; align-items:center; gap:6px; }
+  .tlabel b { font-size:14px; font-weight:700; }
+  .tlabel small { display:block; font-size:11.5px; color:var(--g500); font-weight:500; }
+  .tlabel .ico { width:16px; height:16px; flex:0 0 16px; }
+  .ico.sun { color:#D97706; } .ico.moon { color:var(--navy); }
+  .grid td { padding:0; }
+
+  .cell { width:100%; height:56px; border-radius:10px; border:1px solid var(--line); background:#fff;
+          display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; line-height:1.15;
+          padding:2px; text-align:center; overflow:hidden; transition:transform .08s, background .12s; }
+  .cell svg { width:15px; height:15px; }
+  .cell.free:hover { border-color:var(--blue-lt); background:#F7FAFF; }
+  .cell.free:active { transform:scale(.96); }
+  .cell.sel { background:var(--blue-bg); border:2px solid var(--blue); color:var(--blue); }
+  .cell.mine { background:var(--green-bg); border-color:var(--green-line); color:var(--green); }
+  .cell.block { background:var(--amber-bg); border-color:#FCD34D; color:var(--amber); }
+  .cell.taken { background:var(--taken); color:var(--g500); border-color:#E3E8EF; }
+  .cell.taken.named { color:var(--g700); }
+  .cell.past { background:#F1F4F8; border-color:#EEF1F5; color:transparent; cursor:default; }
+  .cell .nm { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; word-break:break-word; }
+
+  /* ── CARDS ── */
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; }
+  .slot-card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; }
+  .slot-card.full { opacity:.7; }
+  .sc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .sc-time { display:flex; align-items:center; gap:7px; font-weight:700; font-size:15px; }
+  .sc-time .ico { width:16px; height:16px; }
+  .sc-count { font-size:12px; font-weight:600; color:var(--green); background:var(--green-bg); padding:3px 9px; border-radius:20px; }
+  .sc-count.zero { color:var(--g600); background:#EEF1F5; }
+  .sc-courts { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .sc-courts .cell { height:44px; flex-direction:column; gap:1px; }
+  .sc-courts .cell .cn { font-size:12px; font-weight:800; }
+  .sc-courts .cell.taken .cn, .sc-courts .cell.past .cn { color:var(--g500); }
+
+  .empty { text-align:center; color:var(--g600); padding:40px 16px; background:var(--card); border:1px solid var(--line); border-radius:16px; font-size:14px; line-height:1.6; }
+  .loading { opacity:.55; pointer-events:none; transition:opacity .15s; }
+
+  /* ── SELECTION BAR ── */
+  .selbar { position:fixed; left:0; right:0; bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom)); z-index:40; padding:10px 16px;
+            display:flex; justify-content:center; pointer-events:none; }
+  .selbar-in { pointer-events:auto; width:100%; max-width:640px; background:var(--navy); color:#fff; border-radius:16px;
+               padding:10px 10px 10px 16px; display:flex; align-items:center; gap:10px; box-shadow:0 10px 30px rgba(10,18,40,.35); }
+  .selbar-in .txt { flex:1; font-size:14px; line-height:1.3; }
+  .selbar-in .txt small { display:block; color:rgba(255,255,255,.6); font-size:12px; }
+
+  /* ── BUTTONS / FORMS ── */
+  .btn { border:0; border-radius:12px; padding:11px 16px; font-weight:700; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+  .btn-primary { background:var(--blue); color:#fff; }
+  .btn-primary:hover { background:#1D4ED8; }
+  .btn-gold { background:linear-gradient(135deg,var(--gold-dk),var(--gold-lt)); color:var(--navy3); }
+  .btn-ghost { background:transparent; color:inherit; border:1px solid rgba(255,255,255,.25); }
+  .btn-light { background:#EEF2F7; color:var(--g900); }
+  .btn-danger { background:var(--red-bg); color:var(--red); border:1px solid #FECACA; }
+  .btn-block { width:100%; }
+  .btn:disabled { opacity:.55; cursor:not-allowed; }
+  .btn-sm { padding:7px 11px; font-size:13px; border-radius:10px; }
+
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:13px; font-weight:600; color:var(--g700); margin-bottom:6px; }
+  .field input, .field select { width:100%; border:1px solid var(--line); border-radius:12px; padding:11px 12px; background:#fff; font-size:15px; }
+  .field input:focus, .field select:focus { outline:2px solid rgba(37,99,235,.25); border-color:var(--blue); }
+  .field .hint { font-size:12px; color:var(--g500); margin-top:5px; }
+
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin-bottom:14px; }
+  .panel h3 { font-size:16px; font-weight:800; color:var(--navy); margin-bottom:12px; }
+  .kv { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid #F1F4F8; font-size:14px; }
+  .kv:last-child { border-bottom:0; }
+  .kv span { color:var(--g600); }
+  .kv b { font-weight:700; text-align:right; }
+
+  .profile { display:flex; align-items:center; gap:14px; }
+  .profile .avatar { width:52px; height:52px; font-size:20px; }
+  .profile h2 { font-size:18px; font-weight:800; }
+  .profile p { color:var(--g600); font-size:13px; margin-top:2px; }
+
+  /* roles table */
+  .tbl-wrap { overflow-x:auto; }
+  table.tbl { width:100%; border-collapse:collapse; font-size:13px; }
+  .tbl th, .tbl td { padding:9px 8px; border-bottom:1px solid #F1F4F8; text-align:left; white-space:nowrap; }
+  .tbl th { font-size:12px; color:var(--g600); font-weight:600; background:#F8FAFC; }
+  .tbl td.c, .tbl th.c { text-align:center; }
+  .yes { color:var(--green); font-weight:700; } .no { color:var(--g400); }
+
+  /* booking list */
+  .blist { display:flex; flex-direction:column; gap:8px; }
+  .bitem { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .bitem .court { width:48px; height:48px; flex:0 0 48px; border-radius:12px; background:var(--green-bg); color:var(--green); display:flex; align-items:center; justify-content:center; font-weight:800; }
+  .bitem.past .court, .bitem.cancelled .court { background:#EEF1F5; color:var(--g500); }
+  .bitem.block .court { background:var(--amber-bg); color:var(--amber); }
+  .bitem .info { flex:1; min-width:0; }
+  .bitem .info b { display:block; font-size:14.5px; }
+  .bitem .info small { display:block; font-size:12.5px; color:var(--g600); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:2px 7px; border-radius:6px; background:#EEF1F5; color:var(--g600); margin-left:4px; }
+  .tag.red { background:var(--red-bg); color:var(--red); }
+  .tag.amber { background:var(--amber-bg); color:var(--amber); }
+  .section-label { font-size:12px; font-weight:700; color:var(--g500); letter-spacing:.6px; text-transform:uppercase; margin:18px 2px 8px; }
+
+  /* users (admin) */
+  .uitem { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+  .uitem .who { flex:1 1 180px; min-width:0; }
+  .uitem .who b { font-size:14.5px; }
+  .uitem .who small { display:block; color:var(--g600); font-size:12.5px; margin-top:2px; }
+  .uitem select { border:1px solid var(--line); border-radius:10px; padding:7px 8px; background:#fff; font-size:13px; }
+  .uitem.suspended { opacity:.6; }
+  .search { width:100%; border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#fff; margin-bottom:10px; font-size:14px; }
+
+  /* ── TAB BAR ── */
+  .tabbar { position:fixed; bottom:0; left:0; right:0; z-index:45; background:#fff; border-top:1px solid var(--line);
+            display:flex; justify-content:center; padding-bottom:env(safe-area-inset-bottom); }
+  .tabbar-in { display:flex; width:100%; max-width:640px; }
+  .tab { flex:1; border:0; background:transparent; height:var(--tabbar-h); display:flex; flex-direction:column; align-items:center; justify-content:center;
+         gap:4px; font-size:12px; font-weight:600; color:var(--g600); position:relative; }
+  .tab svg { width:22px; height:22px; }
+  .tab.on { color:var(--blue); }
+  .tab.on::before { content:''; position:absolute; top:0; left:18%; right:18%; height:3px; border-radius:0 0 3px 3px; background:var(--blue); }
+
+  /* ── MODAL ── */
+  .modal { position:fixed; inset:0; z-index:100; background:rgba(10,18,40,.5); backdrop-filter:blur(3px);
+           display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
+  .modal.open { opacity:1; pointer-events:auto; }
+  .sheet { width:100%; max-width:520px; max-height:92vh; overflow:auto; background:#fff; border-radius:22px 22px 0 0;
+           padding:20px 18px calc(20px + env(safe-area-inset-bottom)); transform:translateY(30px); transition:transform .22s; }
+  .modal.open .sheet { transform:none; }
+  @media (min-width:640px) { .modal { align-items:center; } .sheet { border-radius:22px; padding-bottom:20px; } }
+  .sheet-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .sheet-head h3 { font-size:18px; font-weight:800; color:var(--navy); }
+  .x { width:34px; height:34px; border-radius:10px; border:0; background:#EEF2F7; font-size:16px; }
+  .slot-list { list-style:none; border:1px solid var(--line); border-radius:14px; margin-bottom:14px; max-height:240px; overflow:auto; }
+  .slot-list li { display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #F1F4F8; font-size:14px; }
+  .slot-list li:last-child { border-bottom:0; }
+  .slot-list li b { font-weight:700; }
+  .auth-tabs { margin-bottom:16px; width:100%; }
+  .auth-tabs button { flex:1; justify-content:center; }
+  .err { background:var(--red-bg); color:var(--red); border:1px solid #FECACA; border-radius:10px; padding:9px 12px; font-size:13px; margin-bottom:12px; }
+  .row-btns { display:flex; gap:8px; margin-top:6px; }
+  .row-btns .btn { flex:1; }
+  .muted { color:var(--g600); font-size:13px; line-height:1.6; }
+
+  .toast { position:fixed; left:50%; top:72px; transform:translate(-50%,-20px); z-index:200; background:var(--navy); color:#fff;
+           padding:11px 16px; border-radius:12px; font-size:14px; max-width:calc(100% - 32px); box-shadow:0 10px 30px rgba(10,18,40,.3);
+           opacity:0; pointer-events:none; transition:all .2s; }
+  .toast.show { opacity:1; transform:translate(-50%,0); }
+  .toast.bad { background:var(--red); }
+  .toast.good { background:var(--green); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="./" class="brand"><span class="brand-name">Srichaphan Tennis Academy</span><span class="brand-sub">Court Booking · จองคอร์ท</span></a>
+  <div class="top-actions">
+    <div class="lang"><button data-lang="th">TH</button><button data-lang="en">EN</button></div>
+    <button class="avatar" id="btnAvatar" aria-label="account"></button>
+  </div>
+</header>
+<div class="demo" id="demoBanner" hidden></div>
+
+<main id="main"></main>
+
+<div class="selbar" id="selbar" hidden>
+  <div class="selbar-in">
+    <div class="txt" id="selText"></div>
+    <button class="btn btn-ghost btn-sm" id="selClear"></button>
+    <button class="btn btn-gold btn-sm" id="selBook"></button>
+  </div>
+</div>
+
+<nav class="tabbar"><div class="tabbar-in" id="tabbar"></div></nav>
+
+<div class="modal" id="modal"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   ใส่ URL ของ Apps Script Web App ตรงนี้ (ดู docs/setup-guide.md)
+   ถ้าเว้นว่าง = โหมดทดลอง: ข้อมูลเก็บใน browser เครื่องนี้เท่านั้น
+   ════════════════════════════════════════════════════════════════ */
+var API_URL = '';
+
+/* ───────────── i18n ───────────── */
+var I18N = {
+  th: {
+    tab_book:'จองคอร์ท', tab_mine:'การจองของฉัน', tab_admin:'แอดมิน', tab_account:'บัญชี',
+    today:'วันนี้', tomorrow:'พรุ่งนี้', grid:'ตาราง', cards:'การ์ด', time:'เวลา',
+    lg_free:'ว่าง', lg_sel:'ที่เลือก', lg_mine:'การจองของคุณ', lg_block:'ปิดคอร์ท', lg_taken:'ไม่ว่าง',
+    you:'คุณ', closed:'ปิด', free_n:'ว่าง {n}/{t}', full:'เต็ม', other_date:'วันอื่น',
+    all_past:'ช่วงเวลาของวันนี้ผ่านไปหมดแล้ว — ลองเลือกวันถัดไป',
+    sel_n:'เลือกแล้ว {n} ชั่วโมง', sel_tap:'แตะช่องว่างเพื่อเลือกเพิ่ม', clear:'ล้าง', book_now:'จองเลย',
+    confirm_title:'ยืนยันการจอง', confirm:'ยืนยัน', cancel:'ยกเลิก', close:'ปิด',
+    type_booking:'จองสนาม', type_block:'ปิดคอร์ท', for_name:'จองให้ (ชื่อผู้เล่น)', for_name_hint:'เว้นว่าง = จองในชื่อคุณ',
+    note:'หมายเหตุ', reason:'เหตุผลที่ปิด', reason_ph:'เช่น ซ่อมพื้นคอร์ท / มีคลาสเรียน', reason_required:'กรุณาใส่เหตุผล',
+    booked_ok:'จองสำเร็จ {n} ชั่วโมง 🎾', blocked_ok:'ปิดคอร์ทแล้ว {n} ช่อง', cancelled_ok:'ยกเลิกการจองแล้ว',
+    detail_title:'รายละเอียดการจอง', d_court:'คอร์ท', d_date:'วันที่', d_time:'เวลา', d_name:'ผู้จอง', d_note:'หมายเหตุ',
+    cancel_booking:'ยกเลิกการจองนี้', reopen:'เปิดคอร์ท (ยกเลิกการปิด)', cancel_confirm:'ยืนยันยกเลิกการจองนี้?',
+    cancel_rule:'ยกเลิกได้ก่อนเวลาเล่นอย่างน้อย {h} ชม.', taken_msg:'ช่วงเวลานี้มีคนจองแล้ว',
+    login_to_book:'เข้าสู่ระบบเพื่อจองคอร์ท',
+    login:'เข้าสู่ระบบ', register:'สมัครสมาชิก', logout:'ออกจากระบบ',
+    phone:'เบอร์โทรศัพท์', password:'รหัสผ่าน', full_name:'ชื่อ - นามสกุล', nickname:'ชื่อเล่น',
+    pw_hint:'อย่างน้อย 6 ตัวอักษร', welcome:'ยินดีต้อนรับ {name}',
+    your_perms:'สิทธิ์ของคุณ', guest_perms:'ยังไม่ล็อกอิน: ดูตารางล่วงหน้าได้ {n} วัน · สมัครฟรีเพื่อจอง',
+    advance:'ดูตาราง/จองล่วงหน้า', advance_v0:'เฉพาะวันนี้', advance_v:'วันนี้ + อีก {n} วัน',
+    max_day:'สูงสุดต่อวัน', max_active:'การจองค้างได้สูงสุด', cancel_before:'ยกเลิกได้ก่อนเวลาเล่น',
+    unlimited:'ไม่จำกัด', hours_v:'{n} ชม.', items_v:'{n} รายการ',
+    can_others:'จองแทนผู้อื่น', can_block:'ปิดคอร์ท', can_cancel_any:'ยกเลิกของทุกคน', can_users:'จัดการผู้ใช้',
+    perm_line:'<b>{role}</b> · ดูตารางและจองล่วงหน้า {adv} · {max}',
+    perm_max:'สูงสุด {n} ชม./วัน', perm_nomax:'ไม่จำกัดชั่วโมง',
+    roles_title:'สิทธิ์แต่ละระดับ', role:'ระดับ', roles_hint:'แอดมินแก้สิทธิ์ได้ในแท็บ Roles ของ Google Sheet',
+    change_pw:'เปลี่ยนรหัสผ่าน', old_pw:'รหัสผ่านเดิม', new_pw:'รหัสผ่านใหม่', save:'บันทึก', saved:'บันทึกแล้ว',
+    upcoming:'กำลังจะมาถึง', history:'ประวัติ', no_upcoming:'ยังไม่มีการจอง', go_book:'ไปจองคอร์ท',
+    st_cancelled:'ยกเลิกแล้ว', st_past:'เล่นแล้ว', for_label:'ชื่อ: {name}',
+    users:'ผู้ใช้ทั้งหมด', search:'ค้นหาชื่อ / เบอร์โทร', suspend:'ระงับ', activate:'เปิดใช้', reset_pw:'ตั้งรหัสใหม่',
+    reset_pw_prompt:'รหัสผ่านใหม่ของ {name} (อย่างน้อย 6 ตัว)', suspended:'ถูกระงับ', joined:'สมัคร {d}', updated:'อัปเดตแล้ว',
+    demo:'<b>โหมดทดลอง</b> — ข้อมูลเก็บใน browser นี้เท่านั้น · ลองล็อกอิน: แอดมิน <b>0800000001 / admin123</b> · สมาชิก <b>0800000002 / member123</b> · ทั่วไป <b>0800000003 / user123</b>',
+    demo_reset:'รีเซ็ตข้อมูลทดลอง', need_login:'เข้าสู่ระบบเพื่อดูการจองของคุณ',
+    err_auth_required:'กรุณาเข้าสู่ระบบก่อน', err_invalid_login:'เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง',
+    err_phone_taken:'เบอร์นี้สมัครไว้แล้ว — ลองเข้าสู่ระบบ', err_invalid_phone:'เบอร์โทรไม่ถูกต้อง (เช่น 0812345678)',
+    err_name_required:'กรุณาใส่ชื่อ', err_weak_password:'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
+    err_forbidden:'คุณไม่มีสิทธิ์ทำรายการนี้', err_slot_taken:'{court} เวลา {time} มีคนจองไปแล้ว',
+    err_slot_past:'ช่วงเวลานี้ผ่านไปแล้ว', err_too_far_ahead:'เลเวลของคุณดูตารางและจองล่วงหน้าได้ไม่เกิน {days} วัน',
+    err_daily_limit:'สิทธิ์ของคุณจองได้สูงสุด {limit} ชม. ต่อวัน', err_active_limit:'สิทธิ์ของคุณมีการจองค้างได้สูงสุด {limit} รายการ',
+    err_cancel_too_late:'ต้องยกเลิกก่อนเวลาเล่นอย่างน้อย {hours} ชม.', err_suspended:'บัญชีนี้ถูกระงับ กรุณาติดต่อแอดมิน',
+    err_not_found:'ไม่พบรายการนี้ (อาจถูกยกเลิกไปแล้ว)', err_self_edit:'แก้สิทธิ์หรือระงับบัญชีตัวเองไม่ได้',
+    err_busy:'ระบบกำลังยุ่ง ลองใหม่อีกครั้ง', err_network:'เชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่',
+    err_invalid_input:'ข้อมูลไม่ถูกต้อง', err_server_error:'เกิดข้อผิดพลาด ลองใหม่อีกครั้ง'
+  },
+  en: {
+    tab_book:'Book', tab_mine:'My bookings', tab_admin:'Admin', tab_account:'Account',
+    today:'Today', tomorrow:'Tomorrow', grid:'Grid', cards:'Cards', time:'Time',
+    lg_free:'Available', lg_sel:'Selected', lg_mine:'Your booking', lg_block:'Closed', lg_taken:'Booked',
+    you:'You', closed:'Closed', free_n:'{n}/{t} free', full:'Full', other_date:'Other date',
+    all_past:'All of today\'s slots have passed — try the next day',
+    sel_n:'{n} hour(s) selected', sel_tap:'Tap free slots to add more', clear:'Clear', book_now:'Book',
+    confirm_title:'Confirm booking', confirm:'Confirm', cancel:'Cancel', close:'Close',
+    type_booking:'Booking', type_block:'Close court', for_name:'Book for (player name)', for_name_hint:'Leave empty to book under your name',
+    note:'Note', reason:'Reason', reason_ph:'e.g. surface repair / coaching class', reason_required:'Please enter a reason',
+    booked_ok:'Booked {n} hour(s) 🎾', blocked_ok:'Closed {n} slot(s)', cancelled_ok:'Booking cancelled',
+    detail_title:'Booking details', d_court:'Court', d_date:'Date', d_time:'Time', d_name:'Booked by', d_note:'Note',
+    cancel_booking:'Cancel this booking', reopen:'Re-open court', cancel_confirm:'Cancel this booking?',
+    cancel_rule:'Cancel at least {h} h before play', taken_msg:'This slot is already booked',
+    login_to_book:'Log in to book a court',
+    login:'Log in', register:'Sign up', logout:'Log out',
+    phone:'Phone number', password:'Password', full_name:'Full name', nickname:'Nickname',
+    pw_hint:'At least 6 characters', welcome:'Welcome, {name}',
+    your_perms:'Your permissions', guest_perms:'Guests: view {n} days ahead · sign up free to book',
+    advance:'View & book ahead', advance_v0:'Today only', advance_v:'Today + {n} day(s)',
+    max_day:'Max per day', max_active:'Max upcoming bookings', cancel_before:'Cancel before play',
+    unlimited:'Unlimited', hours_v:'{n} h', items_v:'{n}',
+    can_others:'Book for others', can_block:'Close courts', can_cancel_any:'Cancel any booking', can_users:'Manage users',
+    perm_line:'<b>{role}</b> · view & book ahead: {adv} · {max}',
+    perm_max:'max {n} h/day', perm_nomax:'no hourly limit',
+    roles_title:'Permission levels', role:'Level', roles_hint:'Admins edit permissions in the Roles tab of the Google Sheet',
+    change_pw:'Change password', old_pw:'Current password', new_pw:'New password', save:'Save', saved:'Saved',
+    upcoming:'Upcoming', history:'History', no_upcoming:'No bookings yet', go_book:'Book a court',
+    st_cancelled:'Cancelled', st_past:'Played', for_label:'Name: {name}',
+    users:'All users', search:'Search name / phone', suspend:'Suspend', activate:'Activate', reset_pw:'Reset password',
+    reset_pw_prompt:'New password for {name} (min 6 characters)', suspended:'Suspended', joined:'Joined {d}', updated:'Updated',
+    demo:'<b>Demo mode</b> — data is stored in this browser only · Try: admin <b>0800000001 / admin123</b> · member <b>0800000002 / member123</b> · user <b>0800000003 / user123</b>',
+    demo_reset:'Reset demo data', need_login:'Log in to see your bookings',
+    err_auth_required:'Please log in first', err_invalid_login:'Wrong phone number or password',
+    err_phone_taken:'This phone number is already registered — try logging in', err_invalid_phone:'Invalid phone number (e.g. 0812345678)',
+    err_name_required:'Please enter your name', err_weak_password:'Password must be at least 6 characters',
+    err_forbidden:'You don\'t have permission to do this', err_slot_taken:'{court} at {time} was just booked',
+    err_slot_past:'This time slot has passed', err_too_far_ahead:'Your level can view and book up to {days} day(s) ahead',
+    err_daily_limit:'Your level can book up to {limit} h per day', err_active_limit:'Your level can hold up to {limit} upcoming bookings',
+    err_cancel_too_late:'Bookings must be cancelled at least {hours} h before play', err_suspended:'This account is suspended — please contact an admin',
+    err_not_found:'Booking not found (it may already be cancelled)', err_self_edit:'You can\'t change your own level or status',
+    err_busy:'System busy, please try again', err_network:'Can\'t connect — check your internet and try again',
+    err_invalid_input:'Invalid input', err_server_error:'Something went wrong, please try again'
+  }
+};
+
+/* ───────────── utils ───────────── */
+var LS = {
+  get: function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function hhmm(h) { return pad(h) + ':00'; }
+function t(key, params) {
+  var s = (I18N[state.lang] && I18N[state.lang][key]) || I18N.th[key] || key;
+  return s.replace(/\{(\w+)\}/g, function (_, k) { return params && params[k] != null ? params[k] : ''; });
+}
+function dateObj(d) { var p = d.split('-'); return new Date(Date.UTC(+p[0], p[1] - 1, +p[2])); }
+function addDays(d, n) { var x = dateObj(d); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
+function daysBetween(a, b) { return Math.round((dateObj(b) - dateObj(a)) / 864e5); }
+function fmtDate(d, opts) {
+  return dateObj(d).toLocaleDateString(state.lang === 'th' ? 'th-TH' : 'en-GB', Object.assign({ timeZone: 'UTC' }, opts));
+}
+function shortDate(d) { return fmtDate(d, { weekday: 'short', day: 'numeric', month: 'short' }); }
+function slotStart(date, hour) { return Date.parse(date + 'T' + hhmm(hour) + ':00+07:00'); }
+
+var ICON = {
+  sun: '<svg class="ico sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>',
+  moon: '<svg class="ico moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10V7.5a5 5 0 0 1 10 0V10h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7zm2 0h6V7.5a3 3 0 0 0-6 0V10z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  grid: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
+  cards: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 12h18M12 3v18"/></svg>',
+  t_book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M12 10.5v6M9 13.5h6"/></svg>',
+  t_mine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M7.5 9.5h1M11 9.5h5.5M7.5 14.5h1M11 14.5h5.5"/></svg>',
+  t_admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6L12 3z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></svg>',
+  t_account: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-3.8 4-5.5 7.5-5.5s6.3 1.7 7.5 5.5" stroke-linecap="round"/></svg>'
+};
+
+/* ───────────── state ───────────── */
+var state = {
+  lang: LS.get('stab_lang', 'th'),
+  view: LS.get('stab_view', 'grid'),
+  token: LS.get('stab_token', ''),
+  tab: 'book',
+  cfg: null, user: null, clock: null,
+  date: null, schedule: null,
+  selected: {},             // key "date|hour|court" → {date, hour, court}
+  mine: null, adminData: null, userQuery: ''
+};
+
+function perms() { return state.user ? state.user.perms : state.cfg.guestPerms; }
+function roleLabel(role) {
+  var r = (state.cfg.roles || []).filter(function (x) { return x.role === role; })[0];
+  if (!r) return role;
+  var parts = String(r.label).split(' / ');
+  return parts.length > 1 ? (state.lang === 'th' ? parts[0] : parts[1]) : r.label;
+}
+function isPast(date, hour) {
+  var a = daysBetween(state.clock.today, date);
+  return a < 0 || (a === 0 && hour <= state.clock.hour);
+}
+
+/* ───────────── API ───────────── */
+function api(action, payload) {
+  if (!API_URL) return DemoApi.call(action, payload || {}, state.token);
+  return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, payload: payload || {}, token: state.token }) })
+    .then(function (r) { return r.json(); }, function () { throw { code: 'network' }; })
+    .then(function (res) {
+      if (!res.ok) throw { code: res.error, params: res.params || {}, message: res.message };
+      return res.data;
+    });
+}
+
+function errText(e) {
+  var p = Object.assign({}, (e && e.params) || {});
+  if (p.hour != null) p.time = hhmm(+p.hour);
+  var code = (e && e.code) || 'server_error';
+  var key = 'err_' + code;
+  return I18N.th[key] ? t(key, p) : (e && e.message) || t('err_server_error');
+}
+
+function handleErr(e) {
+  if (e && e.code === 'auth_required' && state.user) { setSession('', null); renderChrome(); renderView(); openAuth('login'); }
+  toast(errText(e), 'bad');
+}
+
+function setSession(token, user) {
+  state.token = token || '';
+  state.user = user || null;
+  if (token) LS.set('stab_token', token); else LS.del('stab_token');
+  state.selected = {};
+  state.mine = null;
+  state.adminData = null;
+  if (!user && (state.tab === 'admin' || state.tab === 'mine')) state.tab = 'book';
+  // สิทธิ์เปลี่ยน → ถ้าวันที่เลือกอยู่ไกลเกินสิทธิ์ใหม่ ให้กลับมาวันนี้
+  if (state.cfg && state.clock && daysBetween(state.clock.today, state.date) > perms().advance_days) {
+    state.date = state.clock.today;
+    state.schedule = null;
+  }
+}
+
+/* ───────────── toast / modal ───────────── */
+var toastTimer;
+function toast(msg, kind) {
+  var el = $('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (kind || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { el.className = 'toast'; }, 3200);
+}
+function openModal(html) {
+  $('sheet').innerHTML = html;
+  $('modal').classList.add('open');
+  var first = $('sheet').querySelector('input');
+  if (first && window.innerWidth > 640) first.focus();
+}
+function closeModal() { $('modal').classList.remove('open'); }
+function modalOpen() { return $('modal').classList.contains('open'); }
+function sheetHead(title) {
+  return '<div class="sheet-head"><h3>' + esc(title) + '</h3><button class="x" data-act="close" aria-label="close">✕</button></div>';
+}
+
+/* ───────────── boot ───────────── */
+function applyLang() {
+  document.body.classList.remove('th', 'en');
+  document.body.classList.add(state.lang);
+  document.documentElement.lang = state.lang;
+}
+
+function boot() {
+  applyLang();
+  api('bootstrap').then(function (cfg) {
+    state.cfg = cfg;
+    state.clock = cfg.clock;
+    state.user = cfg.user;
+    if (state.token && !cfg.user) setSession('', null);
+    state.date = cfg.clock.today;
+    renderChrome();
+    renderView();
+    loadSchedule();
+  }).catch(function (e) {
+    $('main').innerHTML = '<div class="empty">' + esc(errText(e)) + '</div>';
+  });
+}
+
+function loadSchedule(silent) {
+  var date = state.date;
+  var board = $('board');
+  if (board && !silent) board.classList.add('loading');
+  return api('schedule', { date: date }).then(function (res) {
+    if (res.date !== state.date) return;
+    state.schedule = res;
+    state.clock = res.clock;
+    // ถ้าวันเปลี่ยน (เปิดหน้าค้างข้ามเที่ยงคืน) ให้เลื่อนไปวันนี้
+    if (daysBetween(state.clock.today, state.date) < 0) { state.date = state.clock.today; return loadSchedule(); }
+    pruneSelection();
+    if (state.tab === 'book') renderBook();
+  }).catch(function (e) { if (!silent) handleErr(e); })
+    .then(function () { var b = $('board'); if (b) b.classList.remove('loading'); });
+}
+
+function pruneSelection() {
+  var taken = {};
+  (state.schedule.bookings || []).forEach(function (b) { taken[state.schedule.date + '|' + b.hour + '|' + b.court] = 1; });
+  Object.keys(state.selected).forEach(function (k) {
+    var s = state.selected[k];
+    if (taken[k] || isPast(s.date, s.hour)) delete state.selected[k];
+  });
+}
+
+/* ───────────── chrome (header, tabs, banner) ───────────── */
+function renderChrome() {
+  document.querySelectorAll('.lang button').forEach(function (b) { b.classList.toggle('on', b.dataset.lang === state.lang); });
+  var av = $('btnAvatar');
+  if (state.user) { av.classList.add('in'); av.textContent = (state.user.nickname || state.user.name || '?').trim().charAt(0).toUpperCase(); }
+  else { av.classList.remove('in'); av.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-3.8 4-5.5 7.5-5.5s6.3 1.7 7.5 5.5" stroke-linecap="round"/></svg>'; }
+
+  var banner = $('demoBanner');
+  banner.hidden = !!API_URL;
+  if (!API_URL) banner.innerHTML = t('demo') + ' · <button data-act="demo-reset">' + esc(t('demo_reset')) + '</button>';
+
+  var tabs = [['book', 't_book'], ['mine', 't_mine']];
+  if (state.user && state.user.perms.can_manage_users) tabs.push(['admin', 't_admin']);
+  tabs.push(['account', 't_account']);
+  $('tabbar').innerHTML = tabs.map(function (x) {
+    return '<button class="tab' + (state.tab === x[0] ? ' on' : '') + '" data-tab="' + x[0] + '">' + ICON[x[1]] + '<span>' + esc(t('tab_' + x[0])) + '</span></button>';
+  }).join('');
+  renderSelbar();
+}
+
+function renderSelbar() {
+  var keys = Object.keys(state.selected);
+  var show = state.tab === 'book' && keys.length > 0;
+  $('selbar').hidden = !show;
+  document.body.classList.toggle('has-sel', show);
+  if (!show) return;
+  $('selText').innerHTML = esc(t('sel_n', { n: keys.length })) + '<small>' + esc(t('sel_tap')) + '</small>';
+  $('selClear').textContent = t('clear');
+  $('selBook').textContent = t('book_now');
+}
+
+function renderView() {
+  if (state.tab === 'book') renderBook();
+  else if (state.tab === 'mine') renderMine();
+  else if (state.tab === 'admin') renderAdmin();
+  else renderAccount();
+  renderSelbar();
+}
+
+function switchTab(tab) {
+  state.tab = tab;
+  renderChrome();
+  renderView();
+  window.scrollTo(0, 0);
+  if (tab === 'book') loadSchedule(true);
+}
+
+/* ───────────── BOOK VIEW ───────────── */
+function renderBook() {
+  var p = perms();
+  var today = state.clock.today;
+  var n = Math.min(p.advance_days, 60);
+  var chips = '';
+  for (var i = 0; i <= n; i++) {
+    var d = addDays(today, i);
+    var top = i === 0 ? t('today') : i === 1 ? t('tomorrow') : fmtDate(d, { weekday: 'short' });
+    chips += '<button class="date-chip' + (d === state.date ? ' on' : '') + '" data-date="' + d + '"><b>' + esc(top) + '</b><small>' +
+      esc(fmtDate(d, { day: 'numeric', month: 'short' })) + '</small></button>';
+  }
+  var outside = daysBetween(today, state.date) > n;
+  if (outside) chips += '<button class="date-chip on" data-date="' + state.date + '"><b>' + esc(fmtDate(state.date, { weekday: 'short' })) + '</b><small>' + esc(fmtDate(state.date, { day: 'numeric', month: 'short' })) + '</small></button>';
+
+  var adminDate = p.can_block
+    ? '<label class="admin-date">' + esc(t('other_date')) + ' <input type="date" id="pickDate" min="' + today + '" max="' + addDays(today, 365) + '" value="' + state.date + '"></label>'
+    : '';
+
+  var hint;
+  if (state.user) {
+    hint = t('perm_line', {
+      role: esc(roleLabel(state.user.role)),
+      adv: esc(p.advance_days ? t('advance_v', { n: p.advance_days }) : t('advance_v0')),
+      max: esc(p.max_hours_per_day ? t('perm_max', { n: p.max_hours_per_day }) : t('perm_nomax'))
+    });
+  } else {
+    hint = esc(t('guest_perms', { n: p.advance_days }));
+  }
+
+  $('main').innerHTML =
+    '<div class="dates" id="dates">' + chips + '</div>' +
+    '<div class="date-full">' + esc(fmtDate(state.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })) + '</div>' +
+    '<div class="toolbar"><div class="seg">' +
+      '<button data-view="grid" class="' + (state.view === 'grid' ? 'on' : '') + '">' + ICON.grid + esc(t('grid')) + '</button>' +
+      '<button data-view="card" class="' + (state.view === 'card' ? 'on' : '') + '">' + ICON.cards + esc(t('cards')) + '</button>' +
+    '</div>' + adminDate + '</div>' +
+    '<div class="legend">' +
+      '<span><i class="lg-free"></i>' + esc(t('lg_free')) + '</span>' +
+      '<span><i class="lg-sel"></i>' + esc(t('lg_sel')) + '</span>' +
+      '<span><i class="lg-mine"></i>' + esc(t('lg_mine')) + '</span>' +
+      '<span><i class="lg-block"></i>' + esc(t('lg_block')) + '</span>' +
+      '<span><i class="lg-taken"></i>' + esc(t('lg_taken')) + '</span>' +
+    '</div>' +
+    '<div class="perm-hint">' + hint + '</div>' +
+    '<div id="board">' + (state.schedule && state.schedule.date === state.date ? (state.view === 'grid' ? gridHtml() : cardsHtml()) : '<div class="empty">…</div>') + '</div>';
+
+  var on = $('dates').querySelector('.on');
+  if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  renderSelbar();
+}
+
+function bookingMap() {
+  var map = {};
+  (state.schedule.bookings || []).forEach(function (b) { map[b.hour + '|' + b.court] = b; });
+  return map;
+}
+
+function cellInfo(map, hour, court) {
+  var b = map[hour + '|' + court];
+  var key = state.date + '|' + hour + '|' + court;
+  if (b) {
+    if (b.mine && b.type !== 'block') return { cls: 'mine', html: '<span class="nm">' + esc(t('you')) + '</span>', b: b };
+    if (b.type === 'block') return { cls: 'block', html: '<span class="nm">' + esc(b.note || t('closed')) + '</span>', b: b };
+    if (b.name) return { cls: 'taken named', html: '<span class="nm">' + esc(b.name) + '</span>', b: b };
+    return { cls: 'taken', html: ICON.lock, b: b };
+  }
+  if (isPast(state.date, hour)) return { cls: 'past', html: '' };
+  if (state.selected[key]) return { cls: 'sel', html: ICON.check };
+  return { cls: 'free', html: '' };
+}
+
+function hours() {
+  var out = [];
+  for (var h = state.cfg.openHour; h < state.cfg.closeHour; h++) out.push(h);
+  return out;
+}
+function dayIcon(h) { return h >= state.cfg.nightFromHour ? ICON.moon : ICON.sun; }
+
+function gridHtml() {
+  var map = bookingMap();
+  var courts = state.cfg.courts;
+  var head = '<tr><th class="tcol">' + esc(t('time')) + '</th>' + courts.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr>';
+  var body = hours().map(function (h) {
+    return '<tr><th class="tcol"><div class="tlabel">' + dayIcon(h) + '<div><b>' + hhmm(h) + '</b><small>' + hhmm(h + 1) + '</small></div></div></th>' +
+      courts.map(function (c) {
+        var ci = cellInfo(map, h, c);
+        return '<td><button class="cell ' + ci.cls + '" data-hour="' + h + '" data-court="' + esc(c) + '" aria-label="' + esc(c + ' ' + hhmm(h)) + '">' + ci.html + '</button></td>';
+      }).join('') + '</tr>';
+  }).join('');
+  return '<div class="grid-wrap"><table class="grid"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>';
+}
+
+function cardsHtml() {
+  var map = bookingMap();
+  var courts = state.cfg.courts;
+  var list = hours().filter(function (h) { return !isPast(state.date, h); });
+  if (!list.length) return '<div class="empty">' + esc(t('all_past')) + '</div>';
+  return '<div class="cards">' + list.map(function (h) {
+    var free = 0;
+    var chips = courts.map(function (c) {
+      var ci = cellInfo(map, h, c);
+      if (ci.cls === 'free' || ci.cls === 'sel') free++;
+      var sub = ci.cls === 'free' ? '' : ci.cls === 'taken' ? ICON.lock : ci.html;
+      return '<button class="cell ' + ci.cls + '" data-hour="' + h + '" data-court="' + esc(c) + '"><span class="cn">' + esc(c) + '</span>' + sub + '</button>';
+    }).join('');
+    return '<div class="slot-card' + (free ? '' : ' full') + '"><div class="sc-head"><div class="sc-time">' + dayIcon(h) + hhmm(h) + ' – ' + hhmm(h + 1) + '</div>' +
+      '<span class="sc-count' + (free ? '' : ' zero') + '">' + esc(free ? t('free_n', { n: free, t: courts.length }) : t('full')) + '</span></div>' +
+      '<div class="sc-courts">' + chips + '</div></div>';
+  }).join('') + '</div>';
+}
+
+function onCellClick(hour, court) {
+  var map = bookingMap();
+  var b = map[hour + '|' + court];
+  if (b) {
+    if (b.id) showBookingDetail(Object.assign({ date: state.date }, b));
+    else toast(b.type === 'block' ? (b.note || t('closed')) : t('taken_msg'));
+    return;
+  }
+  if (isPast(state.date, hour)) return;
+  if (!state.user) { toast(t('login_to_book')); openAuth('login'); return; }
+
+  var key = state.date + '|' + hour + '|' + court;
+  if (state.selected[key]) { delete state.selected[key]; }
+  else {
+    var p = perms();
+    var keys = Object.keys(state.selected);
+    if (keys.length >= 20) { toast(errText({ code: 'invalid_input' }), 'bad'); return; }
+    if (p.max_hours_per_day > 0) {
+      var date = state.date;
+      var mineToday = (state.schedule.bookings || []).filter(function (x) { return x.mine && x.type === 'booking'; }).length;
+      var selToday = keys.filter(function (k) { return state.selected[k].date === date; }).length;
+      if (mineToday + selToday >= p.max_hours_per_day) { toast(errText({ code: 'daily_limit', params: { limit: p.max_hours_per_day } }), 'bad'); return; }
+    }
+    state.selected[key] = { date: state.date, hour: hour, court: court };
+  }
+  $('board').innerHTML = state.view === 'grid' ? gridHtml() : cardsHtml();
+  renderSelbar();
+}
+
+function sortedSelection() {
+  return Object.keys(state.selected).map(function (k) { return state.selected[k]; }).sort(function (a, b) {
+    return (a.date + pad(a.hour) + a.court).localeCompare(b.date + pad(b.hour) + b.court);
+  });
+}
+
+function openConfirm() {
+  var p = perms();
+  var slots = sortedSelection();
+  var list = slots.map(function (s) {
+    return '<li><span>' + esc(shortDate(s.date)) + ' · ' + hhmm(s.hour) + '–' + hhmm(s.hour + 1) + '</span><b>' + esc(s.court) + '</b></li>';
+  }).join('');
+  var extra = '';
+  if (p.can_block) {
+    extra += '<div class="seg auth-tabs" id="typeSeg"><button class="on" data-type="booking">' + esc(t('type_booking')) + '</button><button data-type="block">' + esc(t('type_block')) + '</button></div>';
+  }
+  if (p.can_book_for_others) {
+    extra += '<div class="field" id="forField"><label>' + esc(t('for_name')) + '</label><input id="fForName" maxlength="60"><div class="hint">' + esc(t('for_name_hint')) + '</div></div>';
+  }
+  if (p.can_block || p.can_book_for_others) {
+    extra += '<div class="field"><label id="noteLabel">' + esc(t('note')) + '</label><input id="fNote" maxlength="120"></div>';
+  }
+  openModal(sheetHead(t('confirm_title')) + '<ul class="slot-list">' + list + '</ul>' + extra +
+    '<div id="formErr"></div><div class="row-btns"><button class="btn btn-light" data-act="close">' + esc(t('cancel')) + '</button>' +
+    '<button class="btn btn-primary" id="btnConfirm" data-act="confirm-book">' + esc(t('confirm')) + ' (' + slots.length + ')</button></div>');
+}
+
+function setBookType(type) {
+  document.querySelectorAll('#typeSeg button').forEach(function (b) { b.classList.toggle('on', b.dataset.type === type); });
+  document.querySelector('#sheet .sheet-head h3').textContent = type === 'block' ? t('type_block') : t('confirm_title');
+  var ff = $('forField'); if (ff) ff.hidden = type === 'block';
+  $('noteLabel').textContent = type === 'block' ? t('reason') : t('note');
+  $('fNote').placeholder = type === 'block' ? t('reason_ph') : '';
+}
+
+function submitBooking() {
+  var seg = document.querySelector('#typeSeg .on');
+  var type = seg ? seg.dataset.type : 'booking';
+  var note = $('fNote') ? $('fNote').value.trim() : '';
+  var forName = $('fForName') && type === 'booking' ? $('fForName').value.trim() : '';
+  if (type === 'block' && !note) { $('formErr').innerHTML = '<div class="err">' + esc(t('reason_required')) + '</div>'; return; }
+  var slots = sortedSelection().map(function (s) { return { date: s.date, hour: s.hour, court: s.court }; });
+  var btn = $('btnConfirm'); btn.disabled = true;
+  api('book', { slots: slots, type: type, note: note, forName: forName }).then(function (res) {
+    closeModal();
+    state.selected = {};
+    state.mine = null;
+    toast(t(type === 'block' ? 'blocked_ok' : 'booked_ok', { n: res.bookings.length }), 'good');
+    loadSchedule();
+  }).catch(function (e) {
+    btn.disabled = false;
+    $('formErr').innerHTML = '<div class="err">' + esc(errText(e)) + '</div>';
+    if (e && e.code === 'slot_taken') loadSchedule(true);
+  });
+}
+
+function canCancel(b) {
+  var p = perms();
+  if (!state.user) return false;
+  if (p.can_cancel_any) return true;
+  if (!b.mine) return false;
+  var left = (slotStart(b.date, b.hour) - Date.now()) / 36e5;
+  return left > 0 && left >= p.cancel_before_hours;
+}
+
+function showBookingDetail(b) {
+  var p = perms();
+  var rows = [
+    [t('d_court'), b.court],
+    [t('d_date'), fmtDate(b.date, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })],
+    [t('d_time'), hhmm(b.hour) + ' – ' + hhmm(b.hour + 1)]
+  ];
+  if (b.name) rows.push([t('d_name'), b.name]);
+  if (b.note) rows.push([t('d_note'), b.note]);
+  var html = sheetHead(b.type === 'block' ? t('type_block') : t('detail_title')) + '<div class="panel" style="margin-bottom:12px">' +
+    rows.map(function (r) { return '<div class="kv"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>'; }).join('') + '</div>';
+  if (canCancel(b)) {
+    html += '<button class="btn btn-danger btn-block" data-act="cancel-booking" data-id="' + esc(b.id) + '">' + esc(b.type === 'block' ? t('reopen') : t('cancel_booking')) + '</button>';
+  } else if (b.mine) {
+    html += '<p class="muted">' + esc(t('cancel_rule', { h: p.cancel_before_hours })) + '</p>';
+  }
+  openModal(html);
+}
+
+function cancelBooking(id, btn) {
+  if (!confirm(t('cancel_confirm'))) return;
+  if (btn) btn.disabled = true;
+  api('cancel', { id: id }).then(function () {
+    closeModal();
+    toast(t('cancelled_ok'), 'good');
+    state.mine = null;
+    if (state.tab === 'mine') renderMine();
+    loadSchedule(true);
+  }).catch(function (e) { if (btn) btn.disabled = false; handleErr(e); });
+}
+
+/* ───────────── MY BOOKINGS ───────────── */
+function loginCta(msg) {
+  return '<div class="empty">' + esc(msg) + '<br><br><button class="btn btn-primary" data-act="open-login">' + esc(t('login')) + '</button> ' +
+    '<button class="btn btn-light" data-act="open-register">' + esc(t('register')) + '</button></div>';
+}
+
+function renderMine() {
+  var main = $('main');
+  if (!state.user) { main.innerHTML = '<h1 class="view-title">' + esc(t('tab_mine')) + '</h1>' + loginCta(t('need_login')); return; }
+  if (!state.mine) {
+    main.innerHTML = '<h1 class="view-title">' + esc(t('tab_mine')) + '</h1><div class="empty">…</div>';
+    api('myBookings').then(function (res) { state.mine = res; if (state.tab === 'mine') renderMine(); }).catch(handleErr);
+    return;
+  }
+  var item = function (b, isUp) {
+    var cls = b.status === 'cancelled' ? 'cancelled' : !isUp ? 'past' : b.type === 'block' ? 'block' : '';
+    var tag = b.status === 'cancelled' ? '<span class="tag red">' + esc(t('st_cancelled')) + '</span>'
+      : !isUp ? '<span class="tag">' + esc(t('st_past')) + '</span>'
+      : b.type === 'block' ? '<span class="tag amber">' + esc(t('type_block')) + '</span>' : '';
+    var sub = b.type === 'block' ? b.note : t('for_label', { name: b.name });
+    var btn = isUp && canCancel(Object.assign({ mine: true }, b))
+      ? '<button class="btn btn-danger btn-sm" data-act="cancel-booking" data-id="' + esc(b.id) + '">' + esc(t('cancel')) + '</button>' : '';
+    return '<div class="bitem ' + cls + '"><div class="court">' + esc(b.court) + '</div><div class="info"><b>' +
+      esc(fmtDate(b.date, { weekday: 'short', day: 'numeric', month: 'short' })) + ' · ' + hhmm(b.hour) + '–' + hhmm(b.hour + 1) + tag +
+      '</b><small>' + esc(sub) + '</small></div>' + btn + '</div>';
+  };
+  var up = state.mine.upcoming;
+  var html = '<h1 class="view-title">' + esc(t('tab_mine')) + '</h1><div class="section-label">' + esc(t('upcoming')) + '</div>';
+  html += up.length ? '<div class="blist">' + up.map(function (b) { return item(b, true); }).join('') + '</div>'
+    : '<div class="empty">' + esc(t('no_upcoming')) + '<br><br><button class="btn btn-primary" data-tab="book">' + esc(t('go_book')) + '</button></div>';
+  if (state.mine.history.length) {
+    html += '<div class="section-label">' + esc(t('history')) + '</div><div class="blist">' +
+      state.mine.history.map(function (b) { return item(b, false); }).join('') + '</div>';
+  }
+  main.innerHTML = html;
+}
+
+/* ───────────── ACCOUNT ───────────── */
+function permRows(p) {
+  var v = function (n, unit) { return n > 0 ? t(unit, { n: n }) : t('unlimited'); };
+  return [
+    [t('advance'), p.advance_days ? t('advance_v', { n: p.advance_days }) : t('advance_v0')],
+    [t('max_day'), v(p.max_hours_per_day, 'hours_v')],
+    [t('max_active'), v(p.max_active_bookings, 'items_v')],
+    [t('cancel_before'), p.cancel_before_hours > 0 ? t('hours_v', { n: p.cancel_before_hours }) : '—']
+  ];
+}
+
+function rolesTable() {
+  var yn = function (b) { return b ? '<span class="yes">✓</span>' : '<span class="no">—</span>'; };
+  var lim = function (n, unit) { return n > 0 ? esc(t(unit, { n: n })) : esc(t('unlimited')); };
+  var rows = (state.cfg.roles || []).map(function (r) {
+    var mineCls = state.user && state.user.role === r.role ? ' style="background:#F7FAFF"' : '';
+    return '<tr' + mineCls + '><td><span class="role-pill ' + esc(r.role) + '">' + esc(roleLabel(r.role)) + '</span></td>' +
+      '<td class="c">' + esc(r.advance_days) + '</td><td class="c">' + lim(r.max_hours_per_day, 'hours_v') + '</td>' +
+      '<td class="c">' + lim(r.max_active_bookings, 'items_v') + '</td><td class="c">' + (r.cancel_before_hours > 0 ? esc(t('hours_v', { n: r.cancel_before_hours })) : '—') + '</td>' +
+      '<td class="c">' + yn(r.can_book_for_others) + '</td><td class="c">' + yn(r.can_block) + '</td><td class="c">' + yn(r.can_cancel_any) + '</td><td class="c">' + yn(r.can_manage_users) + '</td></tr>';
+  }).join('');
+  return '<div class="panel"><h3>' + esc(t('roles_title')) + '</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>' + esc(t('role')) +
+    '</th><th class="c">' + esc(t('advance')) + '</th><th class="c">' + esc(t('max_day')) + '</th><th class="c">' + esc(t('max_active')) +
+    '</th><th class="c">' + esc(t('cancel_before')) + '</th><th class="c">' + esc(t('can_others')) + '</th><th class="c">' + esc(t('can_block')) +
+    '</th><th class="c">' + esc(t('can_cancel_any')) + '</th><th class="c">' + esc(t('can_users')) + '</th></tr></thead><tbody>' + rows +
+    '</tbody></table></div>' + (state.user && state.user.perms.can_manage_users ? '<p class="muted" style="margin-top:10px">' + esc(t('roles_hint')) + '</p>' : '') + '</div>';
+}
+
+function renderAccount() {
+  var main = $('main');
+  if (!state.user) {
+    main.innerHTML = '<h1 class="view-title">' + esc(t('tab_account')) + '</h1><div class="panel">' + authFormHtml('login') + '</div>' + rolesTable();
+    return;
+  }
+  var u = state.user, p = u.perms;
+  var abilities = [['can_book_for_others', 'can_others'], ['can_block', 'can_block'], ['can_cancel_any', 'can_cancel_any'], ['can_manage_users', 'can_users']]
+    .filter(function (x) { return p[x[0]]; }).map(function (x) { return '<span class="tag" style="margin:0 6px 6px 0">✓ ' + esc(t(x[1])) + '</span>'; }).join('');
+  main.innerHTML = '<h1 class="view-title">' + esc(t('tab_account')) + '</h1>' +
+    '<div class="panel"><div class="profile"><div class="avatar in">' + esc((u.nickname || u.name).charAt(0).toUpperCase()) + '</div><div>' +
+    '<h2>' + esc(u.name) + (u.nickname ? ' <span class="muted">(' + esc(u.nickname) + ')</span>' : '') + '</h2>' +
+    '<p>' + esc(u.phone) + ' · <span class="role-pill ' + esc(u.role) + '">' + esc(roleLabel(u.role)) + '</span></p></div></div></div>' +
+    '<div class="panel"><h3>' + esc(t('your_perms')) + '</h3>' +
+    permRows(p).map(function (r) { return '<div class="kv"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>'; }).join('') +
+    (abilities ? '<div style="margin-top:10px">' + abilities + '</div>' : '') + '</div>' +
+    rolesTable() +
+    '<div class="panel"><h3>' + esc(t('change_pw')) + '</h3><form id="pwForm">' +
+    '<div class="field"><label>' + esc(t('old_pw')) + '</label><input type="password" name="old" autocomplete="current-password" required></div>' +
+    '<div class="field"><label>' + esc(t('new_pw')) + '</label><input type="password" name="new" autocomplete="new-password" minlength="6" required><div class="hint">' + esc(t('pw_hint')) + '</div></div>' +
+    '<div id="pwErr"></div><button class="btn btn-primary" type="submit">' + esc(t('save')) + '</button></form></div>' +
+    '<button class="btn btn-danger btn-block" data-act="logout">' + esc(t('logout')) + '</button>';
+}
+
+/* ───────────── AUTH ───────────── */
+function authFormHtml(mode) {
+  var reg = mode === 'register';
+  return '<div class="seg auth-tabs" style="display:flex"><button type="button" class="' + (reg ? '' : 'on') + '" data-auth="login">' + esc(t('login')) + '</button>' +
+    '<button type="button" class="' + (reg ? 'on' : '') + '" data-auth="register">' + esc(t('register')) + '</button></div>' +
+    '<form id="authForm" data-mode="' + mode + '">' +
+    '<div class="field"><label>' + esc(t('phone')) + '</label><input name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="08x-xxx-xxxx" required></div>' +
+    (reg ? '<div class="field"><label>' + esc(t('full_name')) + '</label><input name="name" autocomplete="name" maxlength="60" required></div>' +
+           '<div class="field"><label>' + esc(t('nickname')) + '</label><input name="nickname" maxlength="30"></div>' : '') +
+    '<div class="field"><label>' + esc(t('password')) + '</label><input name="password" type="password" autocomplete="' + (reg ? 'new-password' : 'current-password') + '" required>' +
+    (reg ? '<div class="hint">' + esc(t('pw_hint')) + '</div>' : '') + '</div>' +
+    '<div id="authErr"></div><button class="btn btn-primary btn-block" type="submit">' + esc(reg ? t('register') : t('login')) + '</button></form>';
+}
+
+function openAuth(mode) {
+  openModal(sheetHead(mode === 'register' ? t('register') : t('login')) + '<div id="authBox">' + authFormHtml(mode) + '</div>');
+}
+
+function submitAuth(form) {
+  var mode = form.dataset.mode;
+  var data = {};
+  new FormData(form).forEach(function (v, k) { data[k] = String(v).trim(); });
+  var btn = form.querySelector('button[type=submit]'); btn.disabled = true;
+  api(mode, data).then(function (res) {
+    setSession(res.token, res.user);
+    closeModal();
+    toast(t('welcome', { name: res.user.nickname || res.user.name }), 'good');
+    renderChrome();
+    renderView();
+    loadSchedule(true);
+  }).catch(function (e) {
+    btn.disabled = false;
+    var box = form.querySelector('#authErr');
+    if (box) box.innerHTML = '<div class="err">' + esc(errText(e)) + '</div>';
+  });
+}
+
+/* ───────────── ADMIN ───────────── */
+function renderAdmin() {
+  var main = $('main');
+  if (!state.user || !state.user.perms.can_manage_users) { switchTab('book'); return; }
+  if (!state.adminData) {
+    main.innerHTML = '<h1 class="view-title">' + esc(t('tab_admin')) + '</h1><div class="empty">…</div>';
+    api('adminUsers').then(function (res) { state.adminData = res; if (state.tab === 'admin') renderAdmin(); }).catch(handleErr);
+    return;
+  }
+  main.innerHTML = '<h1 class="view-title">' + esc(t('tab_admin')) + '</h1>' +
+    '<div class="section-label">' + esc(t('users')) + ' (' + state.adminData.users.length + ')</div>' +
+    '<input class="search" id="userSearch" placeholder="' + esc(t('search')) + '" value="' + esc(state.userQuery) + '">' +
+    '<div class="blist" id="userList">' + userListHtml() + '</div>' +
+    '<div style="height:14px"></div>' + rolesTable();
+}
+
+function userListHtml() {
+  var q = state.userQuery.toLowerCase();
+  var roles = state.adminData.roles;
+  return state.adminData.users.filter(function (u) {
+    return !q || (u.name + ' ' + u.nickname + ' ' + u.phone).toLowerCase().indexOf(q) >= 0;
+  }).map(function (u) {
+    var self = u.id === state.user.id;
+    var opts = roles.map(function (r) { return '<option value="' + esc(r.role) + '"' + (r.role === u.role ? ' selected' : '') + '>' + esc(roleLabel(r.role)) + '</option>'; }).join('');
+    var susp = u.status === 'suspended';
+    return '<div class="uitem' + (susp ? ' suspended' : '') + '"><div class="who"><b>' + esc(u.name) + (u.nickname ? ' (' + esc(u.nickname) + ')' : '') + '</b>' +
+      (susp ? '<span class="tag red">' + esc(t('suspended')) + '</span>' : '') +
+      '<small>' + esc(u.phone) + ' · ' + esc(t('joined', { d: String(u.created_at).slice(0, 10) })) + '</small></div>' +
+      '<select data-role-for="' + esc(u.id) + '"' + (self ? ' disabled' : '') + '>' + opts + '</select>' +
+      '<button class="btn btn-light btn-sm" data-act="reset-pw" data-id="' + esc(u.id) + '" data-name="' + esc(u.name) + '">' + esc(t('reset_pw')) + '</button>' +
+      (self ? '' : '<button class="btn btn-sm ' + (susp ? 'btn-light' : 'btn-danger') + '" data-act="toggle-status" data-id="' + esc(u.id) + '" data-status="' + (susp ? 'active' : 'suspended') + '">' + esc(susp ? t('activate') : t('suspend')) + '</button>') +
+      '</div>';
+  }).join('');
+}
+
+function adminUpdate(payload) {
+  return api('adminUpdateUser', payload).then(function () {
+    toast(t('updated'), 'good');
+    state.adminData = null;
+    renderAdmin();
+  }).catch(function (e) { handleErr(e); state.adminData = null; renderAdmin(); });
+}
+
+/* ───────────── events ───────────── */
+document.addEventListener('click', function (e) {
+  var el = e.target.closest('button, [data-act]');
+  if (!el) { if (e.target === $('modal')) closeModal(); return; }
+
+  if (el.dataset.lang) {
+    state.lang = el.dataset.lang; LS.set('stab_lang', state.lang);
+    applyLang();
+    if (state.cfg) { renderChrome(); renderView(); }
+    return;
+  }
+  if (el.dataset.tab) { closeModal(); switchTab(el.dataset.tab); return; }
+  if (el.dataset.date) {
+    if (el.dataset.date === state.date) return;
+    state.date = el.dataset.date; state.schedule = null; renderBook(); loadSchedule(); return;
+  }
+  if (el.dataset.view) { state.view = el.dataset.view; LS.set('stab_view', state.view); renderBook(); return; }
+  if (el.dataset.court && el.dataset.hour) { onCellClick(+el.dataset.hour, el.dataset.court); return; }
+  if (el.dataset.auth) {
+    var inModal = el.closest('#authBox');
+    (inModal || el.closest('.panel')).innerHTML = authFormHtml(el.dataset.auth);
+    if (inModal) document.querySelector('#sheet .sheet-head h3').textContent = t(el.dataset.auth);
+    return;
+  }
+  if (el.dataset.type) { setBookType(el.dataset.type); return; }
+
+  switch (el.dataset.act) {
+    case 'close': closeModal(); break;
+    case 'confirm-book': submitBooking(); break;
+    case 'cancel-booking': cancelBooking(el.dataset.id, el); break;
+    case 'open-login': openAuth('login'); break;
+    case 'open-register': openAuth('register'); break;
+    case 'logout': setSession('', null); renderChrome(); switchTab('book'); break;
+    case 'demo-reset': DemoApi.reset(); setSession('', null); boot(); break;
+    case 'toggle-status': adminUpdate({ id: el.dataset.id, status: el.dataset.status }); break;
+    case 'reset-pw':
+      var pw = prompt(t('reset_pw_prompt', { name: el.dataset.name }));
+      if (pw) adminUpdate({ id: el.dataset.id, password: pw });
+      break;
+  }
+  if (el.id === 'btnAvatar') { if (state.user) switchTab('account'); else openAuth('login'); }
+  if (el.id === 'selClear') { state.selected = {}; renderBook(); }
+  if (el.id === 'selBook') openConfirm();
+});
+
+document.addEventListener('submit', function (e) {
+  if (e.target.id === 'authForm') { e.preventDefault(); submitAuth(e.target); }
+  if (e.target.id === 'pwForm') {
+    e.preventDefault();
+    var f = e.target;
+    api('changePassword', { oldPassword: f.old.value, newPassword: f.new.value }).then(function () {
+      f.reset(); $('pwErr').innerHTML = ''; toast(t('saved'), 'good');
+    }).catch(function (err) { $('pwErr').innerHTML = '<div class="err">' + esc(errText(err)) + '</div>'; });
+  }
+});
+
+document.addEventListener('change', function (e) {
+  if (e.target.id === 'pickDate' && e.target.value) {
+    state.date = e.target.value; state.schedule = null; renderBook(); loadSchedule();
+  }
+  if (e.target.dataset.roleFor) adminUpdate({ id: e.target.dataset.roleFor, role: e.target.value });
+});
+
+document.addEventListener('input', function (e) {
+  if (e.target.id === 'userSearch') { state.userQuery = e.target.value; $('userList').innerHTML = userListHtml(); }
+});
+
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+// รีเฟรชตารางทุก 60 วินาที (เห็นการจองของคนอื่น + ช่องที่เลยเวลา)
+setInterval(function () {
+  if (state.cfg && state.tab === 'book' && !modalOpen() && !document.hidden) loadSchedule(true);
+}, 60000);
+
+/* ════════════════════════════════════════════════════════════════
+   DEMO API — จำลอง backend ใน browser (ใช้เมื่อ API_URL ว่าง)
+   กติกาเหมือน apps-script/Srichaphan_Court_Booking.gs ทุกข้อ
+   ════════════════════════════════════════════════════════════════ */
+var DemoApi = (function () {
+  var KEY = 'stab_demo_db_v2';
+  var COURTS = ['C1', 'C2', 'C3', 'C4', 'C5'], OPEN = 6, CLOSE = 23, NIGHT = 18;
+  var ROLES = [
+    { role: 'admin', label: 'ผู้ดูแล / Admin', advance_days: 30, max_hours_per_day: 0, max_active_bookings: 0, cancel_before_hours: 0, can_book_for_others: true, can_block: true, can_cancel_any: true, can_manage_users: true },
+    { role: 'member', label: 'สมาชิก / Member', advance_days: 14, max_hours_per_day: 2, max_active_bookings: 4, cancel_before_hours: 3, can_book_for_others: false, can_block: false, can_cancel_any: false, can_manage_users: false },
+    { role: 'user', label: 'ผู้ใช้ทั่วไป / User', advance_days: 7, max_hours_per_day: 1, max_active_bookings: 2, cancel_before_hours: 6, can_book_for_others: false, can_block: false, can_cancel_any: false, can_manage_users: false }
+  ];
+
+  function fail(code, params) { return { code: code, params: params || {} }; }
+  function clock() {
+    var parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+    var g = function (type) { return parts.filter(function (p) { return p.type === type; })[0].value; };
+    return { today: g('year') + '-' + g('month') + '-' + g('day'), hour: +g('hour') % 24, now: Date.now() };
+  }
+  function stamp() { var c = new Date(Date.now() + 7 * 36e5).toISOString(); return c.slice(0, 10) + ' ' + c.slice(11, 19); }
+  function id(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function permsFor(role) { return ROLES.filter(function (r) { return r.role === role; })[0] || ROLES[2]; }
+  function pub(u) { return { id: u.id, phone: u.phone, name: u.name, nickname: u.nickname, role: u.role, perms: permsFor(u.role) }; }
+  function dname(u) { return u.nickname ? u.name + ' (' + u.nickname + ')' : u.name; }
+  function normPhone(v) { var d = String(v || '').replace(/\D/g, ''); if (d.indexOf('66') === 0 && d.length === 11) d = '0' + d.slice(2); return d; }
+  function isDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s + 'T00:00:00Z')); }
+  function upcoming(b, c, inProgress) { var a = daysBetween(c.today, b.date); return a > 0 || (a === 0 && (inProgress ? b.hour >= c.hour : b.hour > c.hour)); }
+
+  function seed() {
+    var c = clock();
+    var users = [
+      { id: 'U-admin', phone: '0800000001', password: 'admin123', name: 'Admin Srichaphan', nickname: 'Admin', role: 'admin', status: 'active', created_at: stamp() },
+      { id: 'U-member', phone: '0800000002', password: 'member123', name: 'สมาชิก ทดลอง', nickname: 'Mem', role: 'member', status: 'active', created_at: stamp() },
+      { id: 'U-user', phone: '0800000003', password: 'user123', name: 'ผู้ใช้ ทดลอง', nickname: 'Guest', role: 'user', status: 'active', created_at: stamp() }
+    ];
+    var players = ['Nok', 'Ton', 'Ploy', 'Beam', 'Mike', 'Fah', 'Joe', 'Pim', 'Bank', 'Mint', 'Arm', 'Kate'];
+    players.forEach(function (n, i) {
+      users.push({ id: 'U-p' + i, phone: '08100000' + pad(i), password: Math.random().toString(36), name: n + ' Player', nickname: n, role: i % 3 ? 'user' : 'member', status: 'active', created_at: stamp() });
+    });
+    var seedN = 7;
+    var rand = function () { seedN = (seedN * 9301 + 49297) % 233280; return seedN / 233280; };
+    var bookings = [];
+    for (var d = 0; d <= 14; d++) {
+      var date = addDays(c.today, d);
+      for (var h = OPEN; h < CLOSE; h++) {
+        var busy = h >= 17 && h <= 21 ? 0.62 : h <= 8 ? 0.35 : 0.18;
+        COURTS.forEach(function (court) {
+          if (rand() < busy * Math.max(0.15, 1.2 - d * 0.12)) {
+            var u = users[3 + Math.floor(rand() * players.length)];
+            bookings.push({ id: id('B'), date: date, hour: h, court: court, user_id: u.id, name: dname(u), type: 'booking', note: '', status: 'active', created_at: stamp() });
+          }
+        });
+      }
+    }
+    var tmr = addDays(c.today, 1);
+    bookings = bookings.filter(function (b) { return !(b.date === tmr && b.court === 'C5' && b.hour < 9); });
+    [6, 7, 8].forEach(function (h) {
+      bookings.push({ id: id('B'), date: tmr, hour: h, court: 'C5', user_id: 'U-admin', name: 'Admin Srichaphan (Admin)', type: 'block', note: 'ซ่อมพื้นคอร์ท / Maintenance', status: 'active', created_at: stamp() });
+    });
+    return { users: users, bookings: bookings };
+  }
+
+  function load() { var db = LS.get(KEY, null); if (!db) { db = seed(); save(db); } return db; }
+  function save(db) { LS.set(KEY, db); }
+  function userOf(db, token) {
+    var u = db.users.filter(function (x) { return x.id === token; })[0];
+    return u && u.status === 'active' ? u : null;
+  }
+  function requireUser(db, token) { var u = userOf(db, token); if (!u) throw fail('auth_required'); return u; }
+
+  var A = {
+    bootstrap: function (db, p, token) {
+      var u = token ? userOf(db, token) : null;
+      return { courts: COURTS, openHour: OPEN, closeHour: CLOSE, nightFromHour: NIGHT, clock: clock(), roles: ROLES, guestPerms: permsFor('user'), user: u ? pub(u) : null };
+    },
+    register: function (db, p) {
+      var phone = normPhone(p.phone), name = String(p.name || '').trim(), pw = String(p.password || '');
+      if (!/^0\d{8,9}$/.test(phone)) throw fail('invalid_phone');
+      if (!name) throw fail('name_required');
+      if (pw.length < 6) throw fail('weak_password');
+      if (db.users.some(function (u) { return u.phone === phone; })) throw fail('phone_taken');
+      var u = { id: id('U'), phone: phone, password: pw, name: name, nickname: String(p.nickname || '').trim(), role: 'user', status: 'active', created_at: stamp() };
+      db.users.push(u);
+      return { token: u.id, user: pub(u) };
+    },
+    login: function (db, p) {
+      var u = db.users.filter(function (x) { return x.phone === normPhone(p.phone); })[0];
+      if (!u || u.password !== String(p.password || '')) throw fail('invalid_login');
+      if (u.status !== 'active') throw fail('suspended');
+      return { token: u.id, user: pub(u) };
+    },
+    schedule: function (db, p, token) {
+      if (!isDate(p.date)) throw fail('invalid_input');
+      var me = token ? userOf(db, token) : null;
+      var pr = me ? permsFor(me.role) : permsFor('user'), ahead = daysBetween(clock().today, p.date);
+      if (!pr.can_block && (ahead < 0 || ahead > pr.advance_days)) throw fail('too_far_ahead', { days: pr.advance_days });
+      var see = me && pr.can_cancel_any;
+      return {
+        date: p.date, clock: clock(),
+        bookings: db.bookings.filter(function (b) { return b.status === 'active' && b.date === p.date; }).map(function (b) {
+          var mine = !!(me && b.user_id === me.id);
+          var o = { court: b.court, hour: b.hour, type: b.type, mine: mine };
+          if (b.type === 'block') o.note = b.note;
+          if (mine || see) { o.id = b.id; o.name = b.name; o.note = b.note; }
+          return o;
+        })
+      };
+    },
+    book: function (db, p, token) {
+      var me = requireUser(db, token), pr = permsFor(me.role), c = clock();
+      var type = p.type === 'block' ? 'block' : 'booking';
+      if (type === 'block' && !pr.can_block) throw fail('forbidden');
+      var forName = String(p.forName || '').trim();
+      if (forName && !pr.can_book_for_others) throw fail('forbidden');
+      var raw = p.slots || [];
+      if (!raw.length || raw.length > 20) throw fail('invalid_input');
+      var maxAhead = type === 'block' ? 365 : pr.advance_days, seen = {};
+      var slots = raw.map(function (s) {
+        var hour = Number(s.hour);
+        if (!isDate(s.date) || COURTS.indexOf(s.court) < 0 || hour % 1 || hour < OPEN || hour >= CLOSE) throw fail('invalid_input');
+        var ahead = daysBetween(c.today, s.date);
+        if (ahead < 0 || (ahead === 0 && hour <= c.hour)) throw fail('slot_past');
+        if (ahead > maxAhead) throw fail('too_far_ahead', { days: maxAhead });
+        var key = s.date + '|' + hour + '|' + s.court;
+        if (seen[key]) throw fail('invalid_input');
+        seen[key] = 1;
+        return { date: s.date, hour: hour, court: s.court, key: key };
+      });
+      var active = db.bookings.filter(function (b) { return b.status === 'active'; });
+      var taken = {};
+      active.forEach(function (b) { taken[b.date + '|' + b.hour + '|' + b.court] = 1; });
+      slots.forEach(function (s) { if (taken[s.key]) throw fail('slot_taken', { court: s.court, hour: s.hour, date: s.date }); });
+      if (type === 'booking') {
+        var mine = active.filter(function (b) { return b.user_id === me.id && b.type === 'booking'; });
+        if (pr.max_hours_per_day > 0) {
+          var per = {};
+          mine.forEach(function (b) { per[b.date] = (per[b.date] || 0) + 1; });
+          slots.forEach(function (s) { per[s.date] = (per[s.date] || 0) + 1; if (per[s.date] > pr.max_hours_per_day) throw fail('daily_limit', { limit: pr.max_hours_per_day }); });
+        }
+        if (pr.max_active_bookings > 0 && mine.filter(function (b) { return upcoming(b, c); }).length + slots.length > pr.max_active_bookings) {
+          throw fail('active_limit', { limit: pr.max_active_bookings });
+        }
+      }
+      var rows = slots.map(function (s) {
+        return { id: id('B'), date: s.date, hour: s.hour, court: s.court, user_id: me.id, name: forName || dname(me), type: type, note: String(p.note || '').trim(), status: 'active', created_at: stamp() };
+      });
+      db.bookings = db.bookings.concat(rows);
+      return { bookings: rows };
+    },
+    cancel: function (db, p, token) {
+      var me = requireUser(db, token), pr = permsFor(me.role);
+      var b = db.bookings.filter(function (x) { return x.id === p.id; })[0];
+      if (!b || b.status !== 'active') throw fail('not_found');
+      if (b.user_id !== me.id && !pr.can_cancel_any) throw fail('forbidden');
+      if (!pr.can_cancel_any) {
+        var left = (slotStart(b.date, b.hour) - Date.now()) / 36e5;
+        if (left <= 0) throw fail('slot_past');
+        if (left < pr.cancel_before_hours) throw fail('cancel_too_late', { hours: pr.cancel_before_hours });
+      }
+      b.status = 'cancelled'; b.cancelled_at = stamp(); b.cancelled_by = me.id;
+      return { id: b.id };
+    },
+    myBookings: function (db, p, token) {
+      var me = requireUser(db, token), c = clock();
+      var key = function (b) { return b.date + pad(b.hour) + b.court; };
+      var mine = db.bookings.filter(function (b) { return b.user_id === me.id; }).map(function (b) {
+        return Object.assign({}, b, { upcoming: b.status === 'active' && upcoming(b, c, true) });
+      });
+      return {
+        clock: c,
+        upcoming: mine.filter(function (b) { return b.upcoming; }).sort(function (a, b) { return key(a).localeCompare(key(b)); }),
+        history: mine.filter(function (b) { return !b.upcoming; }).sort(function (a, b) { return key(b).localeCompare(key(a)); }).slice(0, 30)
+      };
+    },
+    changePassword: function (db, p, token) {
+      var me = requireUser(db, token);
+      if (me.password !== p.oldPassword) throw fail('invalid_login');
+      if (String(p.newPassword || '').length < 6) throw fail('weak_password');
+      me.password = p.newPassword;
+      return { ok: true };
+    },
+    adminUsers: function (db, p, token) {
+      var me = requireUser(db, token);
+      if (!permsFor(me.role).can_manage_users) throw fail('forbidden');
+      return { users: db.users.map(function (u) { return { id: u.id, phone: u.phone, name: u.name, nickname: u.nickname, role: u.role, status: u.status, created_at: u.created_at }; }), roles: ROLES };
+    },
+    adminUpdateUser: function (db, p, token) {
+      var me = requireUser(db, token);
+      if (!permsFor(me.role).can_manage_users) throw fail('forbidden');
+      var u = db.users.filter(function (x) { return x.id === p.id; })[0];
+      if (!u) throw fail('not_found');
+      if (p.role !== undefined) {
+        if (!ROLES.some(function (r) { return r.role === p.role; })) throw fail('invalid_input');
+        if (u.id === me.id && p.role !== u.role) throw fail('self_edit');
+        u.role = p.role;
+      }
+      if (p.status !== undefined) {
+        if (u.id === me.id && p.status !== 'active') throw fail('self_edit');
+        u.status = p.status;
+      }
+      if (p.password) { if (String(p.password).length < 6) throw fail('weak_password'); u.password = p.password; }
+      return { id: u.id };
+    }
+  };
+
+  return {
+    call: function (action, payload, token) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          try {
+            if (!A[action]) throw fail('invalid_input');
+            var db = load();
+            var out = A[action](db, JSON.parse(JSON.stringify(payload)), token);
+            save(db);
+            resolve(JSON.parse(JSON.stringify(out)));
+          } catch (e) { reject(e && e.code ? e : fail('server_error')); }
+        }, 120);
+      });
+    },
+    reset: function () { LS.del(KEY); }
+  };
+})();
+
+boot();
+</script>
+</body>
+</html>
