@@ -7,13 +7,21 @@
  *   3) Deploy → New deployment → Web app (Execute as: Me · Who has access: Anyone)
  *   4) เอา Web app URL ไปใส่ API_URL ใน index.html
  *
- * *** setup() รันซ้ำได้ปลอดภัย: แท็บที่มีอยู่แล้วจะไม่ถูกเขียนทับ ***
+ * *** setup() รันซ้ำได้ปลอดภัย: ไม่ลบไม่ทับข้อมูลเดิม แค่เติมแท็บ/คอลัมน์/ค่าที่ยังขาด ***
  *
  * แท็บในชีท
  *   Users    — ผู้ใช้ (แก้คอลัมน์ role / status ในชีทได้โดยตรง)
- *   Bookings — การจองทุกรายการ (ยกเลิกแล้วไม่ลบ แค่เปลี่ยน status เป็น cancelled)
- *   Roles    — สิทธิ์ของแต่ละ role (จองล่วงหน้ากี่วัน, กี่ ชม./วัน ฯลฯ) แก้ในชีทได้เลย
+ *   Bookings — การจองทุกช่อง (ไม่ลบแถว แค่เปลี่ยน status)
+ *   Roles    — สิทธิ์ของแต่ละเลเวล (จองล่วงหน้ากี่วัน, กี่ ชม./วัน ฯลฯ) แก้ในชีทได้เลย
+ *   Settings — ราคา, เลขบัญชีรับเงิน, เวลาที่ต้องชำระ แก้ในชีทได้เลย
  *   ⚠️ ห้ามเปลี่ยนชื่อหัวคอลัมน์ (แถวที่ 1) — โค้ดหาคอลัมน์จากชื่อหัว
+ *
+ * สถานะการจอง (คอลัมน์ status ใน Bookings)
+ *   pending_payment → รอชำระ (ถ้าไม่อัปโหลดสลิปภายในเวลาที่กำหนด จะกลายเป็น expired และช่องว่างอีกครั้ง)
+ *   pending_review  → อัปโหลดสลิปแล้ว รอแอดมินตรวจ
+ *   confirmed       → แอดมินยืนยันแล้ว
+ *   rejected        → แอดมินปฏิเสธสลิป (ช่องว่างอีกครั้ง)
+ *   expired / cancelled
  */
 
 // ===== แก้ตรงนี้ได้ =====
@@ -22,31 +30,46 @@ var CONFIG = {
   COURTS: ['C1', 'C2', 'C3', 'C4', 'C5'],
   OPEN_HOUR: 6,            // ช่องแรก 06:00–07:00
   CLOSE_HOUR: 23,          // ปิด 23:00 → ช่องสุดท้าย 22:00–23:00
-  NIGHT_FROM_HOUR: 18,     // ตั้งแต่ชั่วโมงนี้แสดงไอคอนกลางคืน
   TIMEZONE: 'Asia/Bangkok',
   UTC_OFFSET: '+07:00',
   SESSION_DAYS: 30,        // ล็อกอินค้างไว้ได้กี่วัน
   MAX_SLOTS_PER_REQUEST: 20,
-  MAX_BLOCK_DAYS_AHEAD: 365 // แอดมินปิดคอร์ทล่วงหน้าได้ไกลสุดกี่วัน
+  MAX_BLOCK_DAYS_AHEAD: 365, // แอดมินปิดคอร์ทล่วงหน้าได้ไกลสุดกี่วัน
+  SLIP_FOLDER_NAME: 'Srichaphan Court Booking — สลิปโอนเงิน',
+  MAX_SLIP_BYTES: 5 * 1024 * 1024
 };
 // ===== จบส่วนแก้ =====
 
 var SHEETS = {
   Users: ['id', 'phone', 'name', 'nickname', 'role', 'status', 'salt', 'password_hash', 'created_at'],
-  Bookings: ['id', 'date', 'hour', 'court', 'user_id', 'name', 'type', 'note', 'status',
+  Bookings: ['id', 'order_id', 'date', 'hour', 'court', 'user_id', 'name', 'type', 'price', 'status', 'note',
+             'expires_at', 'slip_file_id', 'slip_uploaded_at', 'reviewed_by', 'reviewed_at', 'review_note',
              'created_at', 'created_by', 'cancelled_at', 'cancelled_by'],
-  Roles: ['role', 'label', 'advance_days', 'max_hours_per_day', 'max_active_bookings',
-          'cancel_before_hours', 'can_book_for_others', 'can_block', 'can_cancel_any', 'can_manage_users']
+  Roles: ['role', 'label', 'advance_days', 'max_hours_per_day', 'max_active_bookings', 'cancel_before_hours',
+          'can_book_for_others', 'can_block', 'can_cancel_any', 'can_manage_users', 'can_confirm_payments'],
+  Settings: ['key', 'value', 'description']
 };
+var TEXT_COLUMNS = { Users: ['phone'], Bookings: ['date'], Settings: ['value'] };
 
 // advance_days: ดูตาราง + จองล่วงหน้าได้กี่วัน (0 = แค่วันนี้, 7 = วันนี้ + อีก 7 วัน)
 // ตัวเลขจำกัด (ชม./วัน, การจองค้าง) ที่เป็น 0 = ไม่จำกัด
 var DEFAULT_ROLES = [
-  ['admin',  'ผู้ดูแล / Admin',      30, 0, 0, 0, true,  true,  true,  true],
-  ['member', 'สมาชิก / Member',      14, 2, 4, 3, false, false, false, false],
-  ['user',   'ผู้ใช้ทั่วไป / User',  7,  1, 2, 6, false, false, false, false]
+  ['admin',  'ผู้ดูแล / Admin',      30, 0, 0, 0, true,  true,  true,  true,  true],
+  ['member', 'สมาชิก / Member',      14, 2, 4, 3, false, false, false, false, false],
+  ['user',   'ผู้ใช้ทั่วไป / User',  7,  1, 2, 3, false, false, false, false, false]
 ];
 
+var DEFAULT_SETTINGS = [
+  ['price_day', 250, 'ราคาต่อชั่วโมง ช่วงกลางวัน (บาท)'],
+  ['price_night', 350, 'ราคาต่อชั่วโมง ช่วงเปิดไฟ (บาท)'],
+  ['lights_from_hour', 18, 'เริ่มคิดราคาเปิดไฟตั้งแต่ช่องเวลานี้ (18 = ช่อง 18:00 เป็นต้นไป)'],
+  ['pay_within_minutes', 30, 'ต้องอัปโหลดสลิปภายในกี่นาทีหลังกดจอง ไม่งั้นการจองหลุดอัตโนมัติ'],
+  ['bank_name', 'ธนาคารกรุงศรีอยุธยา (กรุงศรี)', 'ธนาคารที่รับโอน'],
+  ['bank_account_no', '1731304053', 'เลขบัญชี (ตัวเลขล้วน)'],
+  ['bank_account_name', 'ธนากร ศรีชาพันธุ์', 'ชื่อบัญชี']
+];
+
+var HOLDING = ['pending_payment', 'pending_review', 'confirmed'];
 var PASSWORD_ROUNDS = 200;
 
 // ───────────────────────────── setup ─────────────────────────────
@@ -60,19 +83,28 @@ function setup() {
     props.setProperty('TOKEN_SECRET', Utilities.getUuid() + Utilities.getUuid());
   }
 
-  var created = [];
+  var log = [];
   Object.keys(SHEETS).forEach(function (name) {
-    if (ss.getSheetByName(name)) return;   // กันรันซ้ำ
-    var headers = SHEETS[name];
-    var sh = ss.insertSheet(name);
-    sh.getRange(1, 1, 1, headers.length).setValues([headers])
-      .setFontWeight('bold').setBackground('#2E75B6').setFontColor('#FFFFFF');
-    sh.setFrozenRows(1);
-    if (name === 'Roles') sh.getRange(2, 1, DEFAULT_ROLES.length, headers.length).setValues(DEFAULT_ROLES);
-    // เก็บวันที่/เบอร์โทรเป็นข้อความ ไม่ให้ชีทแปลงเป็น Date หรือตัด 0 หน้าเบอร์
-    if (name === 'Bookings') sh.getRange('B:B').setNumberFormat('@');
-    if (name === 'Users') sh.getRange('B:B').setNumberFormat('@');
-    created.push(name);
+    var res = ensureSheet_(ss, name, SHEETS[name]);
+    if (res.created) log.push('สร้างแท็บ ' + name);
+    else if (res.added.length) log.push(name + ': เพิ่มคอลัมน์ ' + res.added.join(', '));
+
+    if (name === 'Roles' && res.created) {
+      res.sheet.getRange(2, 1, DEFAULT_ROLES.length, DEFAULT_ROLES[0].length).setValues(DEFAULT_ROLES);
+    }
+    if (name === 'Roles' && res.added.indexOf('can_confirm_payments') >= 0) {
+      // อัปเกรดจากเวอร์ชันเก่า: ใครจัดการผู้ใช้ได้ ให้ยืนยันสลิปได้ด้วย
+      var t = table_(name, ss);
+      t.rows.forEach(function (r) { if (bool_(r.can_manage_users)) update_(t, r, { can_confirm_payments: true }); });
+    }
+    if (name === 'Settings') {
+      var st = table_(name, ss);
+      var have = st.rows.map(function (r) { return String(r.key).trim(); });
+      var missing = DEFAULT_SETTINGS.filter(function (d) { return have.indexOf(d[0]) < 0; })
+        .map(function (d) { return { key: d[0], value: d[1], description: d[2] }; });
+      appendMany_(st, missing);
+      if (missing.length && !res.created) log.push('Settings: เพิ่มค่า ' + missing.map(function (m) { return m.key; }).join(', '));
+    }
   });
 
   ['Sheet1', 'ชีต1', 'แผ่นงาน1'].forEach(function (n) {
@@ -80,10 +112,39 @@ function setup() {
     if (s && s.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(s);
   });
 
-  Logger.log(created.length
-    ? '✅ สร้างแท็บแล้ว: ' + created.join(', ')
-    : '✅ มีครบทุกแท็บอยู่แล้ว ไม่ได้แก้อะไร');
+  var folder = slipFolder_();   // ขอสิทธิ์ Google Drive + สร้างโฟลเดอร์เก็บสลิป
+  Logger.log('✅ ' + (log.length ? log.join(' · ') : 'มีครบทุกแท็บอยู่แล้ว ไม่ได้แก้อะไร'));
+  Logger.log('📁 โฟลเดอร์เก็บสลิป: ' + folder.getName());
   Logger.log('ขั้นต่อไป: Deploy → New deployment → Web app');
+}
+
+function ensureSheet_(ss, name, headers) {
+  var sh = ss.getSheetByName(name);
+  var created = !sh;
+  var added = [];
+  if (created) {
+    sh = ss.insertSheet(name);
+    sh.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sh.setFrozenRows(1);
+    added = headers.slice();
+  } else {
+    var have = sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), 1)).getValues()[0]
+      .map(function (h) { return String(h).trim(); });
+    while (have.length && !have[have.length - 1]) have.pop();
+    added = headers.filter(function (h) { return have.indexOf(h) < 0; });
+    if (added.length) sh.getRange(1, have.length + 1, 1, added.length).setValues([added]);
+  }
+  if (added.length) {
+    var width = sh.getLastColumn();
+    sh.getRange(1, 1, 1, width).setFontWeight('bold').setBackground('#2E75B6').setFontColor('#FFFFFF');
+    // เก็บวันที่/เบอร์โทร/เลขบัญชีเป็นข้อความ ไม่ให้ชีทแปลงเป็น Date หรือตัด 0 หน้า
+    var hdr = sh.getRange(1, 1, 1, width).getValues()[0].map(String);
+    (TEXT_COLUMNS[name] || []).forEach(function (col) {
+      var c = hdr.indexOf(col) + 1;
+      if (c > 0) sh.getRange(1, c, sh.getMaxRows(), 1).setNumberFormat('@');
+    });
+  }
+  return { sheet: sh, created: created, added: created ? [] : added };
 }
 
 // ───────────────────────────── router ─────────────────────────────
@@ -96,9 +157,13 @@ var ACTIONS = {
   book: book_,
   cancel: cancel_,
   myBookings: myBookings_,
+  uploadSlip: uploadSlip_,
+  slip: slip_,
   changePassword: changePassword_,
   adminUsers: adminUsers_,
-  adminUpdateUser: adminUpdateUser_
+  adminUpdateUser: adminUpdateUser_,
+  adminOrders: adminOrders_,
+  reviewOrder: reviewOrder_
 };
 
 function doGet() {
@@ -137,16 +202,25 @@ function err_(code, params) {
 function bootstrap_(p, token) {
   var roles = roles_();
   var me = token ? userFromToken_(token, roles) : null;
-  return {
+  var s = settings_();
+  var out = {
     courts: CONFIG.COURTS,
     openHour: CONFIG.OPEN_HOUR,
     closeHour: CONFIG.CLOSE_HOUR,
-    nightFromHour: CONFIG.NIGHT_FROM_HOUR,
+    nightFromHour: s.lights_from_hour,
+    pricing: { day: s.price_day, night: s.price_night, lightsFromHour: s.lights_from_hour },
+    payment: { bankName: s.bank_name, accountNo: s.bank_account_no, accountName: s.bank_account_name,
+               payWithinMinutes: s.pay_within_minutes },
     clock: clock_(),
     roles: roles.list,
     guestPerms: permsFor_('user', roles),
     user: me ? publicUser_(me) : null
   };
+  if (me && me.perms.can_confirm_payments) {
+    out.pendingReview = orders_(bookings_(), Date.now())
+      .filter(function (o) { return o.status === 'pending_review'; }).length;
+  }
+  return out;
 }
 
 function register_(p) {
@@ -171,8 +245,7 @@ function register_(p) {
       salt: salt, password_hash: hashPassword_(salt, password), created_at: stamp_()
     };
     append_(t, user);
-    var roles = roles_();
-    user.perms = permsFor_(user.role, roles);
+    user.perms = permsFor_(user.role, roles_());
     return { token: makeToken_(user.id), user: publicUser_(user) };
   });
 }
@@ -198,11 +271,15 @@ function schedule_(p, token) {
   // ดูตารางได้แค่ช่วงวันตามเลเวล (คนที่ปิดคอร์ทได้ ดูได้ทุกวัน)
   if (!perms.can_block && (ahead < 0 || ahead > perms.advance_days)) throw err_('too_far_ahead', { days: perms.advance_days });
   var seeNames = !!(me && me.perms.can_cancel_any);
-  var list = activeBookings_().filter(function (b) { return b.date === date; }).map(function (b) {
+  var list = bookings_().filter(function (b) { return b.date === date && isHolding_(b, clock.now); }).map(function (b) {
     var mine = !!(me && b.user_id === me.id);
-    var out = { court: b.court, hour: b.hour, type: b.type, mine: mine };
+    var status = effStatus_(b, clock.now);
+    var out = { court: b.court, hour: b.hour, type: b.type, mine: mine, pending: status !== 'confirmed' };
     if (b.type === 'block') out.note = b.note;
-    if (mine || seeNames) { out.id = b.id; out.name = b.name; out.note = b.note; }
+    if (mine || seeNames) {
+      out.id = b.id; out.order_id = b.order_id; out.name = b.name; out.note = b.note;
+      out.price = b.price; out.status = status;
+    }
     return out;
   });
   return { date: date, clock: clock, bookings: list };
@@ -235,29 +312,34 @@ function book_(p, token) {
     return { date: date, hour: hour, court: court, key: key };
   });
 
+  var s = settings_();
   return withLock_(function () {
     var t = table_('Bookings');
-    var active = t.rows.map(normBooking_).filter(function (b) { return b.status === 'active'; });
+    expireStale_(t, clock.now);
+    var active = t.rows.map(normBooking_).filter(function (b) { return isHolding_(b, clock.now); });
     var taken = {};
     active.forEach(function (b) { taken[slotKey_(b.date, b.hour, b.court)] = true; });
-    slots.forEach(function (s) {
-      if (taken[s.key]) throw err_('slot_taken', { date: s.date, hour: s.hour, court: s.court });
+    slots.forEach(function (sl) {
+      if (taken[sl.key]) throw err_('slot_taken', { date: sl.date, hour: sl.hour, court: sl.court });
     });
 
     if (type === 'booking') checkLimits_(me, active, slots, clock);
 
+    // คนที่ยืนยันสลิปได้ (แอดมิน) จอง/ปิดคอร์ท = ยืนยันทันที ไม่ต้องชำระผ่านระบบ
+    var direct = type === 'block' || perms.can_confirm_payments;
+    var orderId = newId_('R');
     var now = stamp_();
-    var rows = slots.map(function (s) {
+    var rows = slots.map(function (sl) {
       return {
-        id: newId_('B'), date: s.date, hour: s.hour, court: s.court, user_id: me.id,
-        name: forName || displayName_(me), type: type, note: note, status: 'active',
-        created_at: now, created_by: me.id, cancelled_at: '', cancelled_by: ''
+        id: newId_('B'), order_id: orderId, date: sl.date, hour: sl.hour, court: sl.court, user_id: me.id,
+        name: forName || displayName_(me), type: type, price: type === 'block' ? 0 : priceFor_(sl.hour, s),
+        status: direct ? 'confirmed' : 'pending_payment', note: note,
+        expires_at: direct ? '' : clock.now + s.pay_within_minutes * 60000,
+        created_at: now, created_by: me.id
       };
     });
     appendMany_(t, rows);
-    return { bookings: rows.map(function (b) {
-      return { id: b.id, date: b.date, hour: b.hour, court: b.court, type: b.type, name: b.name };
-    }) };
+    return { order: orders_(rows.map(normBooking_), clock.now)[0] };
   });
 }
 
@@ -278,39 +360,147 @@ function checkLimits_(me, active, slots, clock) {
   }
 }
 
+// ยกเลิกทีละช่อง ({id}) หรือทั้งคำสั่งจอง ({orderId})
 function cancel_(p, token) {
   var me = requireUser_(token);
-  var id = String(p.id || '');
+  var id = String(p.id || ''), orderId = String(p.orderId || '');
+  if (!id && !orderId) throw err_('invalid_input');
   return withLock_(function () {
+    var now = Date.now();
     var t = table_('Bookings');
-    var row = t.rows.filter(function (r) { return String(r.id) === id; })[0];
-    var b = row && normBooking_(row);
-    if (!b || b.status !== 'active') throw err_('not_found');
-    var isOwner = b.user_id === me.id;
-    if (!isOwner && !me.perms.can_cancel_any) throw err_('forbidden');
-    if (!me.perms.can_cancel_any) {
-      var hoursLeft = (slotStart_(b.date, b.hour) - Date.now()) / 3600000;
+    expireStale_(t, now);
+    var rows = t.rows.filter(function (r) {
+      var b = normBooking_(r);
+      return (id ? b.id === id : b.order_id === orderId) && isHolding_(b, now);
+    });
+    if (!rows.length) throw err_('not_found');
+    rows.forEach(function (r) {
+      var b = normBooking_(r);
+      if (b.user_id !== me.id && !me.perms.can_cancel_any) throw err_('forbidden');
+      if (me.perms.can_cancel_any) return;
+      var hoursLeft = (slotStart_(b.date, b.hour) - now) / 3600000;
       if (hoursLeft <= 0) throw err_('slot_past');
-      if (hoursLeft < me.perms.cancel_before_hours) throw err_('cancel_too_late', { hours: me.perms.cancel_before_hours });
-    }
-    update_(t, row, { status: 'cancelled', cancelled_at: stamp_(), cancelled_by: me.id });
-    return { id: id };
+      // ยังไม่ได้จ่ายเงิน ยกเลิกได้ตลอด · จ่ายแล้วต้องยกเลิกก่อนเวลาเล่นตามสิทธิ์
+      if (b.status !== 'pending_payment' && hoursLeft < me.perms.cancel_before_hours) {
+        throw err_('cancel_too_late', { hours: me.perms.cancel_before_hours });
+      }
+    });
+    var stamp = stamp_();
+    rows.forEach(function (r) { update_(t, r, { status: 'cancelled', cancelled_at: stamp, cancelled_by: me.id }); });
+    return { cancelled: rows.length };
   });
 }
 
 function myBookings_(p, token) {
   var me = requireUser_(token);
   var clock = clock_();
-  var mine = table_('Bookings').rows.map(normBooking_)
-    .filter(function (b) { return b.user_id === me.id; })
-    .map(function (b) {
-      return { id: b.id, date: b.date, hour: b.hour, court: b.court, type: b.type, name: b.name,
-               note: b.note, status: b.status, upcoming: b.status === 'active' && isUpcoming_(b, clock, true) };
+  var orders = orders_(bookings_().filter(function (b) { return b.user_id === me.id; }), clock.now);
+  orders.forEach(function (o) {
+    o.upcoming = HOLDING.indexOf(o.status) >= 0 &&
+      o.items.some(function (i) { return i.status !== 'cancelled' && isUpcoming_(i, clock, true); });
+  });
+  var firstSlot = function (o) { return o.items[0].date + pad_(o.items[0].hour); };
+  return {
+    clock: clock,
+    upcoming: orders.filter(function (o) { return o.upcoming; })
+      .sort(function (a, b) { return firstSlot(a).localeCompare(firstSlot(b)); }),
+    history: orders.filter(function (o) { return !o.upcoming; })
+      .sort(function (a, b) { return firstSlot(b).localeCompare(firstSlot(a)); }).slice(0, 30)
+  };
+}
+
+function uploadSlip_(p, token) {
+  var me = requireUser_(token);
+  var orderId = String(p.orderId || '');
+  var m = /^data:(image\/(?:png|jpe?g|webp|gif|heic|heif));base64,([A-Za-z0-9+\/=]+)$/.exec(String(p.image || ''));
+  if (!m) throw err_('invalid_slip');
+  var bytes = Utilities.base64Decode(m[2]);
+  if (bytes.length > CONFIG.MAX_SLIP_BYTES) throw err_('slip_too_large');
+
+  var check = function (list, now) {
+    var order = orders_(list.filter(function (b) { return b.order_id === orderId; }), now)[0];
+    if (!order || (order.user_id !== me.id && !me.perms.can_confirm_payments)) throw err_('not_found');
+    if (order.status === 'expired') throw err_('payment_expired');
+    if (order.status !== 'pending_payment' && order.status !== 'pending_review') throw err_('not_found');
+    return order;
+  };
+  check(bookings_(), Date.now());   // ตรวจก่อนอัปโหลดไฟล์ จะได้ไม่สร้างไฟล์ทิ้งเปล่า ๆ
+
+  var ext = m[1].split('/')[1].replace('jpeg', 'jpg');
+  var name = 'slip_' + orderId + '_' + Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyyMMdd_HHmmss') + '.' + ext;
+  var file = slipFolder_().createFile(Utilities.newBlob(bytes, m[1], name));
+
+  try {
+    return withLock_(function () {
+      var now = Date.now();
+      var t = table_('Bookings');
+      expireStale_(t, now);
+      var order = check(t.rows.map(normBooking_), now);
+      var stamp = stamp_();
+      t.rows.forEach(function (r) {
+        var b = normBooking_(r);
+        if (b.order_id === orderId && isHolding_(b, now)) {
+          update_(t, r, { status: 'pending_review', slip_file_id: file.getId(), slip_uploaded_at: stamp });
+        }
+      });
+      return { orderId: orderId, status: 'pending_review', amount: order.amount };
     });
-  var byTime = function (a, b) { return (a.date + pad_(a.hour) + a.court).localeCompare(b.date + pad_(b.hour) + b.court); };
-  var upcoming = mine.filter(function (b) { return b.upcoming; }).sort(byTime);
-  var history = mine.filter(function (b) { return !b.upcoming; }).sort(byTime).reverse().slice(0, 30);
-  return { clock: clock, upcoming: upcoming, history: history };
+  } catch (ex) {
+    file.setTrashed(true);
+    throw ex;
+  }
+}
+
+function slip_(p, token) {
+  var me = requireUser_(token);
+  var orderId = String(p.orderId || '');
+  var b = bookings_().filter(function (x) { return x.order_id === orderId && x.slip_file_id; })[0];
+  if (!b || (b.user_id !== me.id && !me.perms.can_confirm_payments)) throw err_('not_found');
+  var blob = DriveApp.getFileById(b.slip_file_id).getBlob();
+  return { image: 'data:' + blob.getContentType() + ';base64,' + Utilities.base64Encode(blob.getBytes()),
+           uploadedAt: b.slip_uploaded_at };
+}
+
+function adminOrders_(p, token) {
+  var me = requireUser_(token);
+  if (!me.perms.can_confirm_payments) throw err_('forbidden');
+  var now = Date.now();
+  var phones = {};
+  table_('Users').rows.map(normUser_).forEach(function (u) { phones[u.id] = u.phone; });
+  var orders = orders_(bookings_().filter(function (b) { return b.type === 'booking'; }), now);
+  orders.forEach(function (o) { o.phone = phones[o.user_id] || ''; });
+  var by = function (key, desc) {
+    return function (a, b) { var r = String(a[key]).localeCompare(String(b[key])); return desc ? -r : r; };
+  };
+  return {
+    review: orders.filter(function (o) { return o.status === 'pending_review'; }).sort(by('slip_uploaded_at')),
+    awaiting: orders.filter(function (o) { return o.status === 'pending_payment'; }).sort(by('created_at')),
+    recent: orders.filter(function (o) { return o.reviewed_at; }).sort(by('reviewed_at', true)).slice(0, 20)
+  };
+}
+
+function reviewOrder_(p, token) {
+  var me = requireUser_(token);
+  if (!me.perms.can_confirm_payments) throw err_('forbidden');
+  var orderId = String(p.orderId || '');
+  var approve = p.approve === true;
+  var note = String(p.note || '').trim().slice(0, 200);
+  return withLock_(function () {
+    var now = Date.now();
+    var t = table_('Bookings');
+    expireStale_(t, now);
+    var rows = t.rows.filter(function (r) {
+      var b = normBooking_(r);
+      var st = effStatus_(b, now);
+      return b.order_id === orderId && (st === 'pending_review' || st === 'pending_payment');
+    });
+    if (!rows.length) throw err_('not_found');
+    var stamp = stamp_();
+    rows.forEach(function (r) {
+      update_(t, r, { status: approve ? 'confirmed' : 'rejected', reviewed_by: me.id, reviewed_at: stamp, review_note: note });
+    });
+    return { orderId: orderId, status: approve ? 'confirmed' : 'rejected' };
+  });
 }
 
 function changePassword_(p, token) {
@@ -363,6 +553,90 @@ function adminUpdateUser_(p, token) {
     update_(t, row, patch);
     return { id: id };
   });
+}
+
+// ───────────────────────────── orders / payment ─────────────────────────────
+
+function priceFor_(hour, s) {
+  return hour >= s.lights_from_hour ? s.price_night : s.price_day;
+}
+
+// สถานะจริง ณ ตอนนี้: รอชำระที่เลยเวลา = expired · ค่า active จากเวอร์ชันเก่า = confirmed
+function effStatus_(b, now) {
+  if (b.status === 'active') return 'confirmed';
+  if (b.status === 'pending_payment' && b.expires_at && b.expires_at <= now) return 'expired';
+  return b.status;
+}
+
+function isHolding_(b, now) {
+  return HOLDING.indexOf(effStatus_(b, now)) >= 0;
+}
+
+// เขียนสถานะ expired ลงชีทให้คนเปิดดูชีทเข้าใจตรงกัน (เรียกในล็อกเท่านั้น)
+function expireStale_(t, now) {
+  t.rows.forEach(function (r) {
+    if (String(r.status) === 'pending_payment' && effStatus_(normBooking_(r), now) === 'expired') {
+      update_(t, r, { status: 'expired' });
+    }
+  });
+}
+
+// รวมช่องที่จองพร้อมกันเป็น 1 คำสั่งจอง (order) — จ่ายเงิน/ส่งสลิป/ยืนยันทีละ order
+function orders_(list, now) {
+  var map = {}, keys = [];
+  list.forEach(function (b) {
+    var k = b.order_id || b.id;
+    if (!map[k]) { map[k] = []; keys.push(k); }
+    map[k].push(b);
+  });
+  return keys.map(function (k) {
+    var items = map[k].slice().sort(function (a, b) {
+      return (a.date + pad_(a.hour) + a.court).localeCompare(b.date + pad_(b.hour) + b.court);
+    });
+    var live = items.filter(function (b) { return b.status !== 'cancelled'; });
+    var head = live[0] || items[0];
+    return {
+      order_id: k, user_id: head.user_id, name: head.name, type: head.type,
+      status: live.length ? effStatus_(head, now) : 'cancelled',
+      amount: live.reduce(function (sum, b) { return sum + b.price; }, 0),
+      expires_at: head.expires_at || null, created_at: head.created_at,
+      slip: !!head.slip_file_id, slip_uploaded_at: head.slip_uploaded_at,
+      reviewed_at: head.reviewed_at, review_note: head.review_note,
+      items: items.map(function (b) {
+        return { id: b.id, date: b.date, hour: b.hour, court: b.court, price: b.price, note: b.note,
+                 status: b.status === 'cancelled' ? 'cancelled' : effStatus_(b, now) };
+      })
+    };
+  });
+}
+
+function slipFolder_() {
+  var props = PropertiesService.getScriptProperties();
+  var id = props.getProperty('SLIP_FOLDER_ID');
+  if (id) {
+    try { return DriveApp.getFolderById(id); } catch (e) { /* ถูกลบไปแล้ว → สร้างใหม่ */ }
+  }
+  var folder = DriveApp.createFolder(CONFIG.SLIP_FOLDER_NAME);
+  props.setProperty('SLIP_FOLDER_ID', folder.getId());
+  return folder;
+}
+
+function settings_() {
+  var raw = {};
+  DEFAULT_SETTINGS.forEach(function (d) { raw[d[0]] = d[1]; });
+  table_('Settings').rows.forEach(function (r) {
+    var k = String(r.key).trim();
+    if (k && String(r.value).trim() !== '') raw[k] = r.value;
+  });
+  return {
+    price_day: num_(raw.price_day),
+    price_night: num_(raw.price_night),
+    lights_from_hour: num_(raw.lights_from_hour),
+    pay_within_minutes: num_(raw.pay_within_minutes) || 30,
+    bank_name: String(raw.bank_name),
+    bank_account_no: String(raw.bank_account_no).replace(/\D/g, ''),
+    bank_account_name: String(raw.bank_account_name)
+  };
 }
 
 // ───────────────────────────── auth ─────────────────────────────
@@ -424,7 +698,8 @@ function roles_() {
       can_book_for_others: bool_(r.can_book_for_others),
       can_block: bool_(r.can_block),
       can_cancel_any: bool_(r.can_cancel_any),
-      can_manage_users: bool_(r.can_manage_users)
+      can_manage_users: bool_(r.can_manage_users),
+      can_confirm_payments: bool_(r.can_confirm_payments)
     };
   });
   var byName = {};
@@ -436,7 +711,8 @@ function permsFor_(role, roles) {
   // role ที่ไม่มีในแท็บ Roles → ใช้สิทธิ์ของ user · ถ้าไม่มี user ด้วย → จองได้แค่วันนี้ 1 ชม.
   return roles.byName[role] || roles.byName.user || {
     role: role, label: role, advance_days: 0, max_hours_per_day: 1, max_active_bookings: 1,
-    cancel_before_hours: 0, can_book_for_others: false, can_block: false, can_cancel_any: false, can_manage_users: false
+    cancel_before_hours: 0, can_book_for_others: false, can_block: false, can_cancel_any: false,
+    can_manage_users: false, can_confirm_payments: false
   };
 }
 
@@ -448,8 +724,9 @@ function ss_() {
   return SpreadsheetApp.openById(id);
 }
 
-function table_(name) {
-  var sh = ss_().getSheetByName(name);
+function table_(name, ss) {
+  var sh = (ss || ss_()).getSheetByName(name);
+  if (!sh) throw new Error('ไม่พบแท็บ ' + name + ' — รัน setup() ใหม่');
   var vals = sh.getDataRange().getValues();
   var headers = vals[0].map(function (h) { return String(h).trim(); });
   var rows = [];
@@ -487,15 +764,19 @@ function withLock_(fn) {
   try { return fn(); } finally { lock.releaseLock(); }
 }
 
-function activeBookings_() {
-  return table_('Bookings').rows.map(normBooking_).filter(function (b) { return b.status === 'active'; });
+function bookings_() {
+  return table_('Bookings').rows.map(normBooking_);
 }
 
 function normBooking_(r) {
+  var exp = r.expires_at instanceof Date ? r.expires_at.getTime() : num_(r.expires_at);
   return {
-    id: String(r.id), date: normDate_(r.date), hour: Number(r.hour), court: String(r.court),
-    user_id: String(r.user_id), name: String(r.name), type: String(r.type || 'booking'),
-    note: String(r.note || ''), status: String(r.status || 'active')
+    id: String(r.id), order_id: String(r.order_id || ''), date: normDate_(r.date), hour: Number(r.hour),
+    court: String(r.court), user_id: String(r.user_id), name: String(r.name), type: String(r.type || 'booking'),
+    price: num_(r.price), status: String(r.status || 'confirmed').trim(), note: String(r.note || ''),
+    expires_at: exp, slip_file_id: String(r.slip_file_id || ''), slip_uploaded_at: String(r.slip_uploaded_at || ''),
+    reviewed_at: String(r.reviewed_at || ''), review_note: String(r.review_note || ''),
+    created_at: String(r.created_at || '')
   };
 }
 

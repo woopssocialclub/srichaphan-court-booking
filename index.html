@@ -238,6 +238,62 @@
   .toast.show { opacity:1; transform:translate(-50%,0); }
   .toast.bad { background:var(--red); }
   .toast.good { background:var(--green); }
+
+  /* ── PRICE / PAYMENT ── */
+  .cell.sel { flex-direction:column; gap:2px; }
+  .cell .pr { font-size:10.5px; font-weight:700; }
+  .cell.pend { border-style:dashed; }
+  .cell.mine.pend { background:#FFF7ED; border-color:#FDBA74; color:#C2410C; }
+  .lg-pend { background:#FFF7ED; border:1px dashed #FDBA74 !important; }
+  .sc-courts .cell.free .pr { color:var(--g500); font-weight:600; }
+  .sc-time small { font-size:12px; color:var(--g600); font-weight:600; margin-left:2px; }
+  .price-line { margin-top:3px; color:var(--g700); }
+  .slot-list li.total { background:#F8FAFC; font-size:15px; }
+  .slot-list .amt { font-weight:700; }
+  .noprice .amt, .noprice .total { display:none !important; }
+  .pay-amount { text-align:center; padding:4px 0 14px; }
+  .pay-amount small { display:block; font-size:13px; color:var(--g600); }
+  .pay-amount b { font-size:34px; font-weight:800; color:var(--navy); letter-spacing:-.5px; }
+  .bank-card { border-radius:16px; padding:14px 16px; margin-bottom:12px; background:linear-gradient(135deg,#FFE768,#FFD400); color:#4A3A00; }
+  .bank-card small { font-size:12px; opacity:.85; }
+  .bk-name { font-weight:700; font-size:14px; }
+  .bk-row { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 0 2px; }
+  .bk-no { font-family:'Inter',monospace; font-size:22px; font-weight:800; letter-spacing:1px; }
+  .bk-holder { font-size:15px; font-weight:600; }
+  .bank-card .btn-light { background:rgba(255,255,255,.75); }
+  .deadline { text-align:center; font-size:13px; font-weight:600; color:#C2410C; background:#FFF7ED; border-radius:10px; padding:8px; margin-bottom:12px; }
+  .deadline.over { color:var(--red); background:var(--red-bg); }
+  .field label.dropzone, .dropzone { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:110px;
+              border:2px dashed var(--g400); border-radius:14px; background:#F8FAFC; color:var(--g600); font-size:14px; font-weight:600;
+              cursor:pointer; padding:12px; text-align:center; }
+  .dropzone input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .dropzone img { max-width:100%; max-height:260px; border-radius:10px; }
+  .slip-full { display:block; width:100%; max-height:62vh; object-fit:contain; background:#F8FAFC; border-radius:12px; border:1px solid var(--line); margin-bottom:12px; }
+  .pill { display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .st-pending_payment { background:#FFF7ED; color:#C2410C; }
+  .st-pending_review { background:var(--blue-bg); color:var(--blue); }
+  .st-confirmed { background:var(--green-bg); color:var(--green); }
+  .st-rejected, .st-expired, .st-cancelled { background:var(--red-bg); color:var(--red); }
+  .st-past { background:#EEF1F5; color:var(--g600); }
+  .ocard { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 14px; }
+  .ohead { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .oamt { font-size:16px; font-weight:800; color:var(--navy); }
+  .oi { display:flex; align-items:center; gap:10px; padding:6px 0; border-top:1px solid #F1F4F8; font-size:14px; }
+  .oi .oc { width:34px; height:28px; border-radius:8px; background:var(--green-bg); color:var(--green); font-weight:800; font-size:12px;
+            display:flex; align-items:center; justify-content:center; flex:0 0 34px; }
+  .oi .ot { flex:1; }
+  .oi .op { font-weight:700; color:var(--g700); }
+  .oi.gone { opacity:.5; text-decoration:line-through; }
+  .mini-x { border:0; background:var(--red-bg); color:var(--red); width:26px; height:26px; border-radius:8px; font-size:12px; flex:0 0 26px; }
+  .oacts { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .oacts .btn { flex:1; }
+  .onote { font-size:12.5px; color:var(--g600); margin-top:6px; }
+  .onote.warn { color:#C2410C; }
+  .owho { font-size:14px; margin-bottom:4px; }
+  .owho a { color:var(--blue); text-decoration:none; }
+  .oitems-s { font-size:13px; color:var(--g700); line-height:1.6; }
+  .tab .badge { position:absolute; top:7px; left:calc(50% + 6px); min-width:18px; height:18px; padding:0 5px; border-radius:9px;
+                background:var(--red); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
 </style>
 </head>
 <body>
@@ -306,8 +362,28 @@ var I18N = {
     st_cancelled:'ยกเลิกแล้ว', st_past:'เล่นแล้ว', for_label:'ชื่อ: {name}',
     users:'ผู้ใช้ทั้งหมด', search:'ค้นหาชื่อ / เบอร์โทร', suspend:'ระงับ', activate:'เปิดใช้', reset_pw:'ตั้งรหัสใหม่',
     reset_pw_prompt:'รหัสผ่านใหม่ของ {name} (อย่างน้อย 6 ตัว)', suspended:'ถูกระงับ', joined:'สมัคร {d}', updated:'อัปเดตแล้ว',
-    demo:'<b>โหมดทดลอง</b> — ข้อมูลเก็บใน browser นี้เท่านั้น · ลองล็อกอิน: แอดมิน <b>0800000001 / admin123</b> · สมาชิก <b>0800000002 / member123</b> · ทั่วไป <b>0800000003 / user123</b>',
+    demo:'<b>โหมดทดลอง</b> — ข้อมูลเก็บใน browser นี้เท่านั้น (ลองจอง → ส่งสลิป → ล็อกอินแอดมินกดยืนยัน) · ลองล็อกอิน: แอดมิน <b>0800000001 / admin123</b> · สมาชิก <b>0800000002 / member123</b> · ทั่วไป <b>0800000003 / user123</b>',
     demo_reset:'รีเซ็ตข้อมูลทดลอง', need_login:'เข้าสู่ระบบเพื่อดูการจองของคุณ',
+    lg_pend:'รอชำระ/รอตรวจ', cell_pay:'รอชำระ', cell_review:'รอตรวจ',
+    price_line:'<b>ค่าคอร์ท</b> ☀️ {d1}–{d2} <b>฿{day}</b>/ชม. · 🌙 {n1}–{n2} เปิดไฟ <b>฿{night}</b>/ชม.',
+    sel_total:'รวม {amt}', total:'ยอดรวม',
+    pay_note:'หลังกดยืนยัน กรุณาโอนเงินและอัปโหลดสลิปภายใน {m} นาที ไม่งั้นการจองจะหลุดอัตโนมัติ · การจองจะสมบูรณ์เมื่อแอดมินยืนยันสลิป',
+    admin_direct_note:'แอดมินจอง = ยืนยันทันที ไม่ต้องอัปโหลดสลิป (เก็บเงินหน้าเคาน์เตอร์)',
+    pay_title:'ชำระเงิน', pay_amount:'ยอดที่ต้องโอน', pay_bank:'โอนเข้าบัญชี', copy:'คัดลอก', copied:'คัดลอกเลขบัญชีแล้ว',
+    pay_deadline:'โอนและอัปโหลดสลิปภายใน {time} น. (เหลือ {left})', pay_expired:'หมดเวลาชำระแล้ว — กรุณาจองใหม่',
+    slip_upload:'อัปโหลดสลิปโอนเงิน', slip_choose:'📎 แตะเพื่อเลือกรูปสลิป', slip_change:'แตะเพื่อเปลี่ยนรูป', slip_send:'ส่งสลิป',
+    slip_sent:'ส่งสลิปแล้ว — รอแอดมินยืนยัน', slip_later:'ชำระทีหลัง', slip_need:'กรุณาเลือกรูปสลิปก่อน', slip_view:'ดูสลิป',
+    slip_reupload:'ส่งสลิปใหม่', slip_review_hint:'ส่งสลิปแล้ว รอแอดมินตรวจสอบ — ถ้าส่งผิดรูป ส่งใหม่ได้ด้านล่าง',
+    st_pending_payment:'รอชำระเงิน', st_pending_review:'รอตรวจสลิป', st_confirmed:'ยืนยันแล้ว', st_rejected:'สลิปไม่ผ่าน', st_expired:'หมดเวลาชำระ',
+    pay_now:'ชำระเงิน / ส่งสลิป', cancel_order:'ยกเลิกการจอง', cancel_order_confirm:'ยกเลิกการจองทั้งหมดในรายการนี้?',
+    reject_reason:'เหตุผล: {r}', refund_note:'ชำระเงินแล้ว — ถ้ายกเลิก ติดต่อแอดมินเรื่องคืนเงิน', pend_cancel_note:'ยังไม่ได้ชำระ ยกเลิกได้ทันที',
+    adm_review:'รอตรวจสลิป', adm_awaiting:'รอชำระ (ยังไม่ส่งสลิป)', adm_recent:'ตรวจล่าสุด', adm_none:'ไม่มีรายการ',
+    approve:'ยืนยันสลิป', approve_cash:'ยืนยัน (รับเงินแล้ว)', reject:'ปฏิเสธ', reject_prompt:'เหตุผลที่ปฏิเสธ (ผู้จองจะเห็นข้อความนี้)',
+    approved_ok:'ยืนยันการจองแล้ว ✅', rejected_ok:'ปฏิเสธสลิปแล้ว — ช่องว่างอีกครั้ง',
+    uploaded_at:'ส่งสลิป {t}', expires_at:'ต้องส่งสลิปก่อน {t} น.', d_price:'ราคา', d_status:'สถานะ', can_confirm:'ยืนยันสลิป',
+    err_payment_expired:'หมดเวลาชำระแล้ว การจองหลุด — กรุณาจองใหม่ (ถ้าโอนเงินไปแล้ว ติดต่อแอดมิน)',
+    err_invalid_slip:'ไฟล์สลิปต้องเป็นรูปภาพ', err_slip_too_large:'รูปใหญ่เกินไป (เกิน 5MB)',
+    err_demo_unavailable:'โหมดทดลองต้องเปิดผ่านเว็บ (เช่น GitHub Pages) — เปิดไฟล์จากเครื่องตรง ๆ ไม่ได้',
     err_auth_required:'กรุณาเข้าสู่ระบบก่อน', err_invalid_login:'เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง',
     err_phone_taken:'เบอร์นี้สมัครไว้แล้ว — ลองเข้าสู่ระบบ', err_invalid_phone:'เบอร์โทรไม่ถูกต้อง (เช่น 0812345678)',
     err_name_required:'กรุณาใส่ชื่อ', err_weak_password:'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
@@ -350,8 +426,28 @@ var I18N = {
     st_cancelled:'Cancelled', st_past:'Played', for_label:'Name: {name}',
     users:'All users', search:'Search name / phone', suspend:'Suspend', activate:'Activate', reset_pw:'Reset password',
     reset_pw_prompt:'New password for {name} (min 6 characters)', suspended:'Suspended', joined:'Joined {d}', updated:'Updated',
-    demo:'<b>Demo mode</b> — data is stored in this browser only · Try: admin <b>0800000001 / admin123</b> · member <b>0800000002 / member123</b> · user <b>0800000003 / user123</b>',
+    demo:'<b>Demo mode</b> — data is stored in this browser only (try book → send slip → approve as admin) · Try: admin <b>0800000001 / admin123</b> · member <b>0800000002 / member123</b> · user <b>0800000003 / user123</b>',
     demo_reset:'Reset demo data', need_login:'Log in to see your bookings',
+    lg_pend:'Awaiting payment', cell_pay:'Unpaid', cell_review:'Checking',
+    price_line:'<b>Court fee</b> ☀️ {d1}–{d2} <b>฿{day}</b>/h · 🌙 {n1}–{n2} lights on <b>฿{night}</b>/h',
+    sel_total:'Total {amt}', total:'Total',
+    pay_note:'After confirming, transfer and upload your slip within {m} minutes or the booking is released · It is final once an admin approves the slip',
+    admin_direct_note:'Admin bookings are confirmed immediately — no slip needed (collect payment at the counter)',
+    pay_title:'Payment', pay_amount:'Amount to transfer', pay_bank:'Transfer to', copy:'Copy', copied:'Account number copied',
+    pay_deadline:'Transfer and upload the slip by {time} ({left} left)', pay_expired:'Payment time is up — please book again',
+    slip_upload:'Upload transfer slip', slip_choose:'📎 Tap to choose the slip image', slip_change:'Tap to change image', slip_send:'Send slip',
+    slip_sent:'Slip sent — waiting for admin approval', slip_later:'Pay later', slip_need:'Please choose a slip image first', slip_view:'View slip',
+    slip_reupload:'Send a new slip', slip_review_hint:'Slip received, waiting for admin — wrong image? send a new one below',
+    st_pending_payment:'Awaiting payment', st_pending_review:'Checking slip', st_confirmed:'Confirmed', st_rejected:'Slip rejected', st_expired:'Payment expired',
+    pay_now:'Pay / send slip', cancel_order:'Cancel booking', cancel_order_confirm:'Cancel every slot in this booking?',
+    reject_reason:'Reason: {r}', refund_note:'Paid — contact an admin about refunds if you cancel', pend_cancel_note:'Not paid yet — you can cancel any time',
+    adm_review:'Slips to check', adm_awaiting:'Awaiting payment (no slip yet)', adm_recent:'Recently reviewed', adm_none:'Nothing here',
+    approve:'Approve slip', approve_cash:'Approve (paid)', reject:'Reject', reject_prompt:'Reason for rejecting (shown to the player)',
+    approved_ok:'Booking confirmed ✅', rejected_ok:'Slip rejected — the slot is free again',
+    uploaded_at:'Slip sent {t}', expires_at:'Slip due by {t}', d_price:'Price', d_status:'Status', can_confirm:'Approve slips',
+    err_payment_expired:'Payment time is up and the booking was released — please book again (contact an admin if you already paid)',
+    err_invalid_slip:'The slip must be an image', err_slip_too_large:'Image too large (over 5MB)',
+    err_demo_unavailable:'Demo mode must be opened from the website (e.g. GitHub Pages), not as a local file',
     err_auth_required:'Please log in first', err_invalid_login:'Wrong phone number or password',
     err_phone_taken:'This phone number is already registered — try logging in', err_invalid_phone:'Invalid phone number (e.g. 0812345678)',
     err_name_required:'Please enter your name', err_weak_password:'Password must be at least 6 characters',
@@ -410,7 +506,8 @@ var state = {
   cfg: null, user: null, clock: null,
   date: null, schedule: null,
   selected: {},             // key "date|hour|court" → {date, hour, court}
-  mine: null, adminData: null, userQuery: ''
+  mine: null, adminData: null, adminOrders: null, userQuery: '',
+  slip: null                // รูปสลิป (data URL) ที่เลือกไว้ รอส่ง
 };
 
 function perms() { return state.user ? state.user.perms : state.cfg.guestPerms; }
@@ -427,7 +524,7 @@ function isPast(date, hour) {
 
 /* ───────────── API ───────────── */
 function api(action, payload) {
-  if (!API_URL) return DemoApi.call(action, payload || {}, state.token);
+  if (!API_URL) return Demo.call(action, payload || {}, state.token);
   return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, payload: payload || {}, token: state.token }) })
     .then(function (r) { return r.json(); }, function () { throw { code: 'network' }; })
     .then(function (res) {
@@ -456,6 +553,7 @@ function setSession(token, user) {
   state.selected = {};
   state.mine = null;
   state.adminData = null;
+  state.adminOrders = null;
   if (!user && (state.tab === 'admin' || state.tab === 'mine')) state.tab = 'book';
   // สิทธิ์เปลี่ยน → ถ้าวันที่เลือกอยู่ไกลเกินสิทธิ์ใหม่ ให้กลับมาวันนี้
   if (state.cfg && state.clock && daysBetween(state.clock.today, state.date) > perms().advance_days) {
@@ -508,6 +606,14 @@ function boot() {
   });
 }
 
+function refreshCfg() {
+  return api('bootstrap').then(function (cfg) {
+    state.cfg = cfg;
+    state.user = cfg.user;
+    renderChrome();
+  }).catch(function () {});
+}
+
 function loadSchedule(silent) {
   var date = state.date;
   var board = $('board');
@@ -545,10 +651,12 @@ function renderChrome() {
   if (!API_URL) banner.innerHTML = t('demo') + ' · <button data-act="demo-reset">' + esc(t('demo_reset')) + '</button>';
 
   var tabs = [['book', 't_book'], ['mine', 't_mine']];
-  if (state.user && state.user.perms.can_manage_users) tabs.push(['admin', 't_admin']);
+  if (isAdminTab()) tabs.push(['admin', 't_admin']);
   tabs.push(['account', 't_account']);
+  var badge = state.cfg && state.cfg.pendingReview > 0 ? '<span class="badge">' + state.cfg.pendingReview + '</span>' : '';
   $('tabbar').innerHTML = tabs.map(function (x) {
-    return '<button class="tab' + (state.tab === x[0] ? ' on' : '') + '" data-tab="' + x[0] + '">' + ICON[x[1]] + '<span>' + esc(t('tab_' + x[0])) + '</span></button>';
+    return '<button class="tab' + (state.tab === x[0] ? ' on' : '') + '" data-tab="' + x[0] + '">' + ICON[x[1]] +
+      '<span>' + esc(t('tab_' + x[0])) + '</span>' + (x[0] === 'admin' ? badge : '') + '</button>';
   }).join('');
   renderSelbar();
 }
@@ -559,7 +667,8 @@ function renderSelbar() {
   $('selbar').hidden = !show;
   document.body.classList.toggle('has-sel', show);
   if (!show) return;
-  $('selText').innerHTML = esc(t('sel_n', { n: keys.length })) + '<small>' + esc(t('sel_tap')) + '</small>';
+  var total = keys.reduce(function (sum, k) { return sum + priceOf(state.selected[k].hour); }, 0);
+  $('selText').innerHTML = esc(t('sel_n', { n: keys.length })) + ' · <b>' + esc(t('sel_total', { amt: money(total) })) + '</b><small>' + esc(t('sel_tap')) + '</small>';
   $('selClear').textContent = t('clear');
   $('selBook').textContent = t('book_now');
 }
@@ -621,15 +730,34 @@ function renderBook() {
       '<span><i class="lg-free"></i>' + esc(t('lg_free')) + '</span>' +
       '<span><i class="lg-sel"></i>' + esc(t('lg_sel')) + '</span>' +
       '<span><i class="lg-mine"></i>' + esc(t('lg_mine')) + '</span>' +
+      '<span><i class="lg-pend"></i>' + esc(t('lg_pend')) + '</span>' +
       '<span><i class="lg-block"></i>' + esc(t('lg_block')) + '</span>' +
       '<span><i class="lg-taken"></i>' + esc(t('lg_taken')) + '</span>' +
     '</div>' +
-    '<div class="perm-hint">' + hint + '</div>' +
+    '<div class="perm-hint">' + hint + '<div class="price-line">' + priceLine() + '</div></div>' +
     '<div id="board">' + (state.schedule && state.schedule.date === state.date ? (state.view === 'grid' ? gridHtml() : cardsHtml()) : '<div class="empty">…</div>') + '</div>';
 
   var on = $('dates').querySelector('.on');
   if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
   renderSelbar();
+}
+
+function money(n) { return '฿' + Number(n || 0).toLocaleString('en-US'); }
+function priceOf(h) { var p = state.cfg.pricing; return h >= p.lightsFromHour ? p.night : p.day; }
+function priceLine() {
+  var p = state.cfg.pricing;
+  return t('price_line', {
+    d1: hhmm(state.cfg.openHour), d2: hhmm(p.lightsFromHour), day: esc(p.day),
+    n1: hhmm(p.lightsFromHour), n2: hhmm(state.cfg.closeHour), night: esc(p.night)
+  });
+}
+function fmtAccount(no) { return /^\d{10}$/.test(no) ? no.replace(/^(\d{3})(\d)(\d{5})(\d)$/, '$1-$2-$3-$4') : no; }
+function isReviewer() { return !!(state.user && state.user.perms.can_confirm_payments); }
+function isAdminTab() { return !!(state.user && (state.user.perms.can_manage_users || state.user.perms.can_confirm_payments)); }
+function statusPill(st) { return '<span class="pill st-' + esc(st) + '">' + esc(t('st_' + st)) + '</span>'; }
+function errBox(msg) { return '<div class="err">' + esc(msg) + '</div>'; }
+function bkkTime(ms) {
+  return new Date(+ms).toLocaleTimeString(state.lang === 'th' ? 'th-TH' : 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
 }
 
 function bookingMap() {
@@ -641,14 +769,16 @@ function bookingMap() {
 function cellInfo(map, hour, court) {
   var b = map[hour + '|' + court];
   var key = state.date + '|' + hour + '|' + court;
+  var nm = function (txt) { return '<span class="nm">' + esc(txt) + '</span>'; };
   if (b) {
-    if (b.mine && b.type !== 'block') return { cls: 'mine', html: '<span class="nm">' + esc(t('you')) + '</span>', b: b };
-    if (b.type === 'block') return { cls: 'block', html: '<span class="nm">' + esc(b.note || t('closed')) + '</span>', b: b };
-    if (b.name) return { cls: 'taken named', html: '<span class="nm">' + esc(b.name) + '</span>', b: b };
+    var pend = b.pending ? ' pend' : '';
+    if (b.type === 'block') return { cls: 'block', html: nm(b.note || t('closed')), b: b };
+    if (b.mine) return { cls: 'mine' + pend, html: nm(b.pending ? t(b.status === 'pending_review' ? 'cell_review' : 'cell_pay') : t('you')), b: b };
+    if (b.name) return { cls: 'taken named' + pend, html: nm(b.name), b: b };
     return { cls: 'taken', html: ICON.lock, b: b };
   }
   if (isPast(state.date, hour)) return { cls: 'past', html: '' };
-  if (state.selected[key]) return { cls: 'sel', html: ICON.check };
+  if (state.selected[key]) return { cls: 'sel', html: ICON.check + '<span class="pr">' + money(priceOf(hour)) + '</span>' };
   return { cls: 'free', html: '' };
 }
 
@@ -683,10 +813,12 @@ function cardsHtml() {
     var chips = courts.map(function (c) {
       var ci = cellInfo(map, h, c);
       if (ci.cls === 'free' || ci.cls === 'sel') free++;
-      var sub = ci.cls === 'free' ? '' : ci.cls === 'taken' ? ICON.lock : ci.html;
+      var sub = ci.cls === 'free' ? '<span class="pr">' + money(priceOf(h)) + '</span>'
+        : ci.cls === 'sel' ? ICON.check : ci.cls === 'taken' ? ICON.lock : ci.html;
       return '<button class="cell ' + ci.cls + '" data-hour="' + h + '" data-court="' + esc(c) + '"><span class="cn">' + esc(c) + '</span>' + sub + '</button>';
     }).join('');
-    return '<div class="slot-card' + (free ? '' : ' full') + '"><div class="sc-head"><div class="sc-time">' + dayIcon(h) + hhmm(h) + ' – ' + hhmm(h + 1) + '</div>' +
+    return '<div class="slot-card' + (free ? '' : ' full') + '"><div class="sc-head"><div class="sc-time">' + dayIcon(h) + hhmm(h) + ' – ' + hhmm(h + 1) +
+      '<small>· ' + money(priceOf(h)) + '</small></div>' +
       '<span class="sc-count' + (free ? '' : ' zero') + '">' + esc(free ? t('free_n', { n: free, t: courts.length }) : t('full')) + '</span></div>' +
       '<div class="sc-courts">' + chips + '</div></div>';
   }).join('') + '</div>';
@@ -727,12 +859,17 @@ function sortedSelection() {
   });
 }
 
+function slotLine(date, hour, court, price) {
+  return '<li><span>' + esc(shortDate(date)) + ' · ' + hhmm(hour) + '–' + hhmm(hour + 1) + ' · <b>' + esc(court) + '</b></span>' +
+    (price == null ? '' : '<span class="amt">' + money(price) + '</span>') + '</li>';
+}
+
 function openConfirm() {
   var p = perms();
   var slots = sortedSelection();
-  var list = slots.map(function (s) {
-    return '<li><span>' + esc(shortDate(s.date)) + ' · ' + hhmm(s.hour) + '–' + hhmm(s.hour + 1) + '</span><b>' + esc(s.court) + '</b></li>';
-  }).join('');
+  var total = 0;
+  var list = slots.map(function (s) { var pr = priceOf(s.hour); total += pr; return slotLine(s.date, s.hour, s.court, pr); }).join('') +
+    '<li class="total"><span>' + esc(t('total')) + '</span><span class="amt">' + money(total) + '</span></li>';
   var extra = '';
   if (p.can_block) {
     extra += '<div class="seg auth-tabs" id="typeSeg"><button class="on" data-type="booking">' + esc(t('type_booking')) + '</button><button data-type="block">' + esc(t('type_block')) + '</button></div>';
@@ -743,7 +880,9 @@ function openConfirm() {
   if (p.can_block || p.can_book_for_others) {
     extra += '<div class="field"><label id="noteLabel">' + esc(t('note')) + '</label><input id="fNote" maxlength="120"></div>';
   }
-  openModal(sheetHead(t('confirm_title')) + '<ul class="slot-list">' + list + '</ul>' + extra +
+  var note = p.can_confirm_payments ? t('admin_direct_note') : t('pay_note', { m: state.cfg.payment.payWithinMinutes });
+  openModal(sheetHead(t('confirm_title')) + '<ul class="slot-list" id="priceList">' + list + '</ul>' + extra +
+    '<p class="muted" id="payNote" style="margin-bottom:12px">' + esc(note) + '</p>' +
     '<div id="formErr"></div><div class="row-btns"><button class="btn btn-light" data-act="close">' + esc(t('cancel')) + '</button>' +
     '<button class="btn btn-primary" id="btnConfirm" data-act="confirm-book">' + esc(t('confirm')) + ' (' + slots.length + ')</button></div>');
 }
@@ -752,6 +891,8 @@ function setBookType(type) {
   document.querySelectorAll('#typeSeg button').forEach(function (b) { b.classList.toggle('on', b.dataset.type === type); });
   document.querySelector('#sheet .sheet-head h3').textContent = type === 'block' ? t('type_block') : t('confirm_title');
   var ff = $('forField'); if (ff) ff.hidden = type === 'block';
+  $('priceList').classList.toggle('noprice', type === 'block');
+  $('payNote').hidden = type === 'block';
   $('noteLabel').textContent = type === 'block' ? t('reason') : t('note');
   $('fNote').placeholder = type === 'block' ? t('reason_ph') : '';
 }
@@ -761,29 +902,180 @@ function submitBooking() {
   var type = seg ? seg.dataset.type : 'booking';
   var note = $('fNote') ? $('fNote').value.trim() : '';
   var forName = $('fForName') && type === 'booking' ? $('fForName').value.trim() : '';
-  if (type === 'block' && !note) { $('formErr').innerHTML = '<div class="err">' + esc(t('reason_required')) + '</div>'; return; }
+  if (type === 'block' && !note) { $('formErr').innerHTML = errBox(t('reason_required')); return; }
   var slots = sortedSelection().map(function (s) { return { date: s.date, hour: s.hour, court: s.court }; });
   var btn = $('btnConfirm'); btn.disabled = true;
   api('book', { slots: slots, type: type, note: note, forName: forName }).then(function (res) {
-    closeModal();
+    var o = res.order;
     state.selected = {};
     state.mine = null;
-    toast(t(type === 'block' ? 'blocked_ok' : 'booked_ok', { n: res.bookings.length }), 'good');
-    loadSchedule();
+    if (o.status === 'pending_payment') openPayment(o);
+    else { closeModal(); toast(t(type === 'block' ? 'blocked_ok' : 'booked_ok', { n: o.items.length }), 'good'); }
+    loadSchedule(true);
   }).catch(function (e) {
     btn.disabled = false;
-    $('formErr').innerHTML = '<div class="err">' + esc(errText(e)) + '</div>';
+    $('formErr').innerHTML = errBox(errText(e));
     if (e && e.code === 'slot_taken') loadSchedule(true);
   });
 }
 
+/* ───────────── PAYMENT ───────────── */
+var payTimer;
+function openPayment(o) {
+  var pay = state.cfg.payment;
+  state.slip = null;
+  var items = o.items.filter(function (i) { return i.status !== 'cancelled'; });
+  var html = sheetHead(t('pay_title')) +
+    '<div class="pay-amount"><small>' + esc(t('pay_amount')) + '</small><b>' + money(o.amount) + '</b></div>' +
+    '<ul class="slot-list">' + items.map(function (i) { return slotLine(i.date, i.hour, i.court, i.price); }).join('') + '</ul>' +
+    '<div class="bank-card"><small>' + esc(t('pay_bank')) + '</small><div class="bk-name">' + esc(pay.bankName) + '</div>' +
+      '<div class="bk-row"><span class="bk-no">' + esc(fmtAccount(pay.accountNo)) + '</span>' +
+      '<button class="btn btn-sm btn-light" data-act="copy-acc">' + esc(t('copy')) + '</button></div>' +
+      '<div class="bk-holder">' + esc(pay.accountName) + '</div></div>' +
+    (o.status === 'pending_payment' && o.expires_at ? '<div class="deadline" id="payDeadline" data-exp="' + o.expires_at + '"></div>' : '') +
+    (o.status === 'pending_review' ? '<p class="muted" style="margin-bottom:12px">' + esc(t('slip_review_hint')) + '</p>' : '') +
+    '<div class="field"><label>' + esc(t('slip_upload')) + '</label>' +
+      '<label class="dropzone"><input type="file" accept="image/*" id="slipFile"><span id="slipHint">' + esc(t('slip_choose')) + '</span>' +
+      '<img id="slipPrev" alt="" hidden></label></div>' +
+    '<div id="formErr"></div><div class="row-btns"><button class="btn btn-light" data-act="close">' + esc(t('slip_later')) + '</button>' +
+    '<button class="btn btn-primary" id="btnSlip" data-act="send-slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_send')) + '</button></div>';
+  openModal(html);
+  tickDeadline();
+}
+
+function tickDeadline() {
+  clearInterval(payTimer);
+  var update = function () {
+    var el = $('payDeadline');
+    if (!el || !modalOpen()) { clearInterval(payTimer); return; }
+    var left = +el.dataset.exp - Date.now();
+    if (left <= 0) {
+      el.textContent = t('pay_expired'); el.classList.add('over');
+      var b = $('btnSlip'); if (b) b.disabled = true;
+      clearInterval(payTimer); return;
+    }
+    el.textContent = t('pay_deadline', { time: bkkTime(el.dataset.exp), left: Math.floor(left / 60000) + ':' + pad(Math.floor(left % 60000 / 1000)) });
+  };
+  update();
+  payTimer = setInterval(update, 1000);
+}
+
+function openOrderPayment(orderId) {
+  api('myBookings').then(function (res) {
+    state.mine = res;
+    var o = res.upcoming.filter(function (x) { return x.order_id === orderId; })[0];
+    if (o && (o.status === 'pending_payment' || o.status === 'pending_review')) openPayment(o);
+    else { closeModal(); toast(errText({ code: 'not_found' }), 'bad'); if (state.tab === 'mine') renderMine(); }
+  }).catch(handleErr);
+}
+
+// ย่อรูปสลิปก่อนส่ง (ยาวสุด 1600px, JPEG) — ไฟล์เล็ก ส่งเร็ว อ่านตัวเลขยังชัด
+function compressImage(file) {
+  return new Promise(function (resolve, reject) {
+    if (file.type && !/^image\//.test(file.type)) return reject();
+    var reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = function () {
+      var img = new Image();
+      img.onerror = reject;
+      img.onload = function () {
+        var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        resolve(c.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function readSlip(file) {
+  compressImage(file).then(function (dataUrl) {
+    state.slip = dataUrl;
+    $('slipPrev').src = dataUrl; $('slipPrev').hidden = false;
+    $('slipHint').textContent = t('slip_change');
+    $('formErr').innerHTML = '';
+  }).catch(function () {
+    state.slip = null;
+    $('formErr').innerHTML = errBox(t('err_invalid_slip'));
+  });
+}
+
+function sendSlip(orderId, btn) {
+  if (!state.slip) { $('formErr').innerHTML = errBox(t('slip_need')); return; }
+  btn.disabled = true;
+  api('uploadSlip', { orderId: orderId, image: state.slip }).then(function () {
+    state.slip = null;
+    closeModal();
+    toast(t('slip_sent'), 'good');
+    afterOrderChange();
+  }).catch(function (e) {
+    btn.disabled = false;
+    $('formErr').innerHTML = errBox(errText(e));
+  });
+}
+
+function copyAccount() {
+  var no = state.cfg.payment.accountNo;
+  var done = function () { toast(t('copied') + ' · ' + fmtAccount(no), 'good'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(no).then(done, function () { prompt('', no); });
+  else prompt('', no);
+}
+
+function openSlip(orderId) {
+  openModal(sheetHead(t('slip_view')) + '<div class="empty">…</div>');
+  var o = findAdminOrder(orderId);
+  api('slip', { orderId: orderId }).then(function (res) {
+    var html = sheetHead(t('slip_view'));
+    if (o) {
+      html += '<div class="ohead">' + statusPill(o.status) + '<b class="oamt">' + money(o.amount) + '</b></div>' +
+        '<div class="owho"><b>' + esc(o.name) + '</b>' + (o.phone ? ' · ' + esc(o.phone) : '') + '</div>';
+    }
+    html += '<img class="slip-full" src="' + esc(res.image) + '" alt="slip">';
+    if (o && isReviewer() && (o.status === 'pending_review' || o.status === 'pending_payment')) {
+      html += '<div class="row-btns"><button class="btn btn-danger" data-act="reject" data-order="' + esc(orderId) + '">' + esc(t('reject')) + '</button>' +
+        '<button class="btn btn-primary" data-act="approve" data-order="' + esc(orderId) + '">' + esc(t('approve')) + '</button></div>';
+    }
+    if (modalOpen()) openModal(html);
+  }).catch(function (e) { closeModal(); handleErr(e); });
+}
+
+function reviewOrder(orderId, approve, btn) {
+  var note = '';
+  if (!approve) {
+    note = prompt(t('reject_prompt'));
+    if (note === null) return;
+  }
+  if (btn) btn.disabled = true;
+  api('reviewOrder', { orderId: orderId, approve: approve, note: note }).then(function () {
+    closeModal();
+    toast(t(approve ? 'approved_ok' : 'rejected_ok'), 'good');
+    afterOrderChange();
+  }).catch(function (e) { if (btn) btn.disabled = false; handleErr(e); });
+}
+
+function afterOrderChange() {
+  state.mine = null;
+  state.adminOrders = null;
+  if (state.tab === 'mine') renderMine();
+  if (state.tab === 'admin') renderAdmin();
+  if (isReviewer()) refreshCfg();
+  loadSchedule(true);
+}
+
+/* ───────────── DETAIL / CANCEL ───────────── */
+// b: { date, hour, mine, status } — ยังไม่จ่ายเงิน ยกเลิกได้จนถึงเวลาเล่น · จ่ายแล้วต้องยกเลิกก่อนตามสิทธิ์
 function canCancel(b) {
   var p = perms();
   if (!state.user) return false;
   if (p.can_cancel_any) return true;
   if (!b.mine) return false;
   var left = (slotStart(b.date, b.hour) - Date.now()) / 36e5;
-  return left > 0 && left >= p.cancel_before_hours;
+  return left > 0 && (b.status === 'pending_payment' || left >= p.cancel_before_hours);
 }
 
 function showBookingDetail(b) {
@@ -794,26 +1086,34 @@ function showBookingDetail(b) {
     [t('d_time'), hhmm(b.hour) + ' – ' + hhmm(b.hour + 1)]
   ];
   if (b.name) rows.push([t('d_name'), b.name]);
+  if (b.type !== 'block' && b.price != null) rows.push([t('d_price'), money(b.price)]);
   if (b.note) rows.push([t('d_note'), b.note]);
   var html = sheetHead(b.type === 'block' ? t('type_block') : t('detail_title')) + '<div class="panel" style="margin-bottom:12px">' +
+    (b.status && b.type !== 'block' ? '<div class="kv"><span>' + esc(t('d_status')) + '</span>' + statusPill(b.status) + '</div>' : '') +
     rows.map(function (r) { return '<div class="kv"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>'; }).join('') + '</div>';
-  if (canCancel(b)) {
-    html += '<button class="btn btn-danger btn-block" data-act="cancel-booking" data-id="' + esc(b.id) + '">' + esc(b.type === 'block' ? t('reopen') : t('cancel_booking')) + '</button>';
-  } else if (b.mine) {
-    html += '<p class="muted">' + esc(t('cancel_rule', { h: p.cancel_before_hours })) + '</p>';
+  var acts = '';
+  if (b.mine && (b.status === 'pending_payment' || b.status === 'pending_review')) {
+    acts += '<button class="btn btn-primary btn-block" data-act="pay" data-order="' + esc(b.order_id) + '">' + esc(b.status === 'pending_review' ? t('slip_reupload') : t('pay_now')) + '</button>';
   }
-  openModal(html);
+  if (b.status === 'pending_review' && (b.mine || isReviewer())) {
+    acts += '<button class="btn btn-light btn-block" data-act="slip" data-order="' + esc(b.order_id) + '">' + esc(t('slip_view')) + '</button>';
+  }
+  if (canCancel(b)) {
+    acts += '<button class="btn btn-danger btn-block" data-act="cancel-booking" data-id="' + esc(b.id) + '">' + esc(b.type === 'block' ? t('reopen') : t('cancel_booking')) + '</button>';
+    if (!p.can_cancel_any && b.status !== 'pending_payment') acts += '<p class="muted">' + esc(t('refund_note')) + '</p>';
+  } else if (b.mine) {
+    acts += '<p class="muted">' + esc(t('cancel_rule', { h: p.cancel_before_hours })) + '</p>';
+  }
+  openModal(html + '<div style="display:grid;gap:8px">' + acts + '</div>');
 }
 
-function cancelBooking(id, btn) {
-  if (!confirm(t('cancel_confirm'))) return;
+function cancelBooking(id, btn, orderId) {
+  if (!confirm(t(orderId ? 'cancel_order_confirm' : 'cancel_confirm'))) return;
   if (btn) btn.disabled = true;
-  api('cancel', { id: id }).then(function () {
+  api('cancel', orderId ? { orderId: orderId } : { id: id }).then(function () {
     closeModal();
     toast(t('cancelled_ok'), 'good');
-    state.mine = null;
-    if (state.tab === 'mine') renderMine();
-    loadSchedule(true);
+    afterOrderChange();
   }).catch(function (e) { if (btn) btn.disabled = false; handleErr(e); });
 }
 
@@ -821,6 +1121,36 @@ function cancelBooking(id, btn) {
 function loginCta(msg) {
   return '<div class="empty">' + esc(msg) + '<br><br><button class="btn btn-primary" data-act="open-login">' + esc(t('login')) + '</button> ' +
     '<button class="btn btn-light" data-act="open-register">' + esc(t('register')) + '</button></div>';
+}
+
+function orderCard(o, isUp) {
+  var block = o.type === 'block';
+  var pillSt = !isUp && o.status === 'confirmed' ? 'past' : o.status;
+  var items = o.items.map(function (i) {
+    var gone = i.status === 'cancelled';
+    var x = isUp && !gone && o.status !== 'pending_payment' && canCancel({ date: i.date, hour: i.hour, mine: true, status: o.status })
+      ? '<button class="mini-x" data-act="cancel-booking" data-id="' + esc(i.id) + '" aria-label="' + esc(t('cancel')) + '">✕</button>' : '';
+    return '<div class="oi' + (gone ? ' gone' : '') + '"><span class="oc">' + esc(i.court) + '</span><span class="ot">' +
+      esc(fmtDate(i.date, { weekday: 'short', day: 'numeric', month: 'short' })) + ' · ' + hhmm(i.hour) + '–' + hhmm(i.hour + 1) +
+      '</span><span class="op">' + (block ? '' : money(i.price)) + '</span>' + x + '</div>';
+  }).join('');
+  var notes = '';
+  if (block && o.items[0].note) notes += '<p class="onote">' + esc(o.items[0].note) + '</p>';
+  if (o.status === 'rejected' && o.review_note) notes += '<p class="onote warn">' + esc(t('reject_reason', { r: o.review_note })) + '</p>';
+  if (isUp && o.status === 'pending_payment' && o.expires_at) notes += '<p class="onote warn">' + esc(t('expires_at', { t: bkkTime(o.expires_at) })) + '</p>';
+  var acts = '';
+  if (isUp && o.status === 'pending_payment') {
+    acts = '<button class="btn btn-primary btn-sm" data-act="pay" data-order="' + esc(o.order_id) + '">' + esc(t('pay_now')) + '</button>' +
+      '<button class="btn btn-danger btn-sm" data-act="cancel-order" data-order="' + esc(o.order_id) + '">' + esc(t('cancel_order')) + '</button>';
+  } else if (isUp && o.status === 'pending_review') {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>' +
+      '<button class="btn btn-light btn-sm" data-act="pay" data-order="' + esc(o.order_id) + '">' + esc(t('slip_reupload')) + '</button>';
+  } else if (o.slip) {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>';
+  }
+  return '<div class="ocard"><div class="ohead">' + (block ? '<span class="pill" style="background:var(--amber-bg);color:var(--amber)">' + esc(t('type_block')) + '</span>' : statusPill(pillSt)) +
+    (block ? '' : '<b class="oamt">' + money(o.amount) + '</b>') + '</div>' + items + notes +
+    (acts ? '<div class="oacts">' + acts + '</div>' : '') + '</div>';
 }
 
 function renderMine() {
@@ -831,25 +1161,13 @@ function renderMine() {
     api('myBookings').then(function (res) { state.mine = res; if (state.tab === 'mine') renderMine(); }).catch(handleErr);
     return;
   }
-  var item = function (b, isUp) {
-    var cls = b.status === 'cancelled' ? 'cancelled' : !isUp ? 'past' : b.type === 'block' ? 'block' : '';
-    var tag = b.status === 'cancelled' ? '<span class="tag red">' + esc(t('st_cancelled')) + '</span>'
-      : !isUp ? '<span class="tag">' + esc(t('st_past')) + '</span>'
-      : b.type === 'block' ? '<span class="tag amber">' + esc(t('type_block')) + '</span>' : '';
-    var sub = b.type === 'block' ? b.note : t('for_label', { name: b.name });
-    var btn = isUp && canCancel(Object.assign({ mine: true }, b))
-      ? '<button class="btn btn-danger btn-sm" data-act="cancel-booking" data-id="' + esc(b.id) + '">' + esc(t('cancel')) + '</button>' : '';
-    return '<div class="bitem ' + cls + '"><div class="court">' + esc(b.court) + '</div><div class="info"><b>' +
-      esc(fmtDate(b.date, { weekday: 'short', day: 'numeric', month: 'short' })) + ' · ' + hhmm(b.hour) + '–' + hhmm(b.hour + 1) + tag +
-      '</b><small>' + esc(sub) + '</small></div>' + btn + '</div>';
-  };
   var up = state.mine.upcoming;
   var html = '<h1 class="view-title">' + esc(t('tab_mine')) + '</h1><div class="section-label">' + esc(t('upcoming')) + '</div>';
-  html += up.length ? '<div class="blist">' + up.map(function (b) { return item(b, true); }).join('') + '</div>'
+  html += up.length ? '<div class="blist">' + up.map(function (o) { return orderCard(o, true); }).join('') + '</div>'
     : '<div class="empty">' + esc(t('no_upcoming')) + '<br><br><button class="btn btn-primary" data-tab="book">' + esc(t('go_book')) + '</button></div>';
   if (state.mine.history.length) {
     html += '<div class="section-label">' + esc(t('history')) + '</div><div class="blist">' +
-      state.mine.history.map(function (b) { return item(b, false); }).join('') + '</div>';
+      state.mine.history.map(function (o) { return orderCard(o, false); }).join('') + '</div>';
   }
   main.innerHTML = html;
 }
@@ -873,12 +1191,12 @@ function rolesTable() {
     return '<tr' + mineCls + '><td><span class="role-pill ' + esc(r.role) + '">' + esc(roleLabel(r.role)) + '</span></td>' +
       '<td class="c">' + esc(r.advance_days) + '</td><td class="c">' + lim(r.max_hours_per_day, 'hours_v') + '</td>' +
       '<td class="c">' + lim(r.max_active_bookings, 'items_v') + '</td><td class="c">' + (r.cancel_before_hours > 0 ? esc(t('hours_v', { n: r.cancel_before_hours })) : '—') + '</td>' +
-      '<td class="c">' + yn(r.can_book_for_others) + '</td><td class="c">' + yn(r.can_block) + '</td><td class="c">' + yn(r.can_cancel_any) + '</td><td class="c">' + yn(r.can_manage_users) + '</td></tr>';
+      '<td class="c">' + yn(r.can_book_for_others) + '</td><td class="c">' + yn(r.can_block) + '</td><td class="c">' + yn(r.can_cancel_any) + '</td><td class="c">' + yn(r.can_manage_users) + '</td><td class="c">' + yn(r.can_confirm_payments) + '</td></tr>';
   }).join('');
   return '<div class="panel"><h3>' + esc(t('roles_title')) + '</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>' + esc(t('role')) +
     '</th><th class="c">' + esc(t('advance')) + '</th><th class="c">' + esc(t('max_day')) + '</th><th class="c">' + esc(t('max_active')) +
     '</th><th class="c">' + esc(t('cancel_before')) + '</th><th class="c">' + esc(t('can_others')) + '</th><th class="c">' + esc(t('can_block')) +
-    '</th><th class="c">' + esc(t('can_cancel_any')) + '</th><th class="c">' + esc(t('can_users')) + '</th></tr></thead><tbody>' + rows +
+    '</th><th class="c">' + esc(t('can_cancel_any')) + '</th><th class="c">' + esc(t('can_users')) + '</th><th class="c">' + esc(t('can_confirm')) + '</th></tr></thead><tbody>' + rows +
     '</tbody></table></div>' + (state.user && state.user.perms.can_manage_users ? '<p class="muted" style="margin-top:10px">' + esc(t('roles_hint')) + '</p>' : '') + '</div>';
 }
 
@@ -889,7 +1207,7 @@ function renderAccount() {
     return;
   }
   var u = state.user, p = u.perms;
-  var abilities = [['can_book_for_others', 'can_others'], ['can_block', 'can_block'], ['can_cancel_any', 'can_cancel_any'], ['can_manage_users', 'can_users']]
+  var abilities = [['can_book_for_others', 'can_others'], ['can_block', 'can_block'], ['can_cancel_any', 'can_cancel_any'], ['can_manage_users', 'can_users'], ['can_confirm_payments', 'can_confirm']]
     .filter(function (x) { return p[x[0]]; }).map(function (x) { return '<span class="tag" style="margin:0 6px 6px 0">✓ ' + esc(t(x[1])) + '</span>'; }).join('');
   main.innerHTML = '<h1 class="view-title">' + esc(t('tab_account')) + '</h1>' +
     '<div class="panel"><div class="profile"><div class="avatar in">' + esc((u.nickname || u.name).charAt(0).toUpperCase()) + '</div><div>' +
@@ -936,6 +1254,7 @@ function submitAuth(form) {
     renderChrome();
     renderView();
     loadSchedule(true);
+    refreshCfg();
   }).catch(function (e) {
     btn.disabled = false;
     var box = form.querySelector('#authErr');
@@ -944,19 +1263,70 @@ function submitAuth(form) {
 }
 
 /* ───────────── ADMIN ───────────── */
+function findAdminOrder(orderId) {
+  var ao = state.adminOrders;
+  if (!ao) return null;
+  return ao.review.concat(ao.awaiting, ao.recent).filter(function (o) { return o.order_id === orderId; })[0] || null;
+}
+
 function renderAdmin() {
   var main = $('main');
-  if (!state.user || !state.user.perms.can_manage_users) { switchTab('book'); return; }
-  if (!state.adminData) {
-    main.innerHTML = '<h1 class="view-title">' + esc(t('tab_admin')) + '</h1><div class="empty">…</div>';
-    api('adminUsers').then(function (res) { state.adminData = res; if (state.tab === 'admin') renderAdmin(); }).catch(handleErr);
+  if (!isAdminTab()) { switchTab('book'); return; }
+  var p = state.user.perms;
+  var title = '<h1 class="view-title">' + esc(t('tab_admin')) + '</h1>';
+  var need = [];
+  if (p.can_confirm_payments && !state.adminOrders) {
+    need.push(api('adminOrders').then(function (r) { state.adminOrders = r; state.cfg.pendingReview = r.review.length; }));
+  }
+  if (p.can_manage_users && !state.adminData) need.push(api('adminUsers').then(function (r) { state.adminData = r; }));
+  if (need.length) {
+    main.innerHTML = title + '<div class="empty">…</div>';
+    Promise.all(need).then(function () { renderChrome(); if (state.tab === 'admin') renderAdmin(); }).catch(handleErr);
     return;
   }
-  main.innerHTML = '<h1 class="view-title">' + esc(t('tab_admin')) + '</h1>' +
-    '<div class="section-label">' + esc(t('users')) + ' (' + state.adminData.users.length + ')</div>' +
-    '<input class="search" id="userSearch" placeholder="' + esc(t('search')) + '" value="' + esc(state.userQuery) + '">' +
-    '<div class="blist" id="userList">' + userListHtml() + '</div>' +
-    '<div style="height:14px"></div>' + rolesTable();
+  var html = title;
+  if (p.can_confirm_payments) {
+    var ao = state.adminOrders;
+    var block = function (label, list, kind) {
+      return '<div class="section-label">' + esc(label) + ' (' + list.length + ')</div>' +
+        (list.length ? '<div class="blist">' + list.map(function (o) { return adminOrderCard(o, kind); }).join('') + '</div>'
+          : '<div class="muted" style="padding:4px 2px">' + esc(t('adm_none')) + '</div>');
+    };
+    html += block(t('adm_review'), ao.review, 'review') + block(t('adm_awaiting'), ao.awaiting, 'awaiting');
+    if (ao.recent.length) html += block(t('adm_recent'), ao.recent, 'recent');
+  }
+  if (p.can_manage_users) {
+    html += '<div class="section-label">' + esc(t('users')) + ' (' + state.adminData.users.length + ')</div>' +
+      '<input class="search" id="userSearch" placeholder="' + esc(t('search')) + '" value="' + esc(state.userQuery) + '">' +
+      '<div class="blist" id="userList">' + userListHtml() + '</div>' +
+      '<div style="height:14px"></div>' + rolesTable();
+  }
+  main.innerHTML = html;
+}
+
+function adminOrderCard(o, kind) {
+  var items = o.items.filter(function (i) { return i.status !== 'cancelled'; }).map(function (i) {
+    return '<b>' + esc(i.court) + '</b> ' + esc(shortDate(i.date)) + ' ' + hhmm(i.hour) + '–' + hhmm(i.hour + 1);
+  }).join(' · ');
+  var sent = String(o.slip_uploaded_at);
+  var note = kind === 'review' ? t('uploaded_at', { t: shortDate(sent.slice(0, 10)) + ' ' + sent.slice(11, 16) })
+    : kind === 'awaiting' && o.expires_at ? t('expires_at', { t: bkkTime(o.expires_at) })
+    : o.review_note ? t('reject_reason', { r: o.review_note }) : '';
+  var acts = '';
+  if (kind === 'review') {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>' +
+      '<button class="btn btn-danger btn-sm" data-act="reject" data-order="' + esc(o.order_id) + '">' + esc(t('reject')) + '</button>' +
+      '<button class="btn btn-primary btn-sm" data-act="approve" data-order="' + esc(o.order_id) + '">' + esc(t('approve')) + '</button>';
+  } else if (kind === 'awaiting') {
+    acts = '<button class="btn btn-danger btn-sm" data-act="cancel-order" data-order="' + esc(o.order_id) + '">' + esc(t('cancel_order')) + '</button>' +
+      '<button class="btn btn-light btn-sm" data-act="approve" data-order="' + esc(o.order_id) + '">' + esc(t('approve_cash')) + '</button>';
+  } else if (o.slip) {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>';
+  }
+  return '<div class="ocard"><div class="ohead">' + statusPill(o.status) + '<b class="oamt">' + money(o.amount) + '</b></div>' +
+    '<div class="owho"><b>' + esc(o.name) + '</b>' + (o.phone ? ' · <a href="tel:' + esc(o.phone) + '">' + esc(o.phone) + '</a>' : '') + '</div>' +
+    '<div class="oitems-s">' + items + '</div>' + (note ? '<p class="onote">' + esc(note) + '</p>' : '') +
+    (acts ? '<div class="oacts">' + acts + '</div>' : '') + '</div>';
 }
 
 function userListHtml() {
@@ -1016,10 +1386,17 @@ document.addEventListener('click', function (e) {
     case 'close': closeModal(); break;
     case 'confirm-book': submitBooking(); break;
     case 'cancel-booking': cancelBooking(el.dataset.id, el); break;
+    case 'cancel-order': cancelBooking(null, el, el.dataset.order); break;
+    case 'pay': openOrderPayment(el.dataset.order); break;
+    case 'send-slip': sendSlip(el.dataset.order, el); break;
+    case 'copy-acc': copyAccount(); break;
+    case 'slip': openSlip(el.dataset.order); break;
+    case 'approve': reviewOrder(el.dataset.order, true, el); break;
+    case 'reject': reviewOrder(el.dataset.order, false, el); break;
     case 'open-login': openAuth('login'); break;
     case 'open-register': openAuth('register'); break;
     case 'logout': setSession('', null); renderChrome(); switchTab('book'); break;
-    case 'demo-reset': DemoApi.reset(); setSession('', null); boot(); break;
+    case 'demo-reset': Demo.reset(); setSession('', null); state.tab = 'book'; boot(); break;
     case 'toggle-status': adminUpdate({ id: el.dataset.id, status: el.dataset.status }); break;
     case 'reset-pw':
       var pw = prompt(t('reset_pw_prompt', { name: el.dataset.name }));
@@ -1038,7 +1415,7 @@ document.addEventListener('submit', function (e) {
     var f = e.target;
     api('changePassword', { oldPassword: f.old.value, newPassword: f.new.value }).then(function () {
       f.reset(); $('pwErr').innerHTML = ''; toast(t('saved'), 'good');
-    }).catch(function (err) { $('pwErr').innerHTML = '<div class="err">' + esc(errText(err)) + '</div>'; });
+    }).catch(function (err) { $('pwErr').innerHTML = errBox(errText(err)); });
   }
 });
 
@@ -1046,6 +1423,7 @@ document.addEventListener('change', function (e) {
   if (e.target.id === 'pickDate' && e.target.value) {
     state.date = e.target.value; state.schedule = null; renderBook(); loadSchedule();
   }
+  if (e.target.id === 'slipFile' && e.target.files && e.target.files[0]) readSlip(e.target.files[0]);
   if (e.target.dataset.roleFor) adminUpdate({ id: e.target.dataset.roleFor, role: e.target.value });
 });
 
@@ -1055,231 +1433,137 @@ document.addEventListener('input', function (e) {
 
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
-// รีเฟรชตารางทุก 60 วินาที (เห็นการจองของคนอื่น + ช่องที่เลยเวลา)
+// รีเฟรชทุก 60 วินาที: ตาราง (เห็นการจองของคนอื่น + ช่องที่เลยเวลา) และจำนวนสลิปรอตรวจของแอดมิน
 setInterval(function () {
-  if (state.cfg && state.tab === 'book' && !modalOpen() && !document.hidden) loadSchedule(true);
+  if (!state.cfg || modalOpen() || document.hidden) return;
+  if (state.tab === 'book') loadSchedule(true);
+  if (isReviewer() && state.tab !== 'admin') refreshCfg();
 }, 60000);
 
 /* ════════════════════════════════════════════════════════════════
-   DEMO API — จำลอง backend ใน browser (ใช้เมื่อ API_URL ว่าง)
-   กติกาเหมือน apps-script/Srichaphan_Court_Booking.gs ทุกข้อ
+   โหมดทดลอง (API_URL ว่าง) — รันโค้ดหลังบ้านตัวจริง apps-script/Srichaphan_Court_Booking.gs
+   บนตัวจำลอง Google Apps Script (demo/gas-emulator.js) ข้อมูลเก็บใน localStorage
    ════════════════════════════════════════════════════════════════ */
-var DemoApi = (function () {
-  var KEY = 'stab_demo_db_v2';
-  var COURTS = ['C1', 'C2', 'C3', 'C4', 'C5'], OPEN = 6, CLOSE = 23, NIGHT = 18;
-  var ROLES = [
-    { role: 'admin', label: 'ผู้ดูแล / Admin', advance_days: 30, max_hours_per_day: 0, max_active_bookings: 0, cancel_before_hours: 0, can_book_for_others: true, can_block: true, can_cancel_any: true, can_manage_users: true },
-    { role: 'member', label: 'สมาชิก / Member', advance_days: 14, max_hours_per_day: 2, max_active_bookings: 4, cancel_before_hours: 3, can_book_for_others: false, can_block: false, can_cancel_any: false, can_manage_users: false },
-    { role: 'user', label: 'ผู้ใช้ทั่วไป / User', advance_days: 7, max_hours_per_day: 1, max_active_bookings: 2, cancel_before_hours: 6, can_book_for_others: false, can_block: false, can_cancel_any: false, can_manage_users: false }
-  ];
+var Demo = (function () {
+  var PREFIX = 'stab_demo_v3:';
+  var store = {
+    get: function (k) { try { var v = localStorage.getItem(PREFIX + k); return v == null ? null : JSON.parse(v); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(PREFIX + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var ready = null;
 
-  function fail(code, params) { return { code: code, params: params || {} }; }
-  function clock() {
-    var parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
-    var g = function (type) { return parts.filter(function (p) { return p.type === type; })[0].value; };
-    return { today: g('year') + '-' + g('month') + '-' + g('day'), hour: +g('hour') % 24, now: Date.now() };
-  }
-  function stamp() { var c = new Date(Date.now() + 7 * 36e5).toISOString(); return c.slice(0, 10) + ' ' + c.slice(11, 19); }
-  function id(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function permsFor(role) { return ROLES.filter(function (r) { return r.role === role; })[0] || ROLES[2]; }
-  function pub(u) { return { id: u.id, phone: u.phone, name: u.name, nickname: u.nickname, role: u.role, perms: permsFor(u.role) }; }
-  function dname(u) { return u.nickname ? u.name + ' (' + u.nickname + ')' : u.name; }
-  function normPhone(v) { var d = String(v || '').replace(/\D/g, ''); if (d.indexOf('66') === 0 && d.length === 11) d = '0' + d.slice(2); return d; }
-  function isDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s + 'T00:00:00Z')); }
-  function upcoming(b, c, inProgress) { var a = daysBetween(c.today, b.date); return a > 0 || (a === 0 && (inProgress ? b.hour >= c.hour : b.hour > c.hour)); }
-
-  function seed() {
-    var c = clock();
-    var users = [
-      { id: 'U-admin', phone: '0800000001', password: 'admin123', name: 'Admin Srichaphan', nickname: 'Admin', role: 'admin', status: 'active', created_at: stamp() },
-      { id: 'U-member', phone: '0800000002', password: 'member123', name: 'สมาชิก ทดลอง', nickname: 'Mem', role: 'member', status: 'active', created_at: stamp() },
-      { id: 'U-user', phone: '0800000003', password: 'user123', name: 'ผู้ใช้ ทดลอง', nickname: 'Guest', role: 'user', status: 'active', created_at: stamp() }
-    ];
-    var players = ['Nok', 'Ton', 'Ploy', 'Beam', 'Mike', 'Fah', 'Joe', 'Pim', 'Bank', 'Mint', 'Arm', 'Kate'];
-    players.forEach(function (n, i) {
-      users.push({ id: 'U-p' + i, phone: '08100000' + pad(i), password: Math.random().toString(36), name: n + ' Player', nickname: n, role: i % 3 ? 'user' : 'member', status: 'active', created_at: stamp() });
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (window.GasEmulator) return resolve();
+      var s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
     });
-    var seedN = 7;
-    var rand = function () { seedN = (seedN * 9301 + 49297) % 233280; return seedN / 233280; };
-    var bookings = [];
+  }
+  function post(be, action, payload, token) {
+    return JSON.parse(be.doPost({ postData: { contents: JSON.stringify({ action: action, payload: payload || {}, token: token || '' }) } }).getContent());
+  }
+
+  function init() {
+    if (!ready) {
+      ready = loadScript('demo/gas-emulator.js')
+        .then(function () { return fetch('apps-script/Srichaphan_Court_Booking.gs', { cache: 'no-cache' }); })
+        .then(function (r) { if (!r.ok) throw new Error('fetch ' + r.status); return r.text(); })
+        .then(function (code) {
+          var gas = GasEmulator.create(store);
+          var be = gas.load(code);
+          if (!store.get('seeded')) { seed(gas, be); store.set('seeded', true); }
+          return be;
+        })
+        .catch(function (e) { ready = null; if (window.console) console.error(e); throw { code: 'demo_unavailable' }; });
+    }
+    return ready;
+  }
+
+  // ข้อมูลตัวอย่าง: ผู้ใช้ 3 เลเวล + ผู้เล่น 12 คน + การจอง 15 วัน + สลิปรอตรวจ 1 รายการ
+  function seed(gas, be) {
+    be.setup();
+    var U = gas.globals.Utilities;
+    var today = U.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd');
+    var stamp = be.stamp_();
+    var reg = function (phone, pw, name, nick) { return post(be, 'register', { phone: phone, password: pw, name: name, nickname: nick }).data.user; };
+    var admin = reg('0800000001', 'admin123', 'Admin Srichaphan', 'Admin');
+    var mem = reg('0800000002', 'member123', 'สมาชิก ทดลอง', 'Mem');
+    reg('0800000003', 'user123', 'ผู้ใช้ ทดลอง', 'Guest');
+    var players = ['Nok', 'Ton', 'Ploy', 'Beam', 'Mike', 'Fah', 'Joe', 'Pim', 'Bank', 'Mint', 'Arm', 'Kate'].map(function (n, i) {
+      return reg('08100000' + pad(i), 'demo-' + Math.random().toString(36), n + ' Player', n);
+    });
+    var users = be.table_('Users');
+    users.rows.forEach(function (r) {
+      var j = players.map(function (x) { return x.id; }).indexOf(String(r.id));
+      if (r.id === mem.id || (j >= 0 && j % 3 === 0)) be.update_(users, r, { role: 'member' });
+    });
+
+    var price = function (h) { return h >= 18 ? 350 : 250; };
+    var label = function (u) { return u.name + ' (' + u.nickname + ')'; };
+    var n = 0;
+    var row = function (o) {
+      n++;
+      return Object.assign({ id: 'Bseed' + n, order_id: 'Rseed' + n, type: 'booking', status: 'confirmed', note: '', created_at: stamp, created_by: o.user_id }, o);
+    };
+    var tmr = addDays(today, 1), d2 = addDays(today, 2);
+
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="860" font-family="sans-serif">' +
+      '<rect width="600" height="860" fill="#fff"/><rect width="600" height="150" fill="#FFD400"/>' +
+      '<text x="300" y="90" font-size="40" font-weight="700" text-anchor="middle" fill="#4A3A00">โอนเงินสำเร็จ</text>' +
+      '<text x="300" y="260" font-size="72" font-weight="700" text-anchor="middle" fill="#1E293B">฿700.00</text>' +
+      '<text x="60" y="380" font-size="26" fill="#64748B">จาก</text><text x="60" y="420" font-size="30" fill="#1E293B">NOK PLAYER</text>' +
+      '<text x="60" y="510" font-size="26" fill="#64748B">ไปยัง</text><text x="60" y="550" font-size="30" fill="#1E293B">ธนากร ศรีชาพันธุ์</text>' +
+      '<text x="60" y="590" font-size="26" fill="#1E293B">กรุงศรี 173-1-30405-3</text>' +
+      '<text x="300" y="780" font-size="24" text-anchor="middle" fill="#DC2626">สลิปตัวอย่าง (โหมดทดลอง)</text></svg>';
+    var file = be.slipFolder_().createFile(U.newBlob(Array.from(new TextEncoder().encode(svg)), 'image/svg+xml', 'slip_demo.svg'));
+
+    var nok = players[0], ploy = players[2];
+    var specials = [
+      row({ order_id: 'Rblock', date: tmr, hour: 6, court: 'C5', user_id: admin.id, name: label(admin), type: 'block', price: 0, note: 'ซ่อมพื้นคอร์ท / Maintenance' }),
+      row({ order_id: 'Rblock', date: tmr, hour: 7, court: 'C5', user_id: admin.id, name: label(admin), type: 'block', price: 0, note: 'ซ่อมพื้นคอร์ท / Maintenance' }),
+      row({ order_id: 'Rreview', date: tmr, hour: 19, court: 'C1', user_id: nok.id, name: label(nok), price: 350, status: 'pending_review', slip_file_id: file.getId(), slip_uploaded_at: stamp }),
+      row({ order_id: 'Rreview', date: tmr, hour: 20, court: 'C1', user_id: nok.id, name: label(nok), price: 350, status: 'pending_review', slip_file_id: file.getId(), slip_uploaded_at: stamp }),
+      row({ order_id: 'Rawait', date: d2, hour: 18, court: 'C2', user_id: ploy.id, name: label(ploy), price: 350, status: 'pending_payment', expires_at: Date.now() + 25 * 60000 })
+    ];
+    var used = {};
+    specials.forEach(function (r) { used[r.date + '|' + r.hour + '|' + r.court] = 1; });
+
+    var rnd = 7;
+    var rand = function () { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280; };
+    var rows = [];
     for (var d = 0; d <= 14; d++) {
-      var date = addDays(c.today, d);
-      for (var h = OPEN; h < CLOSE; h++) {
+      var date = addDays(today, d);
+      for (var h = 6; h < 23; h++) {
         var busy = h >= 17 && h <= 21 ? 0.62 : h <= 8 ? 0.35 : 0.18;
-        COURTS.forEach(function (court) {
-          if (rand() < busy * Math.max(0.15, 1.2 - d * 0.12)) {
-            var u = users[3 + Math.floor(rand() * players.length)];
-            bookings.push({ id: id('B'), date: date, hour: h, court: court, user_id: u.id, name: dname(u), type: 'booking', note: '', status: 'active', created_at: stamp() });
+        ['C1', 'C2', 'C3', 'C4', 'C5'].forEach(function (c) {
+          if (rand() < busy * Math.max(0.15, 1.2 - d * 0.12) && !used[date + '|' + h + '|' + c]) {
+            var pl = players[Math.floor(rand() * players.length)];
+            rows.push(row({ date: date, hour: h, court: c, user_id: pl.id, name: label(pl), price: price(h) }));
           }
         });
       }
     }
-    var tmr = addDays(c.today, 1);
-    bookings = bookings.filter(function (b) { return !(b.date === tmr && b.court === 'C5' && b.hour < 9); });
-    [6, 7, 8].forEach(function (h) {
-      bookings.push({ id: id('B'), date: tmr, hour: h, court: 'C5', user_id: 'U-admin', name: 'Admin Srichaphan (Admin)', type: 'block', note: 'ซ่อมพื้นคอร์ท / Maintenance', status: 'active', created_at: stamp() });
-    });
-    return { users: users, bookings: bookings };
+    be.appendMany_(be.table_('Bookings'), rows.concat(specials));
   }
-
-  function load() { var db = LS.get(KEY, null); if (!db) { db = seed(); save(db); } return db; }
-  function save(db) { LS.set(KEY, db); }
-  function userOf(db, token) {
-    var u = db.users.filter(function (x) { return x.id === token; })[0];
-    return u && u.status === 'active' ? u : null;
-  }
-  function requireUser(db, token) { var u = userOf(db, token); if (!u) throw fail('auth_required'); return u; }
-
-  var A = {
-    bootstrap: function (db, p, token) {
-      var u = token ? userOf(db, token) : null;
-      return { courts: COURTS, openHour: OPEN, closeHour: CLOSE, nightFromHour: NIGHT, clock: clock(), roles: ROLES, guestPerms: permsFor('user'), user: u ? pub(u) : null };
-    },
-    register: function (db, p) {
-      var phone = normPhone(p.phone), name = String(p.name || '').trim(), pw = String(p.password || '');
-      if (!/^0\d{8,9}$/.test(phone)) throw fail('invalid_phone');
-      if (!name) throw fail('name_required');
-      if (pw.length < 6) throw fail('weak_password');
-      if (db.users.some(function (u) { return u.phone === phone; })) throw fail('phone_taken');
-      var u = { id: id('U'), phone: phone, password: pw, name: name, nickname: String(p.nickname || '').trim(), role: 'user', status: 'active', created_at: stamp() };
-      db.users.push(u);
-      return { token: u.id, user: pub(u) };
-    },
-    login: function (db, p) {
-      var u = db.users.filter(function (x) { return x.phone === normPhone(p.phone); })[0];
-      if (!u || u.password !== String(p.password || '')) throw fail('invalid_login');
-      if (u.status !== 'active') throw fail('suspended');
-      return { token: u.id, user: pub(u) };
-    },
-    schedule: function (db, p, token) {
-      if (!isDate(p.date)) throw fail('invalid_input');
-      var me = token ? userOf(db, token) : null;
-      var pr = me ? permsFor(me.role) : permsFor('user'), ahead = daysBetween(clock().today, p.date);
-      if (!pr.can_block && (ahead < 0 || ahead > pr.advance_days)) throw fail('too_far_ahead', { days: pr.advance_days });
-      var see = me && pr.can_cancel_any;
-      return {
-        date: p.date, clock: clock(),
-        bookings: db.bookings.filter(function (b) { return b.status === 'active' && b.date === p.date; }).map(function (b) {
-          var mine = !!(me && b.user_id === me.id);
-          var o = { court: b.court, hour: b.hour, type: b.type, mine: mine };
-          if (b.type === 'block') o.note = b.note;
-          if (mine || see) { o.id = b.id; o.name = b.name; o.note = b.note; }
-          return o;
-        })
-      };
-    },
-    book: function (db, p, token) {
-      var me = requireUser(db, token), pr = permsFor(me.role), c = clock();
-      var type = p.type === 'block' ? 'block' : 'booking';
-      if (type === 'block' && !pr.can_block) throw fail('forbidden');
-      var forName = String(p.forName || '').trim();
-      if (forName && !pr.can_book_for_others) throw fail('forbidden');
-      var raw = p.slots || [];
-      if (!raw.length || raw.length > 20) throw fail('invalid_input');
-      var maxAhead = type === 'block' ? 365 : pr.advance_days, seen = {};
-      var slots = raw.map(function (s) {
-        var hour = Number(s.hour);
-        if (!isDate(s.date) || COURTS.indexOf(s.court) < 0 || hour % 1 || hour < OPEN || hour >= CLOSE) throw fail('invalid_input');
-        var ahead = daysBetween(c.today, s.date);
-        if (ahead < 0 || (ahead === 0 && hour <= c.hour)) throw fail('slot_past');
-        if (ahead > maxAhead) throw fail('too_far_ahead', { days: maxAhead });
-        var key = s.date + '|' + hour + '|' + s.court;
-        if (seen[key]) throw fail('invalid_input');
-        seen[key] = 1;
-        return { date: s.date, hour: hour, court: s.court, key: key };
-      });
-      var active = db.bookings.filter(function (b) { return b.status === 'active'; });
-      var taken = {};
-      active.forEach(function (b) { taken[b.date + '|' + b.hour + '|' + b.court] = 1; });
-      slots.forEach(function (s) { if (taken[s.key]) throw fail('slot_taken', { court: s.court, hour: s.hour, date: s.date }); });
-      if (type === 'booking') {
-        var mine = active.filter(function (b) { return b.user_id === me.id && b.type === 'booking'; });
-        if (pr.max_hours_per_day > 0) {
-          var per = {};
-          mine.forEach(function (b) { per[b.date] = (per[b.date] || 0) + 1; });
-          slots.forEach(function (s) { per[s.date] = (per[s.date] || 0) + 1; if (per[s.date] > pr.max_hours_per_day) throw fail('daily_limit', { limit: pr.max_hours_per_day }); });
-        }
-        if (pr.max_active_bookings > 0 && mine.filter(function (b) { return upcoming(b, c); }).length + slots.length > pr.max_active_bookings) {
-          throw fail('active_limit', { limit: pr.max_active_bookings });
-        }
-      }
-      var rows = slots.map(function (s) {
-        return { id: id('B'), date: s.date, hour: s.hour, court: s.court, user_id: me.id, name: forName || dname(me), type: type, note: String(p.note || '').trim(), status: 'active', created_at: stamp() };
-      });
-      db.bookings = db.bookings.concat(rows);
-      return { bookings: rows };
-    },
-    cancel: function (db, p, token) {
-      var me = requireUser(db, token), pr = permsFor(me.role);
-      var b = db.bookings.filter(function (x) { return x.id === p.id; })[0];
-      if (!b || b.status !== 'active') throw fail('not_found');
-      if (b.user_id !== me.id && !pr.can_cancel_any) throw fail('forbidden');
-      if (!pr.can_cancel_any) {
-        var left = (slotStart(b.date, b.hour) - Date.now()) / 36e5;
-        if (left <= 0) throw fail('slot_past');
-        if (left < pr.cancel_before_hours) throw fail('cancel_too_late', { hours: pr.cancel_before_hours });
-      }
-      b.status = 'cancelled'; b.cancelled_at = stamp(); b.cancelled_by = me.id;
-      return { id: b.id };
-    },
-    myBookings: function (db, p, token) {
-      var me = requireUser(db, token), c = clock();
-      var key = function (b) { return b.date + pad(b.hour) + b.court; };
-      var mine = db.bookings.filter(function (b) { return b.user_id === me.id; }).map(function (b) {
-        return Object.assign({}, b, { upcoming: b.status === 'active' && upcoming(b, c, true) });
-      });
-      return {
-        clock: c,
-        upcoming: mine.filter(function (b) { return b.upcoming; }).sort(function (a, b) { return key(a).localeCompare(key(b)); }),
-        history: mine.filter(function (b) { return !b.upcoming; }).sort(function (a, b) { return key(b).localeCompare(key(a)); }).slice(0, 30)
-      };
-    },
-    changePassword: function (db, p, token) {
-      var me = requireUser(db, token);
-      if (me.password !== p.oldPassword) throw fail('invalid_login');
-      if (String(p.newPassword || '').length < 6) throw fail('weak_password');
-      me.password = p.newPassword;
-      return { ok: true };
-    },
-    adminUsers: function (db, p, token) {
-      var me = requireUser(db, token);
-      if (!permsFor(me.role).can_manage_users) throw fail('forbidden');
-      return { users: db.users.map(function (u) { return { id: u.id, phone: u.phone, name: u.name, nickname: u.nickname, role: u.role, status: u.status, created_at: u.created_at }; }), roles: ROLES };
-    },
-    adminUpdateUser: function (db, p, token) {
-      var me = requireUser(db, token);
-      if (!permsFor(me.role).can_manage_users) throw fail('forbidden');
-      var u = db.users.filter(function (x) { return x.id === p.id; })[0];
-      if (!u) throw fail('not_found');
-      if (p.role !== undefined) {
-        if (!ROLES.some(function (r) { return r.role === p.role; })) throw fail('invalid_input');
-        if (u.id === me.id && p.role !== u.role) throw fail('self_edit');
-        u.role = p.role;
-      }
-      if (p.status !== undefined) {
-        if (u.id === me.id && p.status !== 'active') throw fail('self_edit');
-        u.status = p.status;
-      }
-      if (p.password) { if (String(p.password).length < 6) throw fail('weak_password'); u.password = p.password; }
-      return { id: u.id };
-    }
-  };
 
   return {
     call: function (action, payload, token) {
-      return new Promise(function (resolve, reject) {
-        setTimeout(function () {
-          try {
-            if (!A[action]) throw fail('invalid_input');
-            var db = load();
-            var out = A[action](db, JSON.parse(JSON.stringify(payload)), token);
-            save(db);
-            resolve(JSON.parse(JSON.stringify(out)));
-          } catch (e) { reject(e && e.code ? e : fail('server_error')); }
-        }, 120);
+      return init().then(function (be) {
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            var res = post(be, action, payload, token);
+            if (res.ok) resolve(res.data); else reject({ code: res.error, params: res.params || {}, message: res.message });
+          }, 120);
+        });
       });
     },
-    reset: function () { LS.del(KEY); }
+    reset: function () {
+      try {
+        Object.keys(localStorage).forEach(function (k) { if (k.indexOf(PREFIX) === 0 || k.indexOf('stab_demo_db') === 0) localStorage.removeItem(k); });
+      } catch (e) {}
+      ready = null;
+    }
   };
 })();
 
