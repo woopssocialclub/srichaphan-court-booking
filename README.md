@@ -9,7 +9,9 @@
 | `apps-script/Srichaphan_Court_Booking.gs` | ระบบหลังบ้าน — วางใน Apps Script ของ Google Sheet |
 | `docs/setup-guide.md` | **คู่มือฉบับเต็ม**: ติดตั้ง · ตั้งสิทธิ์ · คู่มือผู้เล่น · คู่มือแอดมิน · แก้ปัญหา |
 
-👉 เริ่มที่ [docs/setup-guide.md](docs/setup-guide.md)
+🌐 เว็บจอง: https://woopssocialclub.github.io/srichaphan-court-booking/
+
+👉 คู่มือติดตั้ง/ใช้งาน: [docs/setup-guide.md](docs/setup-guide.md)
 
 ก่อนต่อหลังบ้าน (`API_URL` ใน `index.html` ยังว่าง) หน้าเว็บจะทำงานใน **โหมดทดลอง**
 ข้อมูลเก็บใน browser เครื่องนั้นเท่านั้น — ลองล็อกอิน แอดมิน `0800000001 / admin123` · สมาชิก `0800000002 / member123` · ทั่วไป `0800000003 / user123`
