@@ -45,9 +45,6 @@
             color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
   .avatar.in { background:linear-gradient(135deg,var(--gold-dk),var(--gold-lt)); color:var(--navy3); border:0; }
 
-  .demo { background:#FFF7E0; border-bottom:1px solid #F5DFA0; color:#7A5A12; font-size:12.5px; padding:8px 16px; line-height:1.5; }
-  .demo b { font-weight:700; }
-  .demo button { border:0; background:none; color:var(--blue); text-decoration:underline; font-size:12.5px; padding:0; }
 
   main { max-width:980px; margin:0 auto; padding:16px; }
   .view-title { font-size:20px; font-weight:800; margin:4px 0 14px; color:var(--navy); }
@@ -305,7 +302,6 @@
     <button class="avatar" id="btnAvatar" aria-label="account"></button>
   </div>
 </header>
-<div class="demo" id="demoBanner" hidden></div>
 
 <main id="main"></main>
 
@@ -323,11 +319,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ════════════════════════════════════════════════════════════════
-   ใส่ URL ของ Apps Script Web App ตรงนี้ (ดู docs/setup-guide.md)
-   ถ้าเว้นว่าง = โหมดทดลอง: ข้อมูลเก็บใน browser เครื่องนี้เท่านั้น
-   ════════════════════════════════════════════════════════════════ */
-var API_URL = 'https://script.google.com/macros/s/AKfycbzlVfg-g5zst88Xa6zHt6dIomJKgwRw0QrzQUhzmhIA7QmgT5__3l9Z9GStXc2wX_o0/exec';
+/* หลังบ้านอยู่ที่ /api บนเว็บเดียวกัน (Vercel Function → api/index.js) */
+var API_URL = '/api';
 
 /* ───────────── i18n ───────────── */
 var I18N = {
@@ -362,8 +355,7 @@ var I18N = {
     st_cancelled:'ยกเลิกแล้ว', st_past:'เล่นแล้ว', for_label:'ชื่อ: {name}',
     users:'ผู้ใช้ทั้งหมด', search:'ค้นหาชื่อ / เบอร์โทร', suspend:'ระงับ', activate:'เปิดใช้', reset_pw:'ตั้งรหัสใหม่',
     reset_pw_prompt:'รหัสผ่านใหม่ของ {name} (อย่างน้อย 6 ตัว)', suspended:'ถูกระงับ', joined:'สมัคร {d}', updated:'อัปเดตแล้ว',
-    demo:'<b>โหมดทดลอง</b> — ข้อมูลเก็บใน browser นี้เท่านั้น (ลองจอง → ส่งสลิป → ล็อกอินแอดมินกดยืนยัน) · ลองล็อกอิน: แอดมิน <b>0800000001 / admin123</b> · สมาชิก <b>0800000002 / member123</b> · ทั่วไป <b>0800000003 / user123</b>',
-    demo_reset:'รีเซ็ตข้อมูลทดลอง', need_login:'เข้าสู่ระบบเพื่อดูการจองของคุณ',
+    need_login:'เข้าสู่ระบบเพื่อดูการจองของคุณ',
     lg_pend:'รอชำระ/รอตรวจ', cell_pay:'รอชำระ', cell_review:'รอตรวจ',
     price_line:'<b>ค่าคอร์ท</b> ☀️ {d1}–{d2} <b>฿{day}</b>/ชม. · 🌙 {n1}–{n2} เปิดไฟ <b>฿{night}</b>/ชม.',
     sel_total:'รวม {amt}', total:'ยอดรวม',
@@ -384,7 +376,6 @@ var I18N = {
     err_payment_expired:'หมดเวลาชำระแล้ว การจองหลุด — กรุณาจองใหม่ (ถ้าโอนเงินไปแล้ว ติดต่อแอดมิน)',
     err_invalid_slip:'ไฟล์สลิปต้องเป็นรูปภาพ', err_slip_too_large:'รูปใหญ่เกินไป (เกิน 5MB)',
     backend_outdated:'ระบบกำลังอัปเดต กรุณากลับมาใหม่อีกครั้ง 🙏 (สำหรับแอดมิน: หลังบ้านยังเป็นโค้ด .gs เวอร์ชันเก่า — วางโค้ดใหม่ → รัน setup → Deploy New version ตามคู่มือส่วนที่ 7)',
-    err_demo_unavailable:'โหมดทดลองต้องเปิดผ่านเว็บ (เช่น GitHub Pages) — เปิดไฟล์จากเครื่องตรง ๆ ไม่ได้',
     err_auth_required:'กรุณาเข้าสู่ระบบก่อน', err_invalid_login:'เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง',
     err_phone_taken:'เบอร์นี้สมัครไว้แล้ว — ลองเข้าสู่ระบบ', err_invalid_phone:'เบอร์โทรไม่ถูกต้อง (เช่น 0812345678)',
     err_name_required:'กรุณาใส่ชื่อ', err_weak_password:'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
@@ -427,8 +418,7 @@ var I18N = {
     st_cancelled:'Cancelled', st_past:'Played', for_label:'Name: {name}',
     users:'All users', search:'Search name / phone', suspend:'Suspend', activate:'Activate', reset_pw:'Reset password',
     reset_pw_prompt:'New password for {name} (min 6 characters)', suspended:'Suspended', joined:'Joined {d}', updated:'Updated',
-    demo:'<b>Demo mode</b> — data is stored in this browser only (try book → send slip → approve as admin) · Try: admin <b>0800000001 / admin123</b> · member <b>0800000002 / member123</b> · user <b>0800000003 / user123</b>',
-    demo_reset:'Reset demo data', need_login:'Log in to see your bookings',
+    need_login:'Log in to see your bookings',
     lg_pend:'Awaiting payment', cell_pay:'Unpaid', cell_review:'Checking',
     price_line:'<b>Court fee</b> ☀️ {d1}–{d2} <b>฿{day}</b>/h · 🌙 {n1}–{n2} lights on <b>฿{night}</b>/h',
     sel_total:'Total {amt}', total:'Total',
@@ -449,7 +439,6 @@ var I18N = {
     err_payment_expired:'Payment time is up and the booking was released — please book again (contact an admin if you already paid)',
     err_invalid_slip:'The slip must be an image', err_slip_too_large:'Image too large (over 5MB)',
     backend_outdated:'The system is being updated, please check back soon 🙏 (Admins: the backend still runs the old .gs — paste the new code → run setup → Deploy a New version, see guide section 7)',
-    err_demo_unavailable:'Demo mode must be opened from the website (e.g. GitHub Pages), not as a local file',
     err_auth_required:'Please log in first', err_invalid_login:'Wrong phone number or password',
     err_phone_taken:'This phone number is already registered — try logging in', err_invalid_phone:'Invalid phone number (e.g. 0812345678)',
     err_name_required:'Please enter your name', err_weak_password:'Password must be at least 6 characters',
@@ -526,8 +515,11 @@ function isPast(date, hour) {
 
 /* ───────────── API ───────────── */
 function api(action, payload) {
-  if (!API_URL) return Demo.call(action, payload || {}, state.token);
-  return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, payload: payload || {}, token: state.token }) })
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: action, payload: payload || {}, token: state.token })
+  })
     .then(function (r) { return r.json(); }, function () { throw { code: 'network' }; })
     .then(function (res) {
       if (!res.ok) throw { code: res.error, params: res.params || {}, message: res.message };
@@ -650,9 +642,6 @@ function renderChrome() {
   if (state.user) { av.classList.add('in'); av.textContent = (state.user.nickname || state.user.name || '?').trim().charAt(0).toUpperCase(); }
   else { av.classList.remove('in'); av.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-3.8 4-5.5 7.5-5.5s6.3 1.7 7.5 5.5" stroke-linecap="round"/></svg>'; }
 
-  var banner = $('demoBanner');
-  banner.hidden = !!API_URL;
-  if (!API_URL) banner.innerHTML = t('demo') + ' · <button data-act="demo-reset">' + esc(t('demo_reset')) + '</button>';
 
   var tabs = [['book', 't_book'], ['mine', 't_mine']];
   if (isAdminTab()) tabs.push(['admin', 't_admin']);
@@ -1400,7 +1389,6 @@ document.addEventListener('click', function (e) {
     case 'open-login': openAuth('login'); break;
     case 'open-register': openAuth('register'); break;
     case 'logout': setSession('', null); renderChrome(); switchTab('book'); break;
-    case 'demo-reset': Demo.reset(); setSession('', null); state.tab = 'book'; boot(); break;
     case 'toggle-status': adminUpdate({ id: el.dataset.id, status: el.dataset.status }); break;
     case 'reset-pw':
       var pw = prompt(t('reset_pw_prompt', { name: el.dataset.name }));
@@ -1443,133 +1431,6 @@ setInterval(function () {
   if (state.tab === 'book') loadSchedule(true);
   if (isReviewer() && state.tab !== 'admin') refreshCfg();
 }, 60000);
-
-/* ════════════════════════════════════════════════════════════════
-   โหมดทดลอง (API_URL ว่าง) — รันโค้ดหลังบ้านตัวจริง apps-script/Srichaphan_Court_Booking.gs
-   บนตัวจำลอง Google Apps Script (demo/gas-emulator.js) ข้อมูลเก็บใน localStorage
-   ════════════════════════════════════════════════════════════════ */
-var Demo = (function () {
-  var PREFIX = 'stab_demo_v3:';
-  var store = {
-    get: function (k) { try { var v = localStorage.getItem(PREFIX + k); return v == null ? null : JSON.parse(v); } catch (e) { return null; } },
-    set: function (k, v) { try { localStorage.setItem(PREFIX + k, JSON.stringify(v)); } catch (e) {} }
-  };
-  var ready = null;
-
-  function loadScript(src) {
-    return new Promise(function (resolve, reject) {
-      if (window.GasEmulator) return resolve();
-      var s = document.createElement('script');
-      s.src = src; s.onload = resolve; s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-  function post(be, action, payload, token) {
-    return JSON.parse(be.doPost({ postData: { contents: JSON.stringify({ action: action, payload: payload || {}, token: token || '' }) } }).getContent());
-  }
-
-  function init() {
-    if (!ready) {
-      ready = loadScript('demo/gas-emulator.js')
-        .then(function () { return fetch('apps-script/Srichaphan_Court_Booking.gs', { cache: 'no-cache' }); })
-        .then(function (r) { if (!r.ok) throw new Error('fetch ' + r.status); return r.text(); })
-        .then(function (code) {
-          var gas = GasEmulator.create(store);
-          var be = gas.load(code);
-          if (!store.get('seeded')) { seed(gas, be); store.set('seeded', true); }
-          return be;
-        })
-        .catch(function (e) { ready = null; if (window.console) console.error(e); throw { code: 'demo_unavailable' }; });
-    }
-    return ready;
-  }
-
-  // ข้อมูลตัวอย่าง: ผู้ใช้ 3 เลเวล + ผู้เล่น 12 คน + การจอง 15 วัน + สลิปรอตรวจ 1 รายการ
-  function seed(gas, be) {
-    be.setup();
-    var U = gas.globals.Utilities;
-    var today = U.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd');
-    var stamp = be.stamp_();
-    var reg = function (phone, pw, name, nick) { return post(be, 'register', { phone: phone, password: pw, name: name, nickname: nick }).data.user; };
-    var admin = reg('0800000001', 'admin123', 'Admin Srichaphan', 'Admin');
-    var mem = reg('0800000002', 'member123', 'สมาชิก ทดลอง', 'Mem');
-    reg('0800000003', 'user123', 'ผู้ใช้ ทดลอง', 'Guest');
-    var players = ['Nok', 'Ton', 'Ploy', 'Beam', 'Mike', 'Fah', 'Joe', 'Pim', 'Bank', 'Mint', 'Arm', 'Kate'].map(function (n, i) {
-      return reg('08100000' + pad(i), 'demo-' + Math.random().toString(36), n + ' Player', n);
-    });
-    var users = be.table_('Users');
-    users.rows.forEach(function (r) {
-      var j = players.map(function (x) { return x.id; }).indexOf(String(r.id));
-      if (r.id === mem.id || (j >= 0 && j % 3 === 0)) be.update_(users, r, { role: 'member' });
-    });
-
-    var price = function (h) { return h >= 18 ? 350 : 250; };
-    var label = function (u) { return u.name + ' (' + u.nickname + ')'; };
-    var n = 0;
-    var row = function (o) {
-      n++;
-      return Object.assign({ id: 'Bseed' + n, order_id: 'Rseed' + n, type: 'booking', status: 'confirmed', note: '', created_at: stamp, created_by: o.user_id }, o);
-    };
-    var tmr = addDays(today, 1), d2 = addDays(today, 2);
-
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="860" font-family="sans-serif">' +
-      '<rect width="600" height="860" fill="#fff"/><rect width="600" height="150" fill="#FFD400"/>' +
-      '<text x="300" y="90" font-size="40" font-weight="700" text-anchor="middle" fill="#4A3A00">โอนเงินสำเร็จ</text>' +
-      '<text x="300" y="260" font-size="72" font-weight="700" text-anchor="middle" fill="#1E293B">฿700.00</text>' +
-      '<text x="60" y="380" font-size="26" fill="#64748B">จาก</text><text x="60" y="420" font-size="30" fill="#1E293B">NOK PLAYER</text>' +
-      '<text x="60" y="510" font-size="26" fill="#64748B">ไปยัง</text><text x="60" y="550" font-size="30" fill="#1E293B">ธนากร ศรีชาพันธุ์</text>' +
-      '<text x="60" y="590" font-size="26" fill="#1E293B">กรุงศรี 173-1-30405-3</text>' +
-      '<text x="300" y="780" font-size="24" text-anchor="middle" fill="#DC2626">สลิปตัวอย่าง (โหมดทดลอง)</text></svg>';
-    var file = be.slipFolder_().createFile(U.newBlob(Array.from(new TextEncoder().encode(svg)), 'image/svg+xml', 'slip_demo.svg'));
-
-    var nok = players[0], ploy = players[2];
-    var specials = [
-      row({ order_id: 'Rblock', date: tmr, hour: 6, court: 'C5', user_id: admin.id, name: label(admin), type: 'block', price: 0, note: 'ซ่อมพื้นคอร์ท / Maintenance' }),
-      row({ order_id: 'Rblock', date: tmr, hour: 7, court: 'C5', user_id: admin.id, name: label(admin), type: 'block', price: 0, note: 'ซ่อมพื้นคอร์ท / Maintenance' }),
-      row({ order_id: 'Rreview', date: tmr, hour: 19, court: 'C1', user_id: nok.id, name: label(nok), price: 350, status: 'pending_review', slip_file_id: file.getId(), slip_uploaded_at: stamp }),
-      row({ order_id: 'Rreview', date: tmr, hour: 20, court: 'C1', user_id: nok.id, name: label(nok), price: 350, status: 'pending_review', slip_file_id: file.getId(), slip_uploaded_at: stamp }),
-      row({ order_id: 'Rawait', date: d2, hour: 18, court: 'C2', user_id: ploy.id, name: label(ploy), price: 350, status: 'pending_payment', expires_at: Date.now() + 25 * 60000 })
-    ];
-    var used = {};
-    specials.forEach(function (r) { used[r.date + '|' + r.hour + '|' + r.court] = 1; });
-
-    var rnd = 7;
-    var rand = function () { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280; };
-    var rows = [];
-    for (var d = 0; d <= 14; d++) {
-      var date = addDays(today, d);
-      for (var h = 6; h < 23; h++) {
-        var busy = h >= 17 && h <= 21 ? 0.62 : h <= 8 ? 0.35 : 0.18;
-        ['C1', 'C2', 'C3', 'C4', 'C5'].forEach(function (c) {
-          if (rand() < busy * Math.max(0.15, 1.2 - d * 0.12) && !used[date + '|' + h + '|' + c]) {
-            var pl = players[Math.floor(rand() * players.length)];
-            rows.push(row({ date: date, hour: h, court: c, user_id: pl.id, name: label(pl), price: price(h) }));
-          }
-        });
-      }
-    }
-    be.appendMany_(be.table_('Bookings'), rows.concat(specials));
-  }
-
-  return {
-    call: function (action, payload, token) {
-      return init().then(function (be) {
-        return new Promise(function (resolve, reject) {
-          setTimeout(function () {
-            var res = post(be, action, payload, token);
-            if (res.ok) resolve(res.data); else reject({ code: res.error, params: res.params || {}, message: res.message });
-          }, 120);
-        });
-      });
-    },
-    reset: function () {
-      try {
-        Object.keys(localStorage).forEach(function (k) { if (k.indexOf(PREFIX) === 0 || k.indexOf('stab_demo_db') === 0) localStorage.removeItem(k); });
-      } catch (e) {}
-      ready = null;
-    }
-  };
-})();
 
 boot();
 </script>

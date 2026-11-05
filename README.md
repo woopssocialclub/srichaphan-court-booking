@@ -7,17 +7,18 @@
 - จองแล้วโอนเข้าบัญชีกรุงศรี + อัปโหลดสลิปภายใน 30 นาที → แอดมินยืนยันสลิป = จองสำเร็จ
 - ยกเลิกได้ถึง 3 ชั่วโมงก่อนเวลาเล่น
 
-🌐 เว็บจอง: https://woopssocialclub.github.io/srichaphan-court-booking/
+**ระบบ:** หน้าเว็บ + หลังบ้านบน **Vercel** · ฐานข้อมูล + ที่เก็บสลิปบน **Supabase**
 
 👉 คู่มือติดตั้ง/ใช้งาน: [docs/setup-guide.md](docs/setup-guide.md)
 
 | ไฟล์ | คืออะไร |
 |---|---|
-| `index.html` | หน้าเว็บจองคอร์ท (เปิดผ่าน GitHub Pages) |
-| `apps-script/Srichaphan_Court_Booking.gs` | ระบบหลังบ้าน — วางใน Apps Script ของ Google Sheet |
-| `docs/setup-guide.md` | คู่มือฉบับเต็ม: ติดตั้ง · ราคา/บัญชี/สิทธิ์ · คู่มือผู้เล่น · คู่มือแอดมิน (ตรวจสลิป) · แก้ปัญหา |
-| `demo/gas-emulator.js` | ตัวจำลอง Google Apps Script สำหรับโหมดทดลอง (รันโค้ด .gs ตัวจริงใน browser) |
-| `tests/backend.test.js` | เทสต์หลังบ้าน: `node tests/backend.test.js` |
+| `index.html` | หน้าเว็บจองคอร์ท |
+| `api/index.js` | Vercel Function — รับคำสั่งจากหน้าเว็บที่ `/api` |
+| `lib/app.js` | กติกาทั้งหมด: สิทธิ์, ราคา, การจอง, ชำระเงิน, ตรวจสลิป |
+| `lib/db.js`, `lib/storage.js` | ต่อฐานข้อมูล PostgreSQL / Supabase Storage |
+| `supabase/schema.sql` | โครงสร้างฐานข้อมูล — รันใน Supabase SQL Editor |
+| `tests/app.test.js` | เทสต์หลังบ้านกับ PostgreSQL จริง (`npm test`) |
+| `scripts/dev-server.js` | รันทั้งระบบในเครื่อง (`npm run dev -- --reset`) |
 
-ก่อนต่อหลังบ้าน (`API_URL` ใน `index.html` ยังว่าง) หน้าเว็บจะทำงานใน **โหมดทดลอง**
-ข้อมูลเก็บใน browser เครื่องนั้นเท่านั้น — ลองล็อกอิน แอดมิน `0800000001 / admin123` · สมาชิก `0800000002 / member123` · ทั่วไป `0800000003 / user123`
+Environment variables บน Vercel: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SESSION_SECRET` (ดูคู่มือส่วนที่ 2)
