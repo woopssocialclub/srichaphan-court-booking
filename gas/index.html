@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>จองคอร์ท · Srichaphan Tennis Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0F1C3F; --navy3:#0A1228;
+    --gold:#D4A843; --gold-lt:#F0C660; --gold-dk:#A07828;
+    --blue:#2563EB; --blue-lt:#3B82F6; --blue-bg:#EFF6FF;
+    --green:#059669; --green-bg:#DCFCE7; --green-line:#86EFAC;
+    --amber:#B45309; --amber-bg:#FEF3C7;
+    --red:#DC2626; --red-bg:#FEF2F2;
+    --bg:#F3F6FB; --card:#FFFFFF; --line:#E2E8F0;
+    --g400:#CBD5E1; --g500:#94A3B8; --g600:#64748B; --g700:#475569; --g900:#1E293B;
+    --taken: repeating-linear-gradient(135deg,#EEF1F5 0 6px,#E3E8EF 6px 12px);
+    --tabbar-h: 64px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { background:var(--bg); }
+  body { font-family:'Inter','Kanit',sans-serif; color:var(--g900); min-height:100vh;
+         padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 16px); }
+  body.th { font-family:'Kanit','Inter',sans-serif; }
+  body.has-sel { padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 90px); }
+  button, input, select { font:inherit; color:inherit; }
+  button { cursor:pointer; }
+  [hidden] { display:none !important; }
+  svg { display:block; }
+
+  /* ── TOP BAR ── */
+  .topbar { position:sticky; top:0; z-index:50; background:rgba(10,18,40,.96); backdrop-filter:blur(10px);
+            border-bottom:1px solid rgba(212,168,67,.2); height:60px; padding:0 16px;
+            display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .brand { display:flex; flex-direction:column; justify-content:center; min-width:0; color:#fff; text-decoration:none; line-height:1.15; }
+  .brand-name { font-family:'Inter',sans-serif; font-weight:800; font-size:15px; letter-spacing:-.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .brand-sub { font-size:11px; font-weight:600; color:var(--gold-lt); letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .top-actions { display:flex; align-items:center; gap:8px; }
+  .lang { display:flex; background:rgba(255,255,255,.08); border-radius:10px; padding:3px; }
+  .lang button { border:0; background:transparent; color:rgba(255,255,255,.6); font-size:12px; font-weight:700; padding:5px 9px; border-radius:7px; }
+  .lang button.on { background:#fff; color:var(--navy); }
+  .avatar { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08);
+            color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+  .avatar.in { background:linear-gradient(135deg,var(--gold-dk),var(--gold-lt)); color:var(--navy3); border:0; }
+
+  .demo { background:#FFF7E0; border-bottom:1px solid #F5DFA0; color:#7A5A12; font-size:12.5px; padding:8px 16px; line-height:1.5; }
+  .demo b { font-weight:700; }
+  .demo button { border:0; background:none; color:var(--blue); text-decoration:underline; font-size:12.5px; padding:0; }
+
+  main { max-width:980px; margin:0 auto; padding:16px; }
+  .view-title { font-size:20px; font-weight:800; margin:4px 0 14px; color:var(--navy); }
+
+  /* ── DATE STRIP ── */
+  .dates { display:flex; gap:8px; overflow-x:auto; padding:2px 2px 6px; scrollbar-width:none; }
+  .dates::-webkit-scrollbar { display:none; }
+  .date-chip { flex:0 0 auto; min-width:92px; border:1px solid var(--line); background:var(--card); border-radius:14px;
+               padding:9px 12px; text-align:center; transition:all .15s; }
+  .date-chip b { display:block; font-size:15px; font-weight:700; }
+  .date-chip small { display:block; font-size:12px; color:var(--g600); margin-top:2px; white-space:nowrap; }
+  .date-chip.on { background:var(--blue); border-color:var(--blue); color:#fff; box-shadow:0 6px 16px rgba(37,99,235,.28); }
+  .date-chip.on small { color:rgba(255,255,255,.85); }
+  .date-full { font-size:14px; color:var(--g700); margin:10px 2px 0; font-weight:500; }
+
+  .toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:14px 0 10px; flex-wrap:wrap; }
+  .seg { display:inline-flex; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:3px; }
+  .seg button { border:0; background:transparent; padding:7px 14px; border-radius:9px; font-size:14px; font-weight:600; color:var(--g700);
+                display:flex; align-items:center; gap:6px; }
+  .seg button.on { background:var(--blue); color:#fff; }
+  .admin-date { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--g600); }
+  .admin-date input { border:1px solid var(--line); border-radius:10px; padding:6px 8px; background:var(--card); font-size:13px; }
+
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--g700); margin-bottom:8px; }
+  .legend span { display:flex; align-items:center; gap:6px; }
+  .legend i { width:16px; height:16px; border-radius:5px; border:1px solid var(--line); display:inline-block; }
+  .lg-free { background:#fff; } .lg-sel { background:var(--blue-bg); border-color:var(--blue) !important; }
+  .lg-mine { background:var(--green-bg); border-color:var(--green-line) !important; }
+  .lg-block { background:var(--amber-bg); border-color:#FCD34D !important; }
+  .lg-taken { background:var(--taken); }
+
+  .perm-hint { font-size:12.5px; color:var(--g600); background:var(--card); border:1px dashed var(--line); border-radius:12px;
+               padding:8px 12px; margin-bottom:12px; line-height:1.6; }
+  .perm-hint b { color:var(--navy); }
+  .role-pill { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; background:var(--blue-bg); color:var(--blue); vertical-align:1px; }
+  .role-pill.admin { background:#FDF3D8; color:var(--gold-dk); }
+  .role-pill.member { background:var(--green-bg); color:var(--green); }
+
+  /* ── GRID ── */
+  .grid-wrap { background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:auto; max-height:calc(100vh - 150px); max-height:calc(100dvh - 150px);
+               box-shadow:0 1px 2px rgba(15,28,63,.04); }
+  table.grid { border-collapse:separate; border-spacing:4px; width:100%; min-width:330px; table-layout:fixed; }
+  .grid thead th { position:sticky; top:0; z-index:3; background:#F8FAFC; font-size:15px; font-weight:700; color:var(--navy); padding:12px 4px; }
+  .grid th.tcol { position:sticky; left:0; z-index:2; background:#F8FAFC; width:72px; min-width:72px; text-align:left; padding:6px 6px; border-radius:10px; }
+  .grid thead th.tcol { z-index:4; color:var(--g600); font-weight:600; font-size:13px; text-align:center; }
+  .tlabel { display:flex; align-items:center; gap:6px; }
+  .tlabel b { font-size:14px; font-weight:700; }
+  .tlabel small { display:block; font-size:11.5px; color:var(--g500); font-weight:500; }
+  .tlabel .ico { width:16px; height:16px; flex:0 0 16px; }
+  .ico.sun { color:#D97706; } .ico.moon { color:var(--navy); }
+  .grid td { padding:0; }
+
+  .cell { width:100%; height:56px; border-radius:10px; border:1px solid var(--line); background:#fff;
+          display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; line-height:1.15;
+          padding:2px; text-align:center; overflow:hidden; transition:transform .08s, background .12s; }
+  .cell svg { width:15px; height:15px; }
+  .cell.free:hover { border-color:var(--blue-lt); background:#F7FAFF; }
+  .cell.free:active { transform:scale(.96); }
+  .cell.sel { background:var(--blue-bg); border:2px solid var(--blue); color:var(--blue); }
+  .cell.mine { background:var(--green-bg); border-color:var(--green-line); color:var(--green); }
+  .cell.block { background:var(--amber-bg); border-color:#FCD34D; color:var(--amber); }
+  .cell.taken { background:var(--taken); color:var(--g500); border-color:#E3E8EF; }
+  .cell.taken.named { color:var(--g700); }
+  .cell.past { background:#F1F4F8; border-color:#EEF1F5; color:transparent; cursor:default; }
+  .cell .nm { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; word-break:break-word; }
+
+  /* ── CARDS ── */
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; }
+  .slot-card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; }
+  .slot-card.full { opacity:.7; }
+  .sc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .sc-time { display:flex; align-items:center; gap:7px; font-weight:700; font-size:15px; }
+  .sc-time .ico { width:16px; height:16px; }
+  .sc-count { font-size:12px; font-weight:600; color:var(--green); background:var(--green-bg); padding:3px 9px; border-radius:20px; }
+  .sc-count.zero { color:var(--g600); background:#EEF1F5; }
+  .sc-courts { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .sc-courts .cell { height:44px; flex-direction:column; gap:1px; }
+  .sc-courts .cell .cn { font-size:12px; font-weight:800; }
+  .sc-courts .cell.taken .cn, .sc-courts .cell.past .cn { color:var(--g500); }
+
+  .empty { text-align:center; color:var(--g600); padding:40px 16px; background:var(--card); border:1px solid var(--line); border-radius:16px; font-size:14px; line-height:1.6; }
+  .loading { opacity:.55; pointer-events:none; transition:opacity .15s; }
+
+  /* ── SELECTION BAR ── */
+  .selbar { position:fixed; left:0; right:0; bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom)); z-index:40; padding:10px 16px;
+            display:flex; justify-content:center; pointer-events:none; }
+  .selbar-in { pointer-events:auto; width:100%; max-width:640px; background:var(--navy); color:#fff; border-radius:16px;
+               padding:10px 10px 10px 16px; display:flex; align-items:center; gap:10px; box-shadow:0 10px 30px rgba(10,18,40,.35); }
+  .selbar-in .txt { flex:1; font-size:14px; line-height:1.3; }
+  .selbar-in .txt small { display:block; color:rgba(255,255,255,.6); font-size:12px; }
+
+  /* ── BUTTONS / FORMS ── */
+  .btn { border:0; border-radius:12px; padding:11px 16px; font-weight:700; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+  .btn-primary { background:var(--blue); color:#fff; }
+  .btn-primary:hover { background:#1D4ED8; }
+  .btn-gold { background:linear-gradient(135deg,var(--gold-dk),var(--gold-lt)); color:var(--navy3); }
+  .btn-ghost { background:transparent; color:inherit; border:1px solid rgba(255,255,255,.25); }
+  .btn-light { background:#EEF2F7; color:var(--g900); }
+  .btn-danger { background:var(--red-bg); color:var(--red); border:1px solid #FECACA; }
+  .btn-block { width:100%; }
+  .btn:disabled { opacity:.55; cursor:not-allowed; }
+  .btn-sm { padding:7px 11px; font-size:13px; border-radius:10px; }
+
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:13px; font-weight:600; color:var(--g700); margin-bottom:6px; }
+  .field input, .field select { width:100%; border:1px solid var(--line); border-radius:12px; padding:11px 12px; background:#fff; font-size:15px; }
+  .field input:focus, .field select:focus { outline:2px solid rgba(37,99,235,.25); border-color:var(--blue); }
+  .field .hint { font-size:12px; color:var(--g500); margin-top:5px; }
+
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin-bottom:14px; }
+  .panel h3 { font-size:16px; font-weight:800; color:var(--navy); margin-bottom:12px; }
+  .kv { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid #F1F4F8; font-size:14px; }
+  .kv:last-child { border-bottom:0; }
+  .kv span { color:var(--g600); }
+  .kv b { font-weight:700; text-align:right; }
+
+  .profile { display:flex; align-items:center; gap:14px; }
+  .profile .avatar { width:52px; height:52px; font-size:20px; }
+  .profile h2 { font-size:18px; font-weight:800; }
+  .profile p { color:var(--g600); font-size:13px; margin-top:2px; }
+
+  /* roles table */
+  .tbl-wrap { overflow-x:auto; }
+  table.tbl { width:100%; border-collapse:collapse; font-size:13px; }
+  .tbl th, .tbl td { padding:9px 8px; border-bottom:1px solid #F1F4F8; text-align:left; white-space:nowrap; }
+  .tbl th { font-size:12px; color:var(--g600); font-weight:600; background:#F8FAFC; }
+  .tbl td.c, .tbl th.c { text-align:center; }
+  .yes { color:var(--green); font-weight:700; } .no { color:var(--g400); }
+
+  /* booking list */
+  .blist { display:flex; flex-direction:column; gap:8px; }
+  .bitem { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .bitem .court { width:48px; height:48px; flex:0 0 48px; border-radius:12px; background:var(--green-bg); color:var(--green); display:flex; align-items:center; justify-content:center; font-weight:800; }
+  .bitem.past .court, .bitem.cancelled .court { background:#EEF1F5; color:var(--g500); }
+  .bitem.block .court { background:var(--amber-bg); color:var(--amber); }
+  .bitem .info { flex:1; min-width:0; }
+  .bitem .info b { display:block; font-size:14.5px; }
+  .bitem .info small { display:block; font-size:12.5px; color:var(--g600); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:2px 7px; border-radius:6px; background:#EEF1F5; color:var(--g600); margin-left:4px; }
+  .tag.red { background:var(--red-bg); color:var(--red); }
+  .tag.amber { background:var(--amber-bg); color:var(--amber); }
+  .section-label { font-size:12px; font-weight:700; color:var(--g500); letter-spacing:.6px; text-transform:uppercase; margin:18px 2px 8px; }
+
+  /* users (admin) */
+  .uitem { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+  .uitem .who { flex:1 1 180px; min-width:0; }
+  .uitem .who b { font-size:14.5px; }
+  .uitem .who small { display:block; color:var(--g600); font-size:12.5px; margin-top:2px; }
+  .uitem select { border:1px solid var(--line); border-radius:10px; padding:7px 8px; background:#fff; font-size:13px; }
+  .uitem.suspended { opacity:.6; }
+  .search { width:100%; border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#fff; margin-bottom:10px; font-size:14px; }
+
+  /* ── TAB BAR ── */
+  .tabbar { position:fixed; bottom:0; left:0; right:0; z-index:45; background:#fff; border-top:1px solid var(--line);
+            display:flex; justify-content:center; padding-bottom:env(safe-area-inset-bottom); }
+  .tabbar-in { display:flex; width:100%; max-width:640px; }
+  .tab { flex:1; border:0; background:transparent; height:var(--tabbar-h); display:flex; flex-direction:column; align-items:center; justify-content:center;
+         gap:4px; font-size:12px; font-weight:600; color:var(--g600); position:relative; }
+  .tab svg { width:22px; height:22px; }
+  .tab.on { color:var(--blue); }
+  .tab.on::before { content:''; position:absolute; top:0; left:18%; right:18%; height:3px; border-radius:0 0 3px 3px; background:var(--blue); }
+
+  /* ── MODAL ── */
+  .modal { position:fixed; inset:0; z-index:100; background:rgba(10,18,40,.5); backdrop-filter:blur(3px);
+           display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
+  .modal.open { opacity:1; pointer-events:auto; }
+  .sheet { width:100%; max-width:520px; max-height:92vh; overflow:auto; background:#fff; border-radius:22px 22px 0 0;
+           padding:20px 18px calc(20px + env(safe-area-inset-bottom)); transform:translateY(30px); transition:transform .22s; }
+  .modal.open .sheet { transform:none; }
+  @media (min-width:640px) { .modal { align-items:center; } .sheet { border-radius:22px; padding-bottom:20px; } }
+  .sheet-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .sheet-head h3 { font-size:18px; font-weight:800; color:var(--navy); }
+  .x { width:34px; height:34px; border-radius:10px; border:0; background:#EEF2F7; font-size:16px; }
+  .slot-list { list-style:none; border:1px solid var(--line); border-radius:14px; margin-bottom:14px; max-height:240px; overflow:auto; }
+  .slot-list li { display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #F1F4F8; font-size:14px; }
+  .slot-list li:last-child { border-bottom:0; }
+  .slot-list li b { font-weight:700; }
+  .auth-tabs { margin-bottom:16px; width:100%; }
+  .auth-tabs button { flex:1; justify-content:center; }
+  .err { background:var(--red-bg); color:var(--red); border:1px solid #FECACA; border-radius:10px; padding:9px 12px; font-size:13px; margin-bottom:12px; }
+  .row-btns { display:flex; gap:8px; margin-top:6px; }
+  .row-btns .btn { flex:1; }
+  .muted { color:var(--g600); font-size:13px; line-height:1.6; }
+
+  .toast { position:fixed; left:50%; top:72px; transform:translate(-50%,-20px); z-index:200; background:var(--navy); color:#fff;
+           padding:11px 16px; border-radius:12px; font-size:14px; max-width:calc(100% - 32px); box-shadow:0 10px 30px rgba(10,18,40,.3);
+           opacity:0; pointer-events:none; transition:all .2s; }
+  .toast.show { opacity:1; transform:translate(-50%,0); }
+  .toast.bad { background:var(--red); }
+  .toast.good { background:var(--green); }
+
+  /* ── PRICE / PAYMENT ── */
+  .cell.sel { flex-direction:column; gap:2px; }
+  .cell .pr { font-size:10.5px; font-weight:700; }
+  .cell.pend { border-style:dashed; }
+  .cell.mine.pend { background:#FFF7ED; border-color:#FDBA74; color:#C2410C; }
+  .lg-pend { background:#FFF7ED; border:1px dashed #FDBA74 !important; }
+  .sc-courts .cell.free .pr { color:var(--g500); font-weight:600; }
+  .sc-time small { font-size:12px; color:var(--g600); font-weight:600; margin-left:2px; }
+  .price-line { margin-top:3px; color:var(--g700); }
+  .slot-list li.total { background:#F8FAFC; font-size:15px; }
+  .slot-list .amt { font-weight:700; }
+  .noprice .amt, .noprice .total { display:none !important; }
+  .pay-amount { text-align:center; padding:4px 0 14px; }
+  .pay-amount small { display:block; font-size:13px; color:var(--g600); }
+  .pay-amount b { font-size:34px; font-weight:800; color:var(--navy); letter-spacing:-.5px; }
+  .bank-card { border-radius:16px; padding:14px 16px; margin-bottom:12px; background:linear-gradient(135deg,#FFE768,#FFD400); color:#4A3A00; }
+  .bank-card small { font-size:12px; opacity:.85; }
+  .bk-name { font-weight:700; font-size:14px; }
+  .bk-row { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 0 2px; }
+  .bk-no { font-family:'Inter',monospace; font-size:22px; font-weight:800; letter-spacing:1px; }
+  .bk-holder { font-size:15px; font-weight:600; }
+  .bank-card .btn-light { background:rgba(255,255,255,.75); }
+  .deadline { text-align:center; font-size:13px; font-weight:600; color:#C2410C; background:#FFF7ED; border-radius:10px; padding:8px; margin-bottom:12px; }
+  .deadline.over { color:var(--red); background:var(--red-bg); }
+  .field label.dropzone, .dropzone { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:110px;
+              border:2px dashed var(--g400); border-radius:14px; background:#F8FAFC; color:var(--g600); font-size:14px; font-weight:600;
+              cursor:pointer; padding:12px; text-align:center; }
+  .dropzone input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .dropzone img { max-width:100%; max-height:260px; border-radius:10px; }
+  .slip-full { display:block; width:100%; max-height:62vh; object-fit:contain; background:#F8FAFC; border-radius:12px; border:1px solid var(--line); margin-bottom:12px; }
+  .pill { display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .st-pending_payment { background:#FFF7ED; color:#C2410C; }
+  .st-pending_review { background:var(--blue-bg); color:var(--blue); }
+  .st-confirmed { background:var(--green-bg); color:var(--green); }
+  .st-rejected, .st-expired, .st-cancelled { background:var(--red-bg); color:var(--red); }
+  .st-past { background:#EEF1F5; color:var(--g600); }
+  .ocard { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 14px; }
+  .ohead { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .oamt { font-size:16px; font-weight:800; color:var(--navy); }
+  .oi { display:flex; align-items:center; gap:10px; padding:6px 0; border-top:1px solid #F1F4F8; font-size:14px; }
+  .oi .oc { width:34px; height:28px; border-radius:8px; background:var(--green-bg); color:var(--green); font-weight:800; font-size:12px;
+            display:flex; align-items:center; justify-content:center; flex:0 0 34px; }
+  .oi .ot { flex:1; }
+  .oi .op { font-weight:700; color:var(--g700); }
+  .oi.gone { opacity:.5; text-decoration:line-through; }
+  .mini-x { border:0; background:var(--red-bg); color:var(--red); width:26px; height:26px; border-radius:8px; font-size:12px; flex:0 0 26px; }
+  .oacts { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .oacts .btn { flex:1; }
+  .onote { font-size:12.5px; color:var(--g600); margin-top:6px; }
+  .onote.warn { color:#C2410C; }
+  .owho { font-size:14px; margin-bottom:4px; }
+  .owho a { color:var(--blue); text-decoration:none; }
+  .oitems-s { font-size:13px; color:var(--g700); line-height:1.6; }
+  .tab .badge { position:absolute; top:7px; left:calc(50% + 6px); min-width:18px; height:18px; padding:0 5px; border-radius:9px;
+                background:var(--red); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="./" class="brand"><span class="brand-name">Srichaphan Tennis Academy</span><span class="brand-sub">Court Booking · จองคอร์ท</span></a>
+  <div class="top-actions">
+    <div class="lang"><button data-lang="th">TH</button><button data-lang="en">EN</button></div>
+    <button class="avatar" id="btnAvatar" aria-label="account"></button>
+  </div>
+</header>
+<div class="demo" id="demoBanner" hidden></div>
+
+<main id="main"></main>
+
+<div class="selbar" id="selbar" hidden>
+  <div class="selbar-in">
+    <div class="txt" id="selText"></div>
+    <button class="btn btn-ghost btn-sm" id="selClear"></button>
+    <button class="btn btn-gold btn-sm" id="selBook"></button>
+  </div>
+</div>
+
+<nav class="tabbar"><div class="tabbar-in" id="tabbar"></div></nav>
+
+<div class="modal" id="modal"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   ใส่ URL ของ Apps Script Web App ตรงนี้ (ดู docs/setup-guide.md)
+   ถ้าเว้นว่าง = โหมดทดลอง: ข้อมูลเก็บใน browser เครื่องนี้เท่านั้น
+   ════════════════════════════════════════════════════════════════ */
+var API_URL = 'https://script.google.com/macros/s/AKfycbzlVfg-g5zst88Xa6zHt6dIomJKgwRw0QrzQUhzmhIA7QmgT5__3l9Z9GStXc2wX_o0/exec';
+
+/* ───────────── i18n ───────────── */
+var I18N = {
+  th: {
+    tab_book:'จองคอร์ท', tab_mine:'การจองของฉัน', tab_admin:'แอดมิน', tab_account:'บัญชี',
+    today:'วันนี้', tomorrow:'พรุ่งนี้', grid:'ตาราง', cards:'การ์ด', time:'เวลา',
+    lg_free:'ว่าง', lg_sel:'ที่เลือก', lg_mine:'การจองของคุณ', lg_block:'ปิดคอร์ท', lg_taken:'ไม่ว่าง',
+    you:'คุณ', closed:'ปิด', free_n:'ว่าง {n}/{t}', full:'เต็ม', other_date:'วันอื่น',
+    all_past:'ช่วงเวลาของวันนี้ผ่านไปหมดแล้ว — ลองเลือกวันถัดไป',
+    sel_n:'เลือกแล้ว {n} ชั่วโมง', sel_tap:'แตะช่องว่างเพื่อเลือกเพิ่ม', clear:'ล้าง', book_now:'จองเลย',
+    confirm_title:'ยืนยันการจอง', confirm:'ยืนยัน', cancel:'ยกเลิก', close:'ปิด',
+    type_booking:'จองสนาม', type_block:'ปิดคอร์ท', for_name:'จองให้ (ชื่อผู้เล่น)', for_name_hint:'เว้นว่าง = จองในชื่อคุณ',
+    note:'หมายเหตุ', reason:'เหตุผลที่ปิด', reason_ph:'เช่น ซ่อมพื้นคอร์ท / มีคลาสเรียน', reason_required:'กรุณาใส่เหตุผล',
+    booked_ok:'จองสำเร็จ {n} ชั่วโมง 🎾', blocked_ok:'ปิดคอร์ทแล้ว {n} ช่อง', cancelled_ok:'ยกเลิกการจองแล้ว',
+    detail_title:'รายละเอียดการจอง', d_court:'คอร์ท', d_date:'วันที่', d_time:'เวลา', d_name:'ผู้จอง', d_note:'หมายเหตุ',
+    cancel_booking:'ยกเลิกการจองนี้', reopen:'เปิดคอร์ท (ยกเลิกการปิด)', cancel_confirm:'ยืนยันยกเลิกการจองนี้?',
+    cancel_rule:'ยกเลิกได้ก่อนเวลาเล่นอย่างน้อย {h} ชม.', taken_msg:'ช่วงเวลานี้มีคนจองแล้ว',
+    login_to_book:'เข้าสู่ระบบเพื่อจองคอร์ท',
+    login:'เข้าสู่ระบบ', register:'สมัครสมาชิก', logout:'ออกจากระบบ',
+    phone:'เบอร์โทรศัพท์', password:'รหัสผ่าน', full_name:'ชื่อ - นามสกุล', nickname:'ชื่อเล่น',
+    pw_hint:'อย่างน้อย 6 ตัวอักษร', welcome:'ยินดีต้อนรับ {name}',
+    your_perms:'สิทธิ์ของคุณ', guest_perms:'ยังไม่ล็อกอิน: ดูตารางล่วงหน้าได้ {n} วัน · สมัครฟรีเพื่อจอง',
+    advance:'ดูตาราง/จองล่วงหน้า', advance_v0:'เฉพาะวันนี้', advance_v:'วันนี้ + อีก {n} วัน',
+    max_day:'สูงสุดต่อวัน', max_active:'การจองค้างได้สูงสุด', cancel_before:'ยกเลิกได้ก่อนเวลาเล่น',
+    unlimited:'ไม่จำกัด', hours_v:'{n} ชม.', items_v:'{n} รายการ',
+    can_others:'จองแทนผู้อื่น', can_block:'ปิดคอร์ท', can_cancel_any:'ยกเลิกของทุกคน', can_users:'จัดการผู้ใช้',
+    perm_line:'<b>{role}</b> · ดูตารางและจองล่วงหน้า {adv} · {max}',
+    perm_max:'สูงสุด {n} ชม./วัน', perm_nomax:'ไม่จำกัดชั่วโมง',
+    roles_title:'สิทธิ์แต่ละระดับ', role:'ระดับ', roles_hint:'แอดมินแก้สิทธิ์ได้ในแท็บ Roles ของ Google Sheet',
+    change_pw:'เปลี่ยนรหัสผ่าน', old_pw:'รหัสผ่านเดิม', new_pw:'รหัสผ่านใหม่', save:'บันทึก', saved:'บันทึกแล้ว',
+    upcoming:'กำลังจะมาถึง', history:'ประวัติ', no_upcoming:'ยังไม่มีการจอง', go_book:'ไปจองคอร์ท',
+    st_cancelled:'ยกเลิกแล้ว', st_past:'เล่นแล้ว', for_label:'ชื่อ: {name}',
+    users:'ผู้ใช้ทั้งหมด', search:'ค้นหาชื่อ / เบอร์โทร', suspend:'ระงับ', activate:'เปิดใช้', reset_pw:'ตั้งรหัสใหม่',
+    reset_pw_prompt:'รหัสผ่านใหม่ของ {name} (อย่างน้อย 6 ตัว)', suspended:'ถูกระงับ', joined:'สมัคร {d}', updated:'อัปเดตแล้ว',
+    demo:'<b>โหมดทดลอง</b> — ข้อมูลเก็บใน browser นี้เท่านั้น (ลองจอง → ส่งสลิป → ล็อกอินแอดมินกดยืนยัน) · ลองล็อกอิน: แอดมิน <b>0800000001 / admin123</b> · สมาชิก <b>0800000002 / member123</b> · ทั่วไป <b>0800000003 / user123</b>',
+    demo_reset:'รีเซ็ตข้อมูลทดลอง', need_login:'เข้าสู่ระบบเพื่อดูการจองของคุณ',
+    lg_pend:'รอชำระ/รอตรวจ', cell_pay:'รอชำระ', cell_review:'รอตรวจ',
+    price_line:'<b>ค่าคอร์ท</b> ☀️ {d1}–{d2} <b>฿{day}</b>/ชม. · 🌙 {n1}–{n2} เปิดไฟ <b>฿{night}</b>/ชม.',
+    sel_total:'รวม {amt}', total:'ยอดรวม',
+    pay_note:'หลังกดยืนยัน กรุณาโอนเงินและอัปโหลดสลิปภายใน {m} นาที ไม่งั้นการจองจะหลุดอัตโนมัติ · การจองจะสมบูรณ์เมื่อแอดมินยืนยันสลิป',
+    admin_direct_note:'แอดมินจอง = ยืนยันทันที ไม่ต้องอัปโหลดสลิป (เก็บเงินหน้าเคาน์เตอร์)',
+    pay_title:'ชำระเงิน', pay_amount:'ยอดที่ต้องโอน', pay_bank:'โอนเข้าบัญชี', copy:'คัดลอก', copied:'คัดลอกเลขบัญชีแล้ว',
+    pay_deadline:'โอนและอัปโหลดสลิปภายใน {time} น. (เหลือ {left})', pay_expired:'หมดเวลาชำระแล้ว — กรุณาจองใหม่',
+    slip_upload:'อัปโหลดสลิปโอนเงิน', slip_choose:'📎 แตะเพื่อเลือกรูปสลิป', slip_change:'แตะเพื่อเปลี่ยนรูป', slip_send:'ส่งสลิป',
+    slip_sent:'ส่งสลิปแล้ว — รอแอดมินยืนยัน', slip_later:'ชำระทีหลัง', slip_need:'กรุณาเลือกรูปสลิปก่อน', slip_view:'ดูสลิป',
+    slip_reupload:'ส่งสลิปใหม่', slip_review_hint:'ส่งสลิปแล้ว รอแอดมินตรวจสอบ — ถ้าส่งผิดรูป ส่งใหม่ได้ด้านล่าง',
+    st_pending_payment:'รอชำระเงิน', st_pending_review:'รอตรวจสลิป', st_confirmed:'ยืนยันแล้ว', st_rejected:'สลิปไม่ผ่าน', st_expired:'หมดเวลาชำระ',
+    pay_now:'ชำระเงิน / ส่งสลิป', cancel_order:'ยกเลิกการจอง', cancel_order_confirm:'ยกเลิกการจองทั้งหมดในรายการนี้?',
+    reject_reason:'เหตุผล: {r}', refund_note:'ชำระเงินแล้ว — ถ้ายกเลิก ติดต่อแอดมินเรื่องคืนเงิน', pend_cancel_note:'ยังไม่ได้ชำระ ยกเลิกได้ทันที',
+    adm_review:'รอตรวจสลิป', adm_awaiting:'รอชำระ (ยังไม่ส่งสลิป)', adm_recent:'ตรวจล่าสุด', adm_none:'ไม่มีรายการ',
+    approve:'ยืนยันสลิป', approve_cash:'ยืนยัน (รับเงินแล้ว)', reject:'ปฏิเสธ', reject_prompt:'เหตุผลที่ปฏิเสธ (ผู้จองจะเห็นข้อความนี้)',
+    approved_ok:'ยืนยันการจองแล้ว ✅', rejected_ok:'ปฏิเสธสลิปแล้ว — ช่องว่างอีกครั้ง',
+    uploaded_at:'ส่งสลิป {t}', expires_at:'ต้องส่งสลิปก่อน {t} น.', d_price:'ราคา', d_status:'สถานะ', can_confirm:'ยืนยันสลิป',
+    err_payment_expired:'หมดเวลาชำระแล้ว การจองหลุด — กรุณาจองใหม่ (ถ้าโอนเงินไปแล้ว ติดต่อแอดมิน)',
+    err_invalid_slip:'ไฟล์สลิปต้องเป็นรูปภาพ', err_slip_too_large:'รูปใหญ่เกินไป (เกิน 5MB)',
+    backend_outdated:'ระบบกำลังอัปเดต กรุณากลับมาใหม่อีกครั้ง 🙏 (สำหรับแอดมิน: หลังบ้านยังเป็นโค้ด .gs เวอร์ชันเก่า — วางโค้ดใหม่ → รัน setup → Deploy New version ตามคู่มือส่วนที่ 7)',
+    err_demo_unavailable:'โหมดทดลองต้องเปิดผ่านเว็บ (เช่น GitHub Pages) — เปิดไฟล์จากเครื่องตรง ๆ ไม่ได้',
+    err_auth_required:'กรุณาเข้าสู่ระบบก่อน', err_invalid_login:'เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง',
+    err_phone_taken:'เบอร์นี้สมัครไว้แล้ว — ลองเข้าสู่ระบบ', err_invalid_phone:'เบอร์โทรไม่ถูกต้อง (เช่น 0812345678)',
+    err_name_required:'กรุณาใส่ชื่อ', err_weak_password:'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
+    err_forbidden:'คุณไม่มีสิทธิ์ทำรายการนี้', err_slot_taken:'{court} เวลา {time} มีคนจองไปแล้ว',
+    err_slot_past:'ช่วงเวลานี้ผ่านไปแล้ว', err_too_far_ahead:'เลเวลของคุณดูตารางและจองล่วงหน้าได้ไม่เกิน {days} วัน',
+    err_daily_limit:'สิทธิ์ของคุณจองได้สูงสุด {limit} ชม. ต่อวัน', err_active_limit:'สิทธิ์ของคุณมีการจองค้างได้สูงสุด {limit} รายการ',
+    err_cancel_too_late:'ต้องยกเลิกก่อนเวลาเล่นอย่างน้อย {hours} ชม.', err_suspended:'บัญชีนี้ถูกระงับ กรุณาติดต่อแอดมิน',
+    err_not_found:'ไม่พบรายการนี้ (อาจถูกยกเลิกไปแล้ว)', err_self_edit:'แก้สิทธิ์หรือระงับบัญชีตัวเองไม่ได้',
+    err_busy:'ระบบกำลังยุ่ง ลองใหม่อีกครั้ง', err_network:'เชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่',
+    err_bad_response:'เชื่อมต่อระบบหลังบ้านไม่ได้ — กรุณาลองใหม่ภายหลัง (แอดมิน: ตรวจว่าเปิดเว็บถูกที่ และตั้งค่าหลังบ้านครบ)',
+    err_invalid_input:'ข้อมูลไม่ถูกต้อง', err_server_error:'เกิดข้อผิดพลาด ลองใหม่อีกครั้ง'
+  },
+  en: {
+    tab_book:'Book', tab_mine:'My bookings', tab_admin:'Admin', tab_account:'Account',
+    today:'Today', tomorrow:'Tomorrow', grid:'Grid', cards:'Cards', time:'Time',
+    lg_free:'Available', lg_sel:'Selected', lg_mine:'Your booking', lg_block:'Closed', lg_taken:'Booked',
+    you:'You', closed:'Closed', free_n:'{n}/{t} free', full:'Full', other_date:'Other date',
+    all_past:'All of today\'s slots have passed — try the next day',
+    sel_n:'{n} hour(s) selected', sel_tap:'Tap free slots to add more', clear:'Clear', book_now:'Book',
+    confirm_title:'Confirm booking', confirm:'Confirm', cancel:'Cancel', close:'Close',
+    type_booking:'Booking', type_block:'Close court', for_name:'Book for (player name)', for_name_hint:'Leave empty to book under your name',
+    note:'Note', reason:'Reason', reason_ph:'e.g. surface repair / coaching class', reason_required:'Please enter a reason',
+    booked_ok:'Booked {n} hour(s) 🎾', blocked_ok:'Closed {n} slot(s)', cancelled_ok:'Booking cancelled',
+    detail_title:'Booking details', d_court:'Court', d_date:'Date', d_time:'Time', d_name:'Booked by', d_note:'Note',
+    cancel_booking:'Cancel this booking', reopen:'Re-open court', cancel_confirm:'Cancel this booking?',
+    cancel_rule:'Cancel at least {h} h before play', taken_msg:'This slot is already booked',
+    login_to_book:'Log in to book a court',
+    login:'Log in', register:'Sign up', logout:'Log out',
+    phone:'Phone number', password:'Password', full_name:'Full name', nickname:'Nickname',
+    pw_hint:'At least 6 characters', welcome:'Welcome, {name}',
+    your_perms:'Your permissions', guest_perms:'Guests: view {n} days ahead · sign up free to book',
+    advance:'View & book ahead', advance_v0:'Today only', advance_v:'Today + {n} day(s)',
+    max_day:'Max per day', max_active:'Max upcoming bookings', cancel_before:'Cancel before play',
+    unlimited:'Unlimited', hours_v:'{n} h', items_v:'{n}',
+    can_others:'Book for others', can_block:'Close courts', can_cancel_any:'Cancel any booking', can_users:'Manage users',
+    perm_line:'<b>{role}</b> · view & book ahead: {adv} · {max}',
+    perm_max:'max {n} h/day', perm_nomax:'no hourly limit',
+    roles_title:'Permission levels', role:'Level', roles_hint:'Admins edit permissions in the Roles tab of the Google Sheet',
+    change_pw:'Change password', old_pw:'Current password', new_pw:'New password', save:'Save', saved:'Saved',
+    upcoming:'Upcoming', history:'History', no_upcoming:'No bookings yet', go_book:'Book a court',
+    st_cancelled:'Cancelled', st_past:'Played', for_label:'Name: {name}',
+    users:'All users', search:'Search name / phone', suspend:'Suspend', activate:'Activate', reset_pw:'Reset password',
+    reset_pw_prompt:'New password for {name} (min 6 characters)', suspended:'Suspended', joined:'Joined {d}', updated:'Updated',
+    demo:'<b>Demo mode</b> — data is stored in this browser only (try book → send slip → approve as admin) · Try: admin <b>0800000001 / admin123</b> · member <b>0800000002 / member123</b> · user <b>0800000003 / user123</b>',
+    demo_reset:'Reset demo data', need_login:'Log in to see your bookings',
+    lg_pend:'Awaiting payment', cell_pay:'Unpaid', cell_review:'Checking',
+    price_line:'<b>Court fee</b> ☀️ {d1}–{d2} <b>฿{day}</b>/h · 🌙 {n1}–{n2} lights on <b>฿{night}</b>/h',
+    sel_total:'Total {amt}', total:'Total',
+    pay_note:'After confirming, transfer and upload your slip within {m} minutes or the booking is released · It is final once an admin approves the slip',
+    admin_direct_note:'Admin bookings are confirmed immediately — no slip needed (collect payment at the counter)',
+    pay_title:'Payment', pay_amount:'Amount to transfer', pay_bank:'Transfer to', copy:'Copy', copied:'Account number copied',
+    pay_deadline:'Transfer and upload the slip by {time} ({left} left)', pay_expired:'Payment time is up — please book again',
+    slip_upload:'Upload transfer slip', slip_choose:'📎 Tap to choose the slip image', slip_change:'Tap to change image', slip_send:'Send slip',
+    slip_sent:'Slip sent — waiting for admin approval', slip_later:'Pay later', slip_need:'Please choose a slip image first', slip_view:'View slip',
+    slip_reupload:'Send a new slip', slip_review_hint:'Slip received, waiting for admin — wrong image? send a new one below',
+    st_pending_payment:'Awaiting payment', st_pending_review:'Checking slip', st_confirmed:'Confirmed', st_rejected:'Slip rejected', st_expired:'Payment expired',
+    pay_now:'Pay / send slip', cancel_order:'Cancel booking', cancel_order_confirm:'Cancel every slot in this booking?',
+    reject_reason:'Reason: {r}', refund_note:'Paid — contact an admin about refunds if you cancel', pend_cancel_note:'Not paid yet — you can cancel any time',
+    adm_review:'Slips to check', adm_awaiting:'Awaiting payment (no slip yet)', adm_recent:'Recently reviewed', adm_none:'Nothing here',
+    approve:'Approve slip', approve_cash:'Approve (paid)', reject:'Reject', reject_prompt:'Reason for rejecting (shown to the player)',
+    approved_ok:'Booking confirmed ✅', rejected_ok:'Slip rejected — the slot is free again',
+    uploaded_at:'Slip sent {t}', expires_at:'Slip due by {t}', d_price:'Price', d_status:'Status', can_confirm:'Approve slips',
+    err_payment_expired:'Payment time is up and the booking was released — please book again (contact an admin if you already paid)',
+    err_invalid_slip:'The slip must be an image', err_slip_too_large:'Image too large (over 5MB)',
+    backend_outdated:'The system is being updated, please check back soon 🙏 (Admins: the backend still runs the old .gs — paste the new code → run setup → Deploy a New version, see guide section 7)',
+    err_demo_unavailable:'Demo mode must be opened from the website (e.g. GitHub Pages), not as a local file',
+    err_auth_required:'Please log in first', err_invalid_login:'Wrong phone number or password',
+    err_phone_taken:'This phone number is already registered — try logging in', err_invalid_phone:'Invalid phone number (e.g. 0812345678)',
+    err_name_required:'Please enter your name', err_weak_password:'Password must be at least 6 characters',
+    err_forbidden:'You don\'t have permission to do this', err_slot_taken:'{court} at {time} was just booked',
+    err_slot_past:'This time slot has passed', err_too_far_ahead:'Your level can view and book up to {days} day(s) ahead',
+    err_daily_limit:'Your level can book up to {limit} h per day', err_active_limit:'Your level can hold up to {limit} upcoming bookings',
+    err_cancel_too_late:'Bookings must be cancelled at least {hours} h before play', err_suspended:'This account is suspended — please contact an admin',
+    err_not_found:'Booking not found (it may already be cancelled)', err_self_edit:'You can\'t change your own level or status',
+    err_busy:'System busy, please try again', err_network:'Can\'t connect — check your internet and try again',
+    err_bad_response:'Cannot reach the booking server — please try again later (admins: check the site address and server settings)',
+    err_invalid_input:'Invalid input', err_server_error:'Something went wrong, please try again'
+  }
+};
+
+/* ───────────── utils ───────────── */
+var LS = {
+  get: function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function hhmm(h) { return pad(h) + ':00'; }
+function t(key, params) {
+  var s = (I18N[state.lang] && I18N[state.lang][key]) || I18N.th[key] || key;
+  return s.replace(/\{(\w+)\}/g, function (_, k) { return params && params[k] != null ? params[k] : ''; });
+}
+function dateObj(d) { var p = d.split('-'); return new Date(Date.UTC(+p[0], p[1] - 1, +p[2])); }
+function addDays(d, n) { var x = dateObj(d); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
+function daysBetween(a, b) { return Math.round((dateObj(b) - dateObj(a)) / 864e5); }
+function fmtDate(d, opts) {
+  return dateObj(d).toLocaleDateString(state.lang === 'th' ? 'th-TH' : 'en-GB', Object.assign({ timeZone: 'UTC' }, opts));
+}
+function shortDate(d) { return fmtDate(d, { weekday: 'short', day: 'numeric', month: 'short' }); }
+function slotStart(date, hour) { return Date.parse(date + 'T' + hhmm(hour) + ':00+07:00'); }
+
+var ICON = {
+  sun: '<svg class="ico sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>',
+  moon: '<svg class="ico moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10V7.5a5 5 0 0 1 10 0V10h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7zm2 0h6V7.5a3 3 0 0 0-6 0V10z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  grid: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
+  cards: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 12h18M12 3v18"/></svg>',
+  t_book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M12 10.5v6M9 13.5h6"/></svg>',
+  t_mine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M7.5 9.5h1M11 9.5h5.5M7.5 14.5h1M11 14.5h5.5"/></svg>',
+  t_admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6L12 3z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></svg>',
+  t_account: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-3.8 4-5.5 7.5-5.5s6.3 1.7 7.5 5.5" stroke-linecap="round"/></svg>'
+};
+
+/* ───────────── state ───────────── */
+var state = {
+  lang: LS.get('stab_lang', 'th'),
+  view: LS.get('stab_view', 'grid'),
+  token: LS.get('stab_token', ''),
+  tab: 'book',
+  cfg: null, user: null, clock: null,
+  date: null, schedule: null,
+  selected: {},             // key "date|hour|court" → {date, hour, court}
+  mine: null, adminData: null, adminOrders: null, userQuery: '',
+  slip: null                // รูปสลิป (data URL) ที่เลือกไว้ รอส่ง
+};
+
+function perms() { return state.user ? state.user.perms : state.cfg.guestPerms; }
+function roleLabel(role) {
+  var r = (state.cfg.roles || []).filter(function (x) { return x.role === role; })[0];
+  if (!r) return role;
+  var parts = String(r.label).split(' / ');
+  return parts.length > 1 ? (state.lang === 'th' ? parts[0] : parts[1]) : r.label;
+}
+function isPast(date, hour) {
+  var a = daysBetween(state.clock.today, date);
+  return a < 0 || (a === 0 && hour <= state.clock.hour);
+}
+
+/* ───────────── API ───────────── */
+function api(action, payload) {
+  if (!API_URL) return Demo.call(action, payload || {}, state.token);
+  return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, payload: payload || {}, token: state.token }) })
+    .then(function (r) { return r.text(); }, function () { throw { code: 'network' }; })
+    // ได้คำตอบที่ไม่ใช่ JSON (เช่น หน้า error ของเว็บโฮสต์) → แจ้งเป็นภาษาคน ไม่โชว์ error ดิบของเบราว์เซอร์
+    .then(function (txt) { try { return JSON.parse(txt); } catch (e) { throw { code: 'bad_response' }; } })
+    .then(function (res) {
+      if (!res.ok) throw { code: res.error, params: res.params || {}, message: res.message };
+      return res.data;
+    });
+}
+
+function errText(e) {
+  var p = Object.assign({}, (e && e.params) || {});
+  if (p.hour != null) p.time = hhmm(+p.hour);
+  var code = (e && typeof e.code === 'string' && e.code) || 'server_error';
+  var key = 'err_' + code;
+  return I18N.th[key] ? t(key, p) : (e && e.message) || t('err_server_error');
+}
+
+function handleErr(e) {
+  if (e && e.code === 'auth_required' && state.user) { setSession('', null); renderChrome(); renderView(); openAuth('login'); }
+  toast(errText(e), 'bad');
+}
+
+function setSession(token, user) {
+  state.token = token || '';
+  state.user = user || null;
+  if (token) LS.set('stab_token', token); else LS.del('stab_token');
+  state.selected = {};
+  state.mine = null;
+  state.adminData = null;
+  state.adminOrders = null;
+  if (!user && (state.tab === 'admin' || state.tab === 'mine')) state.tab = 'book';
+  // สิทธิ์เปลี่ยน → ถ้าวันที่เลือกอยู่ไกลเกินสิทธิ์ใหม่ ให้กลับมาวันนี้
+  if (state.cfg && state.clock && daysBetween(state.clock.today, state.date) > perms().advance_days) {
+    state.date = state.clock.today;
+    state.schedule = null;
+  }
+}
+
+/* ───────────── toast / modal ───────────── */
+var toastTimer;
+function toast(msg, kind) {
+  var el = $('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (kind || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { el.className = 'toast'; }, 3200);
+}
+function openModal(html) {
+  $('sheet').innerHTML = html;
+  $('modal').classList.add('open');
+  var first = $('sheet').querySelector('input');
+  if (first && window.innerWidth > 640) first.focus();
+}
+function closeModal() { $('modal').classList.remove('open'); }
+function modalOpen() { return $('modal').classList.contains('open'); }
+function sheetHead(title) {
+  return '<div class="sheet-head"><h3>' + esc(title) + '</h3><button class="x" data-act="close" aria-label="close">✕</button></div>';
+}
+
+/* ───────────── boot ───────────── */
+function applyLang() {
+  document.body.classList.remove('th', 'en');
+  document.body.classList.add(state.lang);
+  document.documentElement.lang = state.lang;
+}
+
+function boot() {
+  applyLang();
+  api('bootstrap').then(function (cfg) {
+    // หน้าเว็บเวอร์ชันนี้ต้องใช้หลังบ้านที่มีระบบราคา/ชำระเงิน — ถ้ายังเป็นโค้ด .gs เก่า แจ้งให้อัปเดตแทนที่จะพัง
+    if (!cfg.pricing || !cfg.payment) { $('main').innerHTML = '<div class="empty">' + esc(t('backend_outdated')) + '</div>'; return; }
+    state.cfg = cfg;
+    state.clock = cfg.clock;
+    state.user = cfg.user;
+    if (state.token && !cfg.user) setSession('', null);
+    state.date = cfg.clock.today;
+    renderChrome();
+    renderView();
+    loadSchedule();
+  }).catch(function (e) {
+    $('main').innerHTML = '<div class="empty">' + esc(errText(e)) + '</div>';
+  });
+}
+
+function refreshCfg() {
+  return api('bootstrap').then(function (cfg) {
+    state.cfg = cfg;
+    state.user = cfg.user;
+    renderChrome();
+  }).catch(function () {});
+}
+
+function loadSchedule(silent) {
+  var date = state.date;
+  var board = $('board');
+  if (board && !silent) board.classList.add('loading');
+  return api('schedule', { date: date }).then(function (res) {
+    if (res.date !== state.date) return;
+    state.schedule = res;
+    state.clock = res.clock;
+    // ถ้าวันเปลี่ยน (เปิดหน้าค้างข้ามเที่ยงคืน) ให้เลื่อนไปวันนี้
+    if (daysBetween(state.clock.today, state.date) < 0) { state.date = state.clock.today; return loadSchedule(); }
+    pruneSelection();
+    if (state.tab === 'book') renderBook();
+  }).catch(function (e) { if (!silent) handleErr(e); })
+    .then(function () { var b = $('board'); if (b) b.classList.remove('loading'); });
+}
+
+function pruneSelection() {
+  var taken = {};
+  (state.schedule.bookings || []).forEach(function (b) { taken[state.schedule.date + '|' + b.hour + '|' + b.court] = 1; });
+  Object.keys(state.selected).forEach(function (k) {
+    var s = state.selected[k];
+    if (taken[k] || isPast(s.date, s.hour)) delete state.selected[k];
+  });
+}
+
+/* ───────────── chrome (header, tabs, banner) ───────────── */
+function renderChrome() {
+  document.querySelectorAll('.lang button').forEach(function (b) { b.classList.toggle('on', b.dataset.lang === state.lang); });
+  var av = $('btnAvatar');
+  if (state.user) { av.classList.add('in'); av.textContent = (state.user.nickname || state.user.name || '?').trim().charAt(0).toUpperCase(); }
+  else { av.classList.remove('in'); av.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-3.8 4-5.5 7.5-5.5s6.3 1.7 7.5 5.5" stroke-linecap="round"/></svg>'; }
+
+  var banner = $('demoBanner');
+  banner.hidden = !!API_URL;
+  if (!API_URL) banner.innerHTML = t('demo') + ' · <button data-act="demo-reset">' + esc(t('demo_reset')) + '</button>';
+
+  var tabs = [['book', 't_book'], ['mine', 't_mine']];
+  if (isAdminTab()) tabs.push(['admin', 't_admin']);
+  tabs.push(['account', 't_account']);
+  var badge = state.cfg && state.cfg.pendingReview > 0 ? '<span class="badge">' + state.cfg.pendingReview + '</span>' : '';
+  $('tabbar').innerHTML = tabs.map(function (x) {
+    return '<button class="tab' + (state.tab === x[0] ? ' on' : '') + '" data-tab="' + x[0] + '">' + ICON[x[1]] +
+      '<span>' + esc(t('tab_' + x[0])) + '</span>' + (x[0] === 'admin' ? badge : '') + '</button>';
+  }).join('');
+  renderSelbar();
+}
+
+function renderSelbar() {
+  var keys = Object.keys(state.selected);
+  var show = state.tab === 'book' && keys.length > 0;
+  $('selbar').hidden = !show;
+  document.body.classList.toggle('has-sel', show);
+  if (!show) return;
+  var total = keys.reduce(function (sum, k) { return sum + priceOf(state.selected[k].hour); }, 0);
+  $('selText').innerHTML = esc(t('sel_n', { n: keys.length })) + ' · <b>' + esc(t('sel_total', { amt: money(total) })) + '</b><small>' + esc(t('sel_tap')) + '</small>';
+  $('selClear').textContent = t('clear');
+  $('selBook').textContent = t('book_now');
+}
+
+function renderView() {
+  if (state.tab === 'book') renderBook();
+  else if (state.tab === 'mine') renderMine();
+  else if (state.tab === 'admin') renderAdmin();
+  else renderAccount();
+  renderSelbar();
+}
+
+function switchTab(tab) {
+  state.tab = tab;
+  renderChrome();
+  renderView();
+  window.scrollTo(0, 0);
+  if (tab === 'book') loadSchedule(true);
+}
+
+/* ───────────── BOOK VIEW ───────────── */
+function renderBook() {
+  var p = perms();
+  var today = state.clock.today;
+  var n = Math.min(p.advance_days, 60);
+  var chips = '';
+  for (var i = 0; i <= n; i++) {
+    var d = addDays(today, i);
+    var top = i === 0 ? t('today') : i === 1 ? t('tomorrow') : fmtDate(d, { weekday: 'short' });
+    chips += '<button class="date-chip' + (d === state.date ? ' on' : '') + '" data-date="' + d + '"><b>' + esc(top) + '</b><small>' +
+      esc(fmtDate(d, { day: 'numeric', month: 'short' })) + '</small></button>';
+  }
+  var outside = daysBetween(today, state.date) > n;
+  if (outside) chips += '<button class="date-chip on" data-date="' + state.date + '"><b>' + esc(fmtDate(state.date, { weekday: 'short' })) + '</b><small>' + esc(fmtDate(state.date, { day: 'numeric', month: 'short' })) + '</small></button>';
+
+  var adminDate = p.can_block
+    ? '<label class="admin-date">' + esc(t('other_date')) + ' <input type="date" id="pickDate" min="' + today + '" max="' + addDays(today, 365) + '" value="' + state.date + '"></label>'
+    : '';
+
+  var hint;
+  if (state.user) {
+    hint = t('perm_line', {
+      role: esc(roleLabel(state.user.role)),
+      adv: esc(p.advance_days ? t('advance_v', { n: p.advance_days }) : t('advance_v0')),
+      max: esc(p.max_hours_per_day ? t('perm_max', { n: p.max_hours_per_day }) : t('perm_nomax'))
+    });
+  } else {
+    hint = esc(t('guest_perms', { n: p.advance_days }));
+  }
+
+  $('main').innerHTML =
+    '<div class="dates" id="dates">' + chips + '</div>' +
+    '<div class="date-full">' + esc(fmtDate(state.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })) + '</div>' +
+    '<div class="toolbar"><div class="seg">' +
+      '<button data-view="grid" class="' + (state.view === 'grid' ? 'on' : '') + '">' + ICON.grid + esc(t('grid')) + '</button>' +
+      '<button data-view="card" class="' + (state.view === 'card' ? 'on' : '') + '">' + ICON.cards + esc(t('cards')) + '</button>' +
+    '</div>' + adminDate + '</div>' +
+    '<div class="legend">' +
+      '<span><i class="lg-free"></i>' + esc(t('lg_free')) + '</span>' +
+      '<span><i class="lg-sel"></i>' + esc(t('lg_sel')) + '</span>' +
+      '<span><i class="lg-mine"></i>' + esc(t('lg_mine')) + '</span>' +
+      '<span><i class="lg-pend"></i>' + esc(t('lg_pend')) + '</span>' +
+      '<span><i class="lg-block"></i>' + esc(t('lg_block')) + '</span>' +
+      '<span><i class="lg-taken"></i>' + esc(t('lg_taken')) + '</span>' +
+    '</div>' +
+    '<div class="perm-hint">' + hint + '<div class="price-line">' + priceLine() + '</div></div>' +
+    '<div id="board">' + (state.schedule && state.schedule.date === state.date ? (state.view === 'grid' ? gridHtml() : cardsHtml()) : '<div class="empty">…</div>') + '</div>';
+
+  var on = $('dates').querySelector('.on');
+  if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  renderSelbar();
+}
+
+function money(n) { return '฿' + Number(n || 0).toLocaleString('en-US'); }
+function priceOf(h) { var p = state.cfg.pricing; return h >= p.lightsFromHour ? p.night : p.day; }
+function priceLine() {
+  var p = state.cfg.pricing;
+  return t('price_line', {
+    d1: hhmm(state.cfg.openHour), d2: hhmm(p.lightsFromHour), day: esc(p.day),
+    n1: hhmm(p.lightsFromHour), n2: hhmm(state.cfg.closeHour), night: esc(p.night)
+  });
+}
+function fmtAccount(no) { return /^\d{10}$/.test(no) ? no.replace(/^(\d{3})(\d)(\d{5})(\d)$/, '$1-$2-$3-$4') : no; }
+function isReviewer() { return !!(state.user && state.user.perms.can_confirm_payments); }
+function isAdminTab() { return !!(state.user && (state.user.perms.can_manage_users || state.user.perms.can_confirm_payments)); }
+function statusPill(st) { return '<span class="pill st-' + esc(st) + '">' + esc(t('st_' + st)) + '</span>'; }
+function errBox(msg) { return '<div class="err">' + esc(msg) + '</div>'; }
+function bkkTime(ms) {
+  return new Date(+ms).toLocaleTimeString(state.lang === 'th' ? 'th-TH' : 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+}
+
+function bookingMap() {
+  var map = {};
+  (state.schedule.bookings || []).forEach(function (b) { map[b.hour + '|' + b.court] = b; });
+  return map;
+}
+
+function cellInfo(map, hour, court) {
+  var b = map[hour + '|' + court];
+  var key = state.date + '|' + hour + '|' + court;
+  var nm = function (txt) { return '<span class="nm">' + esc(txt) + '</span>'; };
+  if (b) {
+    var pend = b.pending ? ' pend' : '';
+    if (b.type === 'block') return { cls: 'block', html: nm(b.note || t('closed')), b: b };
+    if (b.mine) return { cls: 'mine' + pend, html: nm(b.pending ? t(b.status === 'pending_review' ? 'cell_review' : 'cell_pay') : t('you')), b: b };
+    if (b.name) return { cls: 'taken named' + pend, html: nm(b.name), b: b };
+    return { cls: 'taken', html: ICON.lock, b: b };
+  }
+  if (isPast(state.date, hour)) return { cls: 'past', html: '' };
+  if (state.selected[key]) return { cls: 'sel', html: ICON.check + '<span class="pr">' + money(priceOf(hour)) + '</span>' };
+  return { cls: 'free', html: '' };
+}
+
+function hours() {
+  var out = [];
+  for (var h = state.cfg.openHour; h < state.cfg.closeHour; h++) out.push(h);
+  return out;
+}
+function dayIcon(h) { return h >= state.cfg.nightFromHour ? ICON.moon : ICON.sun; }
+
+function gridHtml() {
+  var map = bookingMap();
+  var courts = state.cfg.courts;
+  var head = '<tr><th class="tcol">' + esc(t('time')) + '</th>' + courts.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr>';
+  var body = hours().map(function (h) {
+    return '<tr><th class="tcol"><div class="tlabel">' + dayIcon(h) + '<div><b>' + hhmm(h) + '</b><small>' + hhmm(h + 1) + '</small></div></div></th>' +
+      courts.map(function (c) {
+        var ci = cellInfo(map, h, c);
+        return '<td><button class="cell ' + ci.cls + '" data-hour="' + h + '" data-court="' + esc(c) + '" aria-label="' + esc(c + ' ' + hhmm(h)) + '">' + ci.html + '</button></td>';
+      }).join('') + '</tr>';
+  }).join('');
+  return '<div class="grid-wrap"><table class="grid"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>';
+}
+
+function cardsHtml() {
+  var map = bookingMap();
+  var courts = state.cfg.courts;
+  var list = hours().filter(function (h) { return !isPast(state.date, h); });
+  if (!list.length) return '<div class="empty">' + esc(t('all_past')) + '</div>';
+  return '<div class="cards">' + list.map(function (h) {
+    var free = 0;
+    var chips = courts.map(function (c) {
+      var ci = cellInfo(map, h, c);
+      if (ci.cls === 'free' || ci.cls === 'sel') free++;
+      var sub = ci.cls === 'free' ? '<span class="pr">' + money(priceOf(h)) + '</span>'
+        : ci.cls === 'sel' ? ICON.check : ci.cls === 'taken' ? ICON.lock : ci.html;
+      return '<button class="cell ' + ci.cls + '" data-hour="' + h + '" data-court="' + esc(c) + '"><span class="cn">' + esc(c) + '</span>' + sub + '</button>';
+    }).join('');
+    return '<div class="slot-card' + (free ? '' : ' full') + '"><div class="sc-head"><div class="sc-time">' + dayIcon(h) + hhmm(h) + ' – ' + hhmm(h + 1) +
+      '<small>· ' + money(priceOf(h)) + '</small></div>' +
+      '<span class="sc-count' + (free ? '' : ' zero') + '">' + esc(free ? t('free_n', { n: free, t: courts.length }) : t('full')) + '</span></div>' +
+      '<div class="sc-courts">' + chips + '</div></div>';
+  }).join('') + '</div>';
+}
+
+function onCellClick(hour, court) {
+  var map = bookingMap();
+  var b = map[hour + '|' + court];
+  if (b) {
+    if (b.id) showBookingDetail(Object.assign({ date: state.date }, b));
+    else toast(b.type === 'block' ? (b.note || t('closed')) : t('taken_msg'));
+    return;
+  }
+  if (isPast(state.date, hour)) return;
+  if (!state.user) { toast(t('login_to_book')); openAuth('login'); return; }
+
+  var key = state.date + '|' + hour + '|' + court;
+  if (state.selected[key]) { delete state.selected[key]; }
+  else {
+    var p = perms();
+    var keys = Object.keys(state.selected);
+    if (keys.length >= 20) { toast(errText({ code: 'invalid_input' }), 'bad'); return; }
+    if (p.max_hours_per_day > 0) {
+      var date = state.date;
+      var mineToday = (state.schedule.bookings || []).filter(function (x) { return x.mine && x.type === 'booking'; }).length;
+      var selToday = keys.filter(function (k) { return state.selected[k].date === date; }).length;
+      if (mineToday + selToday >= p.max_hours_per_day) { toast(errText({ code: 'daily_limit', params: { limit: p.max_hours_per_day } }), 'bad'); return; }
+    }
+    state.selected[key] = { date: state.date, hour: hour, court: court };
+  }
+  $('board').innerHTML = state.view === 'grid' ? gridHtml() : cardsHtml();
+  renderSelbar();
+}
+
+function sortedSelection() {
+  return Object.keys(state.selected).map(function (k) { return state.selected[k]; }).sort(function (a, b) {
+    return (a.date + pad(a.hour) + a.court).localeCompare(b.date + pad(b.hour) + b.court);
+  });
+}
+
+function slotLine(date, hour, court, price) {
+  return '<li><span>' + esc(shortDate(date)) + ' · ' + hhmm(hour) + '–' + hhmm(hour + 1) + ' · <b>' + esc(court) + '</b></span>' +
+    (price == null ? '' : '<span class="amt">' + money(price) + '</span>') + '</li>';
+}
+
+function openConfirm() {
+  var p = perms();
+  var slots = sortedSelection();
+  var total = 0;
+  var list = slots.map(function (s) { var pr = priceOf(s.hour); total += pr; return slotLine(s.date, s.hour, s.court, pr); }).join('') +
+    '<li class="total"><span>' + esc(t('total')) + '</span><span class="amt">' + money(total) + '</span></li>';
+  var extra = '';
+  if (p.can_block) {
+    extra += '<div class="seg auth-tabs" id="typeSeg"><button class="on" data-type="booking">' + esc(t('type_booking')) + '</button><button data-type="block">' + esc(t('type_block')) + '</button></div>';
+  }
+  if (p.can_book_for_others) {
+    extra += '<div class="field" id="forField"><label>' + esc(t('for_name')) + '</label><input id="fForName" maxlength="60"><div class="hint">' + esc(t('for_name_hint')) + '</div></div>';
+  }
+  if (p.can_block || p.can_book_for_others) {
+    extra += '<div class="field"><label id="noteLabel">' + esc(t('note')) + '</label><input id="fNote" maxlength="120"></div>';
+  }
+  var note = p.can_confirm_payments ? t('admin_direct_note') : t('pay_note', { m: state.cfg.payment.payWithinMinutes });
+  openModal(sheetHead(t('confirm_title')) + '<ul class="slot-list" id="priceList">' + list + '</ul>' + extra +
+    '<p class="muted" id="payNote" style="margin-bottom:12px">' + esc(note) + '</p>' +
+    '<div id="formErr"></div><div class="row-btns"><button class="btn btn-light" data-act="close">' + esc(t('cancel')) + '</button>' +
+    '<button class="btn btn-primary" id="btnConfirm" data-act="confirm-book">' + esc(t('confirm')) + ' (' + slots.length + ')</button></div>');
+}
+
+function setBookType(type) {
+  document.querySelectorAll('#typeSeg button').forEach(function (b) { b.classList.toggle('on', b.dataset.type === type); });
+  document.querySelector('#sheet .sheet-head h3').textContent = type === 'block' ? t('type_block') : t('confirm_title');
+  var ff = $('forField'); if (ff) ff.hidden = type === 'block';
+  $('priceList').classList.toggle('noprice', type === 'block');
+  $('payNote').hidden = type === 'block';
+  $('noteLabel').textContent = type === 'block' ? t('reason') : t('note');
+  $('fNote').placeholder = type === 'block' ? t('reason_ph') : '';
+}
+
+function submitBooking() {
+  var seg = document.querySelector('#typeSeg .on');
+  var type = seg ? seg.dataset.type : 'booking';
+  var note = $('fNote') ? $('fNote').value.trim() : '';
+  var forName = $('fForName') && type === 'booking' ? $('fForName').value.trim() : '';
+  if (type === 'block' && !note) { $('formErr').innerHTML = errBox(t('reason_required')); return; }
+  var slots = sortedSelection().map(function (s) { return { date: s.date, hour: s.hour, court: s.court }; });
+  var btn = $('btnConfirm'); btn.disabled = true;
+  api('book', { slots: slots, type: type, note: note, forName: forName }).then(function (res) {
+    var o = res.order;
+    state.selected = {};
+    state.mine = null;
+    if (o.status === 'pending_payment') openPayment(o);
+    else { closeModal(); toast(t(type === 'block' ? 'blocked_ok' : 'booked_ok', { n: o.items.length }), 'good'); }
+    loadSchedule(true);
+  }).catch(function (e) {
+    btn.disabled = false;
+    $('formErr').innerHTML = errBox(errText(e));
+    if (e && e.code === 'slot_taken') loadSchedule(true);
+  });
+}
+
+/* ───────────── PAYMENT ───────────── */
+var payTimer;
+function openPayment(o) {
+  var pay = state.cfg.payment;
+  state.slip = null;
+  var items = o.items.filter(function (i) { return i.status !== 'cancelled'; });
+  var html = sheetHead(t('pay_title')) +
+    '<div class="pay-amount"><small>' + esc(t('pay_amount')) + '</small><b>' + money(o.amount) + '</b></div>' +
+    '<ul class="slot-list">' + items.map(function (i) { return slotLine(i.date, i.hour, i.court, i.price); }).join('') + '</ul>' +
+    '<div class="bank-card"><small>' + esc(t('pay_bank')) + '</small><div class="bk-name">' + esc(pay.bankName) + '</div>' +
+      '<div class="bk-row"><span class="bk-no">' + esc(fmtAccount(pay.accountNo)) + '</span>' +
+      '<button class="btn btn-sm btn-light" data-act="copy-acc">' + esc(t('copy')) + '</button></div>' +
+      '<div class="bk-holder">' + esc(pay.accountName) + '</div></div>' +
+    (o.status === 'pending_payment' && o.expires_at ? '<div class="deadline" id="payDeadline" data-exp="' + o.expires_at + '"></div>' : '') +
+    (o.status === 'pending_review' ? '<p class="muted" style="margin-bottom:12px">' + esc(t('slip_review_hint')) + '</p>' : '') +
+    '<div class="field"><label>' + esc(t('slip_upload')) + '</label>' +
+      '<label class="dropzone"><input type="file" accept="image/*" id="slipFile"><span id="slipHint">' + esc(t('slip_choose')) + '</span>' +
+      '<img id="slipPrev" alt="" hidden></label></div>' +
+    '<div id="formErr"></div><div class="row-btns"><button class="btn btn-light" data-act="close">' + esc(t('slip_later')) + '</button>' +
+    '<button class="btn btn-primary" id="btnSlip" data-act="send-slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_send')) + '</button></div>';
+  openModal(html);
+  tickDeadline();
+}
+
+function tickDeadline() {
+  clearInterval(payTimer);
+  var update = function () {
+    var el = $('payDeadline');
+    if (!el || !modalOpen()) { clearInterval(payTimer); return; }
+    var left = +el.dataset.exp - Date.now();
+    if (left <= 0) {
+      el.textContent = t('pay_expired'); el.classList.add('over');
+      var b = $('btnSlip'); if (b) b.disabled = true;
+      clearInterval(payTimer); return;
+    }
+    el.textContent = t('pay_deadline', { time: bkkTime(el.dataset.exp), left: Math.floor(left / 60000) + ':' + pad(Math.floor(left % 60000 / 1000)) });
+  };
+  update();
+  payTimer = setInterval(update, 1000);
+}
+
+function openOrderPayment(orderId) {
+  api('myBookings').then(function (res) {
+    state.mine = res;
+    var o = res.upcoming.filter(function (x) { return x.order_id === orderId; })[0];
+    if (o && (o.status === 'pending_payment' || o.status === 'pending_review')) openPayment(o);
+    else { closeModal(); toast(errText({ code: 'not_found' }), 'bad'); if (state.tab === 'mine') renderMine(); }
+  }).catch(handleErr);
+}
+
+// ย่อรูปสลิปก่อนส่ง (ยาวสุด 1600px, JPEG) — ไฟล์เล็ก ส่งเร็ว อ่านตัวเลขยังชัด
+function compressImage(file) {
+  return new Promise(function (resolve, reject) {
+    if (file.type && !/^image\//.test(file.type)) return reject();
+    var reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = function () {
+      var img = new Image();
+      img.onerror = reject;
+      img.onload = function () {
+        var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        resolve(c.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function readSlip(file) {
+  compressImage(file).then(function (dataUrl) {
+    state.slip = dataUrl;
+    $('slipPrev').src = dataUrl; $('slipPrev').hidden = false;
+    $('slipHint').textContent = t('slip_change');
+    $('formErr').innerHTML = '';
+  }).catch(function () {
+    state.slip = null;
+    $('formErr').innerHTML = errBox(t('err_invalid_slip'));
+  });
+}
+
+function sendSlip(orderId, btn) {
+  if (!state.slip) { $('formErr').innerHTML = errBox(t('slip_need')); return; }
+  btn.disabled = true;
+  api('uploadSlip', { orderId: orderId, image: state.slip }).then(function () {
+    state.slip = null;
+    closeModal();
+    toast(t('slip_sent'), 'good');
+    afterOrderChange();
+  }).catch(function (e) {
+    btn.disabled = false;
+    $('formErr').innerHTML = errBox(errText(e));
+  });
+}
+
+function copyAccount() {
+  var no = state.cfg.payment.accountNo;
+  var done = function () { toast(t('copied') + ' · ' + fmtAccount(no), 'good'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(no).then(done, function () { prompt('', no); });
+  else prompt('', no);
+}
+
+function openSlip(orderId) {
+  openModal(sheetHead(t('slip_view')) + '<div class="empty">…</div>');
+  var o = findAdminOrder(orderId);
+  api('slip', { orderId: orderId }).then(function (res) {
+    var html = sheetHead(t('slip_view'));
+    if (o) {
+      html += '<div class="ohead">' + statusPill(o.status) + '<b class="oamt">' + money(o.amount) + '</b></div>' +
+        '<div class="owho"><b>' + esc(o.name) + '</b>' + (o.phone ? ' · ' + esc(o.phone) : '') + '</div>';
+    }
+    html += '<img class="slip-full" src="' + esc(res.image) + '" alt="slip">';
+    if (o && isReviewer() && (o.status === 'pending_review' || o.status === 'pending_payment')) {
+      html += '<div class="row-btns"><button class="btn btn-danger" data-act="reject" data-order="' + esc(orderId) + '">' + esc(t('reject')) + '</button>' +
+        '<button class="btn btn-primary" data-act="approve" data-order="' + esc(orderId) + '">' + esc(t('approve')) + '</button></div>';
+    }
+    if (modalOpen()) openModal(html);
+  }).catch(function (e) { closeModal(); handleErr(e); });
+}
+
+function reviewOrder(orderId, approve, btn) {
+  var note = '';
+  if (!approve) {
+    note = prompt(t('reject_prompt'));
+    if (note === null) return;
+  }
+  if (btn) btn.disabled = true;
+  api('reviewOrder', { orderId: orderId, approve: approve, note: note }).then(function () {
+    closeModal();
+    toast(t(approve ? 'approved_ok' : 'rejected_ok'), 'good');
+    afterOrderChange();
+  }).catch(function (e) { if (btn) btn.disabled = false; handleErr(e); });
+}
+
+function afterOrderChange() {
+  state.mine = null;
+  state.adminOrders = null;
+  if (state.tab === 'mine') renderMine();
+  if (state.tab === 'admin') renderAdmin();
+  if (isReviewer()) refreshCfg();
+  loadSchedule(true);
+}
+
+/* ───────────── DETAIL / CANCEL ───────────── */
+// b: { date, hour, mine, status } — ยังไม่จ่ายเงิน ยกเลิกได้จนถึงเวลาเล่น · จ่ายแล้วต้องยกเลิกก่อนตามสิทธิ์
+function canCancel(b) {
+  var p = perms();
+  if (!state.user) return false;
+  if (p.can_cancel_any) return true;
+  if (!b.mine) return false;
+  var left = (slotStart(b.date, b.hour) - Date.now()) / 36e5;
+  return left > 0 && (b.status === 'pending_payment' || left >= p.cancel_before_hours);
+}
+
+function showBookingDetail(b) {
+  var p = perms();
+  var rows = [
+    [t('d_court'), b.court],
+    [t('d_date'), fmtDate(b.date, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })],
+    [t('d_time'), hhmm(b.hour) + ' – ' + hhmm(b.hour + 1)]
+  ];
+  if (b.name) rows.push([t('d_name'), b.name]);
+  if (b.type !== 'block' && b.price != null) rows.push([t('d_price'), money(b.price)]);
+  if (b.note) rows.push([t('d_note'), b.note]);
+  var html = sheetHead(b.type === 'block' ? t('type_block') : t('detail_title')) + '<div class="panel" style="margin-bottom:12px">' +
+    (b.status && b.type !== 'block' ? '<div class="kv"><span>' + esc(t('d_status')) + '</span>' + statusPill(b.status) + '</div>' : '') +
+    rows.map(function (r) { return '<div class="kv"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>'; }).join('') + '</div>';
+  var acts = '';
+  if (b.mine && (b.status === 'pending_payment' || b.status === 'pending_review')) {
+    acts += '<button class="btn btn-primary btn-block" data-act="pay" data-order="' + esc(b.order_id) + '">' + esc(b.status === 'pending_review' ? t('slip_reupload') : t('pay_now')) + '</button>';
+  }
+  if (b.status === 'pending_review' && (b.mine || isReviewer())) {
+    acts += '<button class="btn btn-light btn-block" data-act="slip" data-order="' + esc(b.order_id) + '">' + esc(t('slip_view')) + '</button>';
+  }
+  if (canCancel(b)) {
+    acts += '<button class="btn btn-danger btn-block" data-act="cancel-booking" data-id="' + esc(b.id) + '">' + esc(b.type === 'block' ? t('reopen') : t('cancel_booking')) + '</button>';
+    if (!p.can_cancel_any && b.status !== 'pending_payment') acts += '<p class="muted">' + esc(t('refund_note')) + '</p>';
+  } else if (b.mine) {
+    acts += '<p class="muted">' + esc(t('cancel_rule', { h: p.cancel_before_hours })) + '</p>';
+  }
+  openModal(html + '<div style="display:grid;gap:8px">' + acts + '</div>');
+}
+
+function cancelBooking(id, btn, orderId) {
+  if (!confirm(t(orderId ? 'cancel_order_confirm' : 'cancel_confirm'))) return;
+  if (btn) btn.disabled = true;
+  api('cancel', orderId ? { orderId: orderId } : { id: id }).then(function () {
+    closeModal();
+    toast(t('cancelled_ok'), 'good');
+    afterOrderChange();
+  }).catch(function (e) { if (btn) btn.disabled = false; handleErr(e); });
+}
+
+/* ───────────── MY BOOKINGS ───────────── */
+function loginCta(msg) {
+  return '<div class="empty">' + esc(msg) + '<br><br><button class="btn btn-primary" data-act="open-login">' + esc(t('login')) + '</button> ' +
+    '<button class="btn btn-light" data-act="open-register">' + esc(t('register')) + '</button></div>';
+}
+
+function orderCard(o, isUp) {
+  var block = o.type === 'block';
+  var pillSt = !isUp && o.status === 'confirmed' ? 'past' : o.status;
+  var items = o.items.map(function (i) {
+    var gone = i.status === 'cancelled';
+    var x = isUp && !gone && o.status !== 'pending_payment' && canCancel({ date: i.date, hour: i.hour, mine: true, status: o.status })
+      ? '<button class="mini-x" data-act="cancel-booking" data-id="' + esc(i.id) + '" aria-label="' + esc(t('cancel')) + '">✕</button>' : '';
+    return '<div class="oi' + (gone ? ' gone' : '') + '"><span class="oc">' + esc(i.court) + '</span><span class="ot">' +
+      esc(fmtDate(i.date, { weekday: 'short', day: 'numeric', month: 'short' })) + ' · ' + hhmm(i.hour) + '–' + hhmm(i.hour + 1) +
+      '</span><span class="op">' + (block ? '' : money(i.price)) + '</span>' + x + '</div>';
+  }).join('');
+  var notes = '';
+  if (block && o.items[0].note) notes += '<p class="onote">' + esc(o.items[0].note) + '</p>';
+  if (o.status === 'rejected' && o.review_note) notes += '<p class="onote warn">' + esc(t('reject_reason', { r: o.review_note })) + '</p>';
+  if (isUp && o.status === 'pending_payment' && o.expires_at) notes += '<p class="onote warn">' + esc(t('expires_at', { t: bkkTime(o.expires_at) })) + '</p>';
+  var acts = '';
+  if (isUp && o.status === 'pending_payment') {
+    acts = '<button class="btn btn-primary btn-sm" data-act="pay" data-order="' + esc(o.order_id) + '">' + esc(t('pay_now')) + '</button>' +
+      '<button class="btn btn-danger btn-sm" data-act="cancel-order" data-order="' + esc(o.order_id) + '">' + esc(t('cancel_order')) + '</button>';
+  } else if (isUp && o.status === 'pending_review') {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>' +
+      '<button class="btn btn-light btn-sm" data-act="pay" data-order="' + esc(o.order_id) + '">' + esc(t('slip_reupload')) + '</button>';
+  } else if (o.slip) {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>';
+  }
+  return '<div class="ocard"><div class="ohead">' + (block ? '<span class="pill" style="background:var(--amber-bg);color:var(--amber)">' + esc(t('type_block')) + '</span>' : statusPill(pillSt)) +
+    (block ? '' : '<b class="oamt">' + money(o.amount) + '</b>') + '</div>' + items + notes +
+    (acts ? '<div class="oacts">' + acts + '</div>' : '') + '</div>';
+}
+
+function renderMine() {
+  var main = $('main');
+  if (!state.user) { main.innerHTML = '<h1 class="view-title">' + esc(t('tab_mine')) + '</h1>' + loginCta(t('need_login')); return; }
+  if (!state.mine) {
+    main.innerHTML = '<h1 class="view-title">' + esc(t('tab_mine')) + '</h1><div class="empty">…</div>';
+    api('myBookings').then(function (res) { state.mine = res; if (state.tab === 'mine') renderMine(); }).catch(handleErr);
+    return;
+  }
+  var up = state.mine.upcoming;
+  var html = '<h1 class="view-title">' + esc(t('tab_mine')) + '</h1><div class="section-label">' + esc(t('upcoming')) + '</div>';
+  html += up.length ? '<div class="blist">' + up.map(function (o) { return orderCard(o, true); }).join('') + '</div>'
+    : '<div class="empty">' + esc(t('no_upcoming')) + '<br><br><button class="btn btn-primary" data-tab="book">' + esc(t('go_book')) + '</button></div>';
+  if (state.mine.history.length) {
+    html += '<div class="section-label">' + esc(t('history')) + '</div><div class="blist">' +
+      state.mine.history.map(function (o) { return orderCard(o, false); }).join('') + '</div>';
+  }
+  main.innerHTML = html;
+}
+
+/* ───────────── ACCOUNT ───────────── */
+function permRows(p) {
+  var v = function (n, unit) { return n > 0 ? t(unit, { n: n }) : t('unlimited'); };
+  return [
+    [t('advance'), p.advance_days ? t('advance_v', { n: p.advance_days }) : t('advance_v0')],
+    [t('max_day'), v(p.max_hours_per_day, 'hours_v')],
+    [t('max_active'), v(p.max_active_bookings, 'items_v')],
+    [t('cancel_before'), p.cancel_before_hours > 0 ? t('hours_v', { n: p.cancel_before_hours }) : '—']
+  ];
+}
+
+function rolesTable() {
+  var yn = function (b) { return b ? '<span class="yes">✓</span>' : '<span class="no">—</span>'; };
+  var lim = function (n, unit) { return n > 0 ? esc(t(unit, { n: n })) : esc(t('unlimited')); };
+  var rows = (state.cfg.roles || []).map(function (r) {
+    var mineCls = state.user && state.user.role === r.role ? ' style="background:#F7FAFF"' : '';
+    return '<tr' + mineCls + '><td><span class="role-pill ' + esc(r.role) + '">' + esc(roleLabel(r.role)) + '</span></td>' +
+      '<td class="c">' + esc(r.advance_days) + '</td><td class="c">' + lim(r.max_hours_per_day, 'hours_v') + '</td>' +
+      '<td class="c">' + lim(r.max_active_bookings, 'items_v') + '</td><td class="c">' + (r.cancel_before_hours > 0 ? esc(t('hours_v', { n: r.cancel_before_hours })) : '—') + '</td>' +
+      '<td class="c">' + yn(r.can_book_for_others) + '</td><td class="c">' + yn(r.can_block) + '</td><td class="c">' + yn(r.can_cancel_any) + '</td><td class="c">' + yn(r.can_manage_users) + '</td><td class="c">' + yn(r.can_confirm_payments) + '</td></tr>';
+  }).join('');
+  return '<div class="panel"><h3>' + esc(t('roles_title')) + '</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>' + esc(t('role')) +
+    '</th><th class="c">' + esc(t('advance')) + '</th><th class="c">' + esc(t('max_day')) + '</th><th class="c">' + esc(t('max_active')) +
+    '</th><th class="c">' + esc(t('cancel_before')) + '</th><th class="c">' + esc(t('can_others')) + '</th><th class="c">' + esc(t('can_block')) +
+    '</th><th class="c">' + esc(t('can_cancel_any')) + '</th><th class="c">' + esc(t('can_users')) + '</th><th class="c">' + esc(t('can_confirm')) + '</th></tr></thead><tbody>' + rows +
+    '</tbody></table></div>' + (state.user && state.user.perms.can_manage_users ? '<p class="muted" style="margin-top:10px">' + esc(t('roles_hint')) + '</p>' : '') + '</div>';
+}
+
+function renderAccount() {
+  var main = $('main');
+  if (!state.user) {
+    main.innerHTML = '<h1 class="view-title">' + esc(t('tab_account')) + '</h1><div class="panel">' + authFormHtml('login') + '</div>' + rolesTable();
+    return;
+  }
+  var u = state.user, p = u.perms;
+  var abilities = [['can_book_for_others', 'can_others'], ['can_block', 'can_block'], ['can_cancel_any', 'can_cancel_any'], ['can_manage_users', 'can_users'], ['can_confirm_payments', 'can_confirm']]
+    .filter(function (x) { return p[x[0]]; }).map(function (x) { return '<span class="tag" style="margin:0 6px 6px 0">✓ ' + esc(t(x[1])) + '</span>'; }).join('');
+  main.innerHTML = '<h1 class="view-title">' + esc(t('tab_account')) + '</h1>' +
+    '<div class="panel"><div class="profile"><div class="avatar in">' + esc((u.nickname || u.name).charAt(0).toUpperCase()) + '</div><div>' +
+    '<h2>' + esc(u.name) + (u.nickname ? ' <span class="muted">(' + esc(u.nickname) + ')</span>' : '') + '</h2>' +
+    '<p>' + esc(u.phone) + ' · <span class="role-pill ' + esc(u.role) + '">' + esc(roleLabel(u.role)) + '</span></p></div></div></div>' +
+    '<div class="panel"><h3>' + esc(t('your_perms')) + '</h3>' +
+    permRows(p).map(function (r) { return '<div class="kv"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>'; }).join('') +
+    (abilities ? '<div style="margin-top:10px">' + abilities + '</div>' : '') + '</div>' +
+    rolesTable() +
+    '<div class="panel"><h3>' + esc(t('change_pw')) + '</h3><form id="pwForm">' +
+    '<div class="field"><label>' + esc(t('old_pw')) + '</label><input type="password" name="old" autocomplete="current-password" required></div>' +
+    '<div class="field"><label>' + esc(t('new_pw')) + '</label><input type="password" name="new" autocomplete="new-password" minlength="6" required><div class="hint">' + esc(t('pw_hint')) + '</div></div>' +
+    '<div id="pwErr"></div><button class="btn btn-primary" type="submit">' + esc(t('save')) + '</button></form></div>' +
+    '<button class="btn btn-danger btn-block" data-act="logout">' + esc(t('logout')) + '</button>';
+}
+
+/* ───────────── AUTH ───────────── */
+function authFormHtml(mode) {
+  var reg = mode === 'register';
+  return '<div class="seg auth-tabs" style="display:flex"><button type="button" class="' + (reg ? '' : 'on') + '" data-auth="login">' + esc(t('login')) + '</button>' +
+    '<button type="button" class="' + (reg ? 'on' : '') + '" data-auth="register">' + esc(t('register')) + '</button></div>' +
+    '<form id="authForm" data-mode="' + mode + '">' +
+    '<div class="field"><label>' + esc(t('phone')) + '</label><input name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="08x-xxx-xxxx" required></div>' +
+    (reg ? '<div class="field"><label>' + esc(t('full_name')) + '</label><input name="name" autocomplete="name" maxlength="60" required></div>' +
+           '<div class="field"><label>' + esc(t('nickname')) + '</label><input name="nickname" maxlength="30"></div>' : '') +
+    '<div class="field"><label>' + esc(t('password')) + '</label><input name="password" type="password" autocomplete="' + (reg ? 'new-password' : 'current-password') + '" required>' +
+    (reg ? '<div class="hint">' + esc(t('pw_hint')) + '</div>' : '') + '</div>' +
+    '<div id="authErr"></div><button class="btn btn-primary btn-block" type="submit">' + esc(reg ? t('register') : t('login')) + '</button></form>';
+}
+
+function openAuth(mode) {
+  openModal(sheetHead(mode === 'register' ? t('register') : t('login')) + '<div id="authBox">' + authFormHtml(mode) + '</div>');
+}
+
+function submitAuth(form) {
+  var mode = form.dataset.mode;
+  var data = {};
+  new FormData(form).forEach(function (v, k) { data[k] = String(v).trim(); });
+  var btn = form.querySelector('button[type=submit]'); btn.disabled = true;
+  api(mode, data).then(function (res) {
+    setSession(res.token, res.user);
+    closeModal();
+    toast(t('welcome', { name: res.user.nickname || res.user.name }), 'good');
+    renderChrome();
+    renderView();
+    loadSchedule(true);
+    refreshCfg();
+  }).catch(function (e) {
+    btn.disabled = false;
+    var box = form.querySelector('#authErr');
+    if (box) box.innerHTML = '<div class="err">' + esc(errText(e)) + '</div>';
+  });
+}
+
+/* ───────────── ADMIN ───────────── */
+function findAdminOrder(orderId) {
+  var ao = state.adminOrders;
+  if (!ao) return null;
+  return ao.review.concat(ao.awaiting, ao.recent).filter(function (o) { return o.order_id === orderId; })[0] || null;
+}
+
+function renderAdmin() {
+  var main = $('main');
+  if (!isAdminTab()) { switchTab('book'); return; }
+  var p = state.user.perms;
+  var title = '<h1 class="view-title">' + esc(t('tab_admin')) + '</h1>';
+  var need = [];
+  if (p.can_confirm_payments && !state.adminOrders) {
+    need.push(api('adminOrders').then(function (r) { state.adminOrders = r; state.cfg.pendingReview = r.review.length; }));
+  }
+  if (p.can_manage_users && !state.adminData) need.push(api('adminUsers').then(function (r) { state.adminData = r; }));
+  if (need.length) {
+    main.innerHTML = title + '<div class="empty">…</div>';
+    Promise.all(need).then(function () { renderChrome(); if (state.tab === 'admin') renderAdmin(); }).catch(handleErr);
+    return;
+  }
+  var html = title;
+  if (p.can_confirm_payments) {
+    var ao = state.adminOrders;
+    var block = function (label, list, kind) {
+      return '<div class="section-label">' + esc(label) + ' (' + list.length + ')</div>' +
+        (list.length ? '<div class="blist">' + list.map(function (o) { return adminOrderCard(o, kind); }).join('') + '</div>'
+          : '<div class="muted" style="padding:4px 2px">' + esc(t('adm_none')) + '</div>');
+    };
+    html += block(t('adm_review'), ao.review, 'review') + block(t('adm_awaiting'), ao.awaiting, 'awaiting');
+    if (ao.recent.length) html += block(t('adm_recent'), ao.recent, 'recent');
+  }
+  if (p.can_manage_users) {
+    html += '<div class="section-label">' + esc(t('users')) + ' (' + state.adminData.users.length + ')</div>' +
+      '<input class="search" id="userSearch" placeholder="' + esc(t('search')) + '" value="' + esc(state.userQuery) + '">' +
+      '<div class="blist" id="userList">' + userListHtml() + '</div>' +
+      '<div style="height:14px"></div>' + rolesTable();
+  }
+  main.innerHTML = html;
+}
+
+function adminOrderCard(o, kind) {
+  var items = o.items.filter(function (i) { return i.status !== 'cancelled'; }).map(function (i) {
+    return '<b>' + esc(i.court) + '</b> ' + esc(shortDate(i.date)) + ' ' + hhmm(i.hour) + '–' + hhmm(i.hour + 1);
+  }).join(' · ');
+  var sent = String(o.slip_uploaded_at);
+  var note = kind === 'review' ? t('uploaded_at', { t: shortDate(sent.slice(0, 10)) + ' ' + sent.slice(11, 16) })
+    : kind === 'awaiting' && o.expires_at ? t('expires_at', { t: bkkTime(o.expires_at) })
+    : o.review_note ? t('reject_reason', { r: o.review_note }) : '';
+  var acts = '';
+  if (kind === 'review') {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>' +
+      '<button class="btn btn-danger btn-sm" data-act="reject" data-order="' + esc(o.order_id) + '">' + esc(t('reject')) + '</button>' +
+      '<button class="btn btn-primary btn-sm" data-act="approve" data-order="' + esc(o.order_id) + '">' + esc(t('approve')) + '</button>';
+  } else if (kind === 'awaiting') {
+    acts = '<button class="btn btn-danger btn-sm" data-act="cancel-order" data-order="' + esc(o.order_id) + '">' + esc(t('cancel_order')) + '</button>' +
+      '<button class="btn btn-light btn-sm" data-act="approve" data-order="' + esc(o.order_id) + '">' + esc(t('approve_cash')) + '</button>';
+  } else if (o.slip) {
+    acts = '<button class="btn btn-light btn-sm" data-act="slip" data-order="' + esc(o.order_id) + '">' + esc(t('slip_view')) + '</button>';
+  }
+  return '<div class="ocard"><div class="ohead">' + statusPill(o.status) + '<b class="oamt">' + money(o.amount) + '</b></div>' +
+    '<div class="owho"><b>' + esc(o.name) + '</b>' + (o.phone ? ' · <a href="tel:' + esc(o.phone) + '">' + esc(o.phone) + '</a>' : '') + '</div>' +
+    '<div class="oitems-s">' + items + '</div>' + (note ? '<p class="onote">' + esc(note) + '</p>' : '') +
+    (acts ? '<div class="oacts">' + acts + '</div>' : '') + '</div>';
+}
+
+function userListHtml() {
+  var q = state.userQuery.toLowerCase();
+  var roles = state.adminData.roles;
+  return state.adminData.users.filter(function (u) {
+    return !q || (u.name + ' ' + u.nickname + ' ' + u.phone).toLowerCase().indexOf(q) >= 0;
+  }).map(function (u) {
+    var self = u.id === state.user.id;
+    var opts = roles.map(function (r) { return '<option value="' + esc(r.role) + '"' + (r.role === u.role ? ' selected' : '') + '>' + esc(roleLabel(r.role)) + '</option>'; }).join('');
+    var susp = u.status === 'suspended';
+    return '<div class="uitem' + (susp ? ' suspended' : '') + '"><div class="who"><b>' + esc(u.name) + (u.nickname ? ' (' + esc(u.nickname) + ')' : '') + '</b>' +
+      (susp ? '<span class="tag red">' + esc(t('suspended')) + '</span>' : '') +
+      '<small>' + esc(u.phone) + ' · ' + esc(t('joined', { d: String(u.created_at).slice(0, 10) })) + '</small></div>' +
+      '<select data-role-for="' + esc(u.id) + '"' + (self ? ' disabled' : '') + '>' + opts + '</select>' +
+      '<button class="btn btn-light btn-sm" data-act="reset-pw" data-id="' + esc(u.id) + '" data-name="' + esc(u.name) + '">' + esc(t('reset_pw')) + '</button>' +
+      (self ? '' : '<button class="btn btn-sm ' + (susp ? 'btn-light' : 'btn-danger') + '" data-act="toggle-status" data-id="' + esc(u.id) + '" data-status="' + (susp ? 'active' : 'suspended') + '">' + esc(susp ? t('activate') : t('suspend')) + '</button>') +
+      '</div>';
+  }).join('');
+}
+
+function adminUpdate(payload) {
+  return api('adminUpdateUser', payload).then(function () {
+    toast(t('updated'), 'good');
+    state.adminData = null;
+    renderAdmin();
+  }).catch(function (e) { handleErr(e); state.adminData = null; renderAdmin(); });
+}
+
+/* ───────────── events ───────────── */
+document.addEventListener('click', function (e) {
+  var el = e.target.closest('button, [data-act]');
+  if (!el) { if (e.target === $('modal')) closeModal(); return; }
+
+  if (el.dataset.lang) {
+    state.lang = el.dataset.lang; LS.set('stab_lang', state.lang);
+    applyLang();
+    if (state.cfg) { renderChrome(); renderView(); }
+    return;
+  }
+  if (el.dataset.tab) { closeModal(); switchTab(el.dataset.tab); return; }
+  if (el.dataset.date) {
+    if (el.dataset.date === state.date) return;
+    state.date = el.dataset.date; state.schedule = null; renderBook(); loadSchedule(); return;
+  }
+  if (el.dataset.view) { state.view = el.dataset.view; LS.set('stab_view', state.view); renderBook(); return; }
+  if (el.dataset.court && el.dataset.hour) { onCellClick(+el.dataset.hour, el.dataset.court); return; }
+  if (el.dataset.auth) {
+    var inModal = el.closest('#authBox');
+    (inModal || el.closest('.panel')).innerHTML = authFormHtml(el.dataset.auth);
+    if (inModal) document.querySelector('#sheet .sheet-head h3').textContent = t(el.dataset.auth);
+    return;
+  }
+  if (el.dataset.type) { setBookType(el.dataset.type); return; }
+
+  switch (el.dataset.act) {
+    case 'close': closeModal(); break;
+    case 'confirm-book': submitBooking(); break;
+    case 'cancel-booking': cancelBooking(el.dataset.id, el); break;
+    case 'cancel-order': cancelBooking(null, el, el.dataset.order); break;
+    case 'pay': openOrderPayment(el.dataset.order); break;
+    case 'send-slip': sendSlip(el.dataset.order, el); break;
+    case 'copy-acc': copyAccount(); break;
+    case 'slip': openSlip(el.dataset.order); break;
+    case 'approve': reviewOrder(el.dataset.order, true, el); break;
+    case 'reject': reviewOrder(el.dataset.order, false, el); break;
+    case 'open-login': openAuth('login'); break;
+    case 'open-register': openAuth('register'); break;
+    case 'logout': setSession('', null); renderChrome(); switchTab('book'); break;
+    case 'demo-reset': Demo.reset(); setSession('', null); state.tab = 'book'; boot(); break;
+    case 'toggle-status': adminUpdate({ id: el.dataset.id, status: el.dataset.status }); break;
+    case 'reset-pw':
+      var pw = prompt(t('reset_pw_prompt', { name: el.dataset.name }));
+      if (pw) adminUpdate({ id: el.dataset.id, password: pw });
+      break;
+  }
+  if (el.id === 'btnAvatar') { if (state.user) switchTab('account'); else openAuth('login'); }
+  if (el.id === 'selClear') { state.selected = {}; renderBook(); }
+  if (el.id === 'selBook') openConfirm();
+});
+
+document.addEventListener('submit', function (e) {
+  if (e.target.id === 'authForm') { e.preventDefault(); submitAuth(e.target); }
+  if (e.target.id === 'pwForm') {
+    e.preventDefault();
+    var f = e.target;
+    api('changePassword', { oldPassword: f.old.value, newPassword: f.new.value }).then(function () {
+      f.reset(); $('pwErr').innerHTML = ''; toast(t('saved'), 'good');
+    }).catch(function (err) { $('pwErr').innerHTML = errBox(errText(err)); });
+  }
+});
+
+document.addEventListener('change', function (e) {
+  if (e.target.id === 'pickDate' && e.target.value) {
+    state.date = e.target.value; state.schedule = null; renderBook(); loadSchedule();
+  }
+  if (e.target.id === 'slipFile' && e.target.files && e.target.files[0]) readSlip(e.target.files[0]);
+  if (e.target.dataset.roleFor) adminUpdate({ id: e.target.dataset.roleFor, role: e.target.value });
+});
+
+document.addEventListener('input', function (e) {
+  if (e.target.id === 'userSearch') { state.userQuery = e.target.value; $('userList').innerHTML = userListHtml(); }
+});
+
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+// รีเฟรชทุก 60 วินาที: ตาราง (เห็นการจองของคนอื่น + ช่องที่เลยเวลา) และจำนวนสลิปรอตรวจของแอดมิน
+setInterval(function () {
+  if (!state.cfg || modalOpen() || document.hidden) return;
+  if (state.tab === 'book') loadSchedule(true);
+  if (isReviewer() && state.tab !== 'admin') refreshCfg();
+}, 60000);
+
+/* ════════════════════════════════════════════════════════════════
+   โหมดทดลอง (API_URL ว่าง) — รันโค้ดหลังบ้านตัวจริง apps-script/Srichaphan_Court_Booking.gs
+   บนตัวจำลอง Google Apps Script (demo/gas-emulator.js) ข้อมูลเก็บใน localStorage
+   ════════════════════════════════════════════════════════════════ */
+var Demo = (function () {
+  var PREFIX = 'stab_demo_v3:';
+  var store = {
+    get: function (k) { try { var v = localStorage.getItem(PREFIX + k); return v == null ? null : JSON.parse(v); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(PREFIX + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var ready = null;
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (window.GasEmulator) return resolve();
+      var s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  function post(be, action, payload, token) {
+    return JSON.parse(be.doPost({ postData: { contents: JSON.stringify({ action: action, payload: payload || {}, token: token || '' }) } }).getContent());
+  }
+
+  function init() {
+    if (!ready) {
+      ready = loadScript('demo/gas-emulator.js')
+        .then(function () { return fetch('apps-script/Srichaphan_Court_Booking.gs', { cache: 'no-cache' }); })
+        .then(function (r) { if (!r.ok) throw new Error('fetch ' + r.status); return r.text(); })
+        .then(function (code) {
+          var gas = GasEmulator.create(store);
+          var be = gas.load(code);
+          if (!store.get('seeded')) { seed(gas, be); store.set('seeded', true); }
+          return be;
+        })
+        .catch(function (e) { ready = null; if (window.console) console.error(e); throw { code: 'demo_unavailable' }; });
+    }
+    return ready;
+  }
+
+  // ข้อมูลตัวอย่าง: ผู้ใช้ 3 เลเวล + ผู้เล่น 12 คน + การจอง 15 วัน + สลิปรอตรวจ 1 รายการ
+  function seed(gas, be) {
+    be.setup();
+    var U = gas.globals.Utilities;
+    var today = U.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM-dd');
+    var stamp = be.stamp_();
+    var reg = function (phone, pw, name, nick) { return post(be, 'register', { phone: phone, password: pw, name: name, nickname: nick }).data.user; };
+    var admin = reg('0800000001', 'admin123', 'Admin Srichaphan', 'Admin');
+    var mem = reg('0800000002', 'member123', 'สมาชิก ทดลอง', 'Mem');
+    reg('0800000003', 'user123', 'ผู้ใช้ ทดลอง', 'Guest');
+    var players = ['Nok', 'Ton', 'Ploy', 'Beam', 'Mike', 'Fah', 'Joe', 'Pim', 'Bank', 'Mint', 'Arm', 'Kate'].map(function (n, i) {
+      return reg('08100000' + pad(i), 'demo-' + Math.random().toString(36), n + ' Player', n);
+    });
+    var users = be.table_('Users');
+    users.rows.forEach(function (r) {
+      var j = players.map(function (x) { return x.id; }).indexOf(String(r.id));
+      if (r.id === mem.id || (j >= 0 && j % 3 === 0)) be.update_(users, r, { role: 'member' });
+    });
+
+    var price = function (h) { return h >= 18 ? 350 : 250; };
+    var label = function (u) { return u.name + ' (' + u.nickname + ')'; };
+    var n = 0;
+    var row = function (o) {
+      n++;
+      return Object.assign({ id: 'Bseed' + n, order_id: 'Rseed' + n, type: 'booking', status: 'confirmed', note: '', created_at: stamp, created_by: o.user_id }, o);
+    };
+    var tmr = addDays(today, 1), d2 = addDays(today, 2);
+
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="860" font-family="sans-serif">' +
+      '<rect width="600" height="860" fill="#fff"/><rect width="600" height="150" fill="#FFD400"/>' +
+      '<text x="300" y="90" font-size="40" font-weight="700" text-anchor="middle" fill="#4A3A00">โอนเงินสำเร็จ</text>' +
+      '<text x="300" y="260" font-size="72" font-weight="700" text-anchor="middle" fill="#1E293B">฿700.00</text>' +
+      '<text x="60" y="380" font-size="26" fill="#64748B">จาก</text><text x="60" y="420" font-size="30" fill="#1E293B">NOK PLAYER</text>' +
+      '<text x="60" y="510" font-size="26" fill="#64748B">ไปยัง</text><text x="60" y="550" font-size="30" fill="#1E293B">ธนากร ศรีชาพันธุ์</text>' +
+      '<text x="60" y="590" font-size="26" fill="#1E293B">กรุงศรี 173-1-30405-3</text>' +
+      '<text x="300" y="780" font-size="24" text-anchor="middle" fill="#DC2626">สลิปตัวอย่าง (โหมดทดลอง)</text></svg>';
+    var file = be.slipFolder_().createFile(U.newBlob(Array.from(new TextEncoder().encode(svg)), 'image/svg+xml', 'slip_demo.svg'));
+
+    var nok = players[0], ploy = players[2];
+    var specials = [
+      row({ order_id: 'Rblock', date: tmr, hour: 6, court: 'C5', user_id: admin.id, name: label(admin), type: 'block', price: 0, note: 'ซ่อมพื้นคอร์ท / Maintenance' }),
+      row({ order_id: 'Rblock', date: tmr, hour: 7, court: 'C5', user_id: admin.id, name: label(admin), type: 'block', price: 0, note: 'ซ่อมพื้นคอร์ท / Maintenance' }),
+      row({ order_id: 'Rreview', date: tmr, hour: 19, court: 'C1', user_id: nok.id, name: label(nok), price: 350, status: 'pending_review', slip_file_id: file.getId(), slip_uploaded_at: stamp }),
+      row({ order_id: 'Rreview', date: tmr, hour: 20, court: 'C1', user_id: nok.id, name: label(nok), price: 350, status: 'pending_review', slip_file_id: file.getId(), slip_uploaded_at: stamp }),
+      row({ order_id: 'Rawait', date: d2, hour: 18, court: 'C2', user_id: ploy.id, name: label(ploy), price: 350, status: 'pending_payment', expires_at: Date.now() + 25 * 60000 })
+    ];
+    var used = {};
+    specials.forEach(function (r) { used[r.date + '|' + r.hour + '|' + r.court] = 1; });
+
+    var rnd = 7;
+    var rand = function () { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280; };
+    var rows = [];
+    for (var d = 0; d <= 14; d++) {
+      var date = addDays(today, d);
+      for (var h = 6; h < 23; h++) {
+        var busy = h >= 17 && h <= 21 ? 0.62 : h <= 8 ? 0.35 : 0.18;
+        ['C1', 'C2', 'C3', 'C4', 'C5'].forEach(function (c) {
+          if (rand() < busy * Math.max(0.15, 1.2 - d * 0.12) && !used[date + '|' + h + '|' + c]) {
+            var pl = players[Math.floor(rand() * players.length)];
+            rows.push(row({ date: date, hour: h, court: c, user_id: pl.id, name: label(pl), price: price(h) }));
+          }
+        });
+      }
+    }
+    be.appendMany_(be.table_('Bookings'), rows.concat(specials));
+  }
+
+  return {
+    call: function (action, payload, token) {
+      return init().then(function (be) {
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            var res = post(be, action, payload, token);
+            if (res.ok) resolve(res.data); else reject({ code: res.error, params: res.params || {}, message: res.message });
+          }, 120);
+        });
+      });
+    },
+    reset: function () {
+      try {
+        Object.keys(localStorage).forEach(function (k) { if (k.indexOf(PREFIX) === 0 || k.indexOf('stab_demo_db') === 0) localStorage.removeItem(k); });
+      } catch (e) {}
+      ready = null;
+    }
+  };
+})();
+
+boot();
+</script>
+</body>
+</html>
