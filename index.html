@@ -385,6 +385,7 @@ var I18N = {
     err_cancel_too_late:'ต้องยกเลิกก่อนเวลาเล่นอย่างน้อย {hours} ชม.', err_suspended:'บัญชีนี้ถูกระงับ กรุณาติดต่อแอดมิน',
     err_not_found:'ไม่พบรายการนี้ (อาจถูกยกเลิกไปแล้ว)', err_self_edit:'แก้สิทธิ์หรือระงับบัญชีตัวเองไม่ได้',
     err_busy:'ระบบกำลังยุ่ง ลองใหม่อีกครั้ง', err_network:'เชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่',
+    err_bad_response:'เชื่อมต่อระบบหลังบ้านไม่ได้ — กรุณาลองใหม่ภายหลัง (แอดมิน: ตรวจว่าเปิดเว็บถูกที่ และตั้งค่าหลังบ้านครบ)',
     err_invalid_input:'ข้อมูลไม่ถูกต้อง', err_server_error:'เกิดข้อผิดพลาด ลองใหม่อีกครั้ง'
   },
   en: {
@@ -448,6 +449,7 @@ var I18N = {
     err_cancel_too_late:'Bookings must be cancelled at least {hours} h before play', err_suspended:'This account is suspended — please contact an admin',
     err_not_found:'Booking not found (it may already be cancelled)', err_self_edit:'You can\'t change your own level or status',
     err_busy:'System busy, please try again', err_network:'Can\'t connect — check your internet and try again',
+    err_bad_response:'Cannot reach the booking server — please try again later (admins: check the site address and server settings)',
     err_invalid_input:'Invalid input', err_server_error:'Something went wrong, please try again'
   }
 };
@@ -520,7 +522,9 @@ function api(action, payload) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: action, payload: payload || {}, token: state.token })
   })
-    .then(function (r) { return r.json(); }, function () { throw { code: 'network' }; })
+    .then(function (r) { return r.text(); }, function () { throw { code: 'network' }; })
+    // ได้คำตอบที่ไม่ใช่ JSON (เช่น หน้า error ของเว็บโฮสต์) → แจ้งเป็นภาษาคน ไม่โชว์ error ดิบของเบราว์เซอร์
+    .then(function (txt) { try { return JSON.parse(txt); } catch (e) { throw { code: 'bad_response' }; } })
     .then(function (res) {
       if (!res.ok) throw { code: res.error, params: res.params || {}, message: res.message };
       return res.data;
@@ -530,7 +534,7 @@ function api(action, payload) {
 function errText(e) {
   var p = Object.assign({}, (e && e.params) || {});
   if (p.hour != null) p.time = hhmm(+p.hour);
-  var code = (e && e.code) || 'server_error';
+  var code = (e && typeof e.code === 'string' && e.code) || 'server_error';
   var key = 'err_' + code;
   return I18N.th[key] ? t(key, p) : (e && e.message) || t('err_server_error');
 }
